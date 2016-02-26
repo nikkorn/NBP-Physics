@@ -50,6 +50,14 @@ public class NBPBox {
 			// Apply Acceleration to Velocity
 			this.velx += accx;
 			this.vely += accy;
+			// If the velocity is a super small number (between -0.0005 and 0.0005) just set it to zero
+	        // to stop our boxes infinitely floating around.
+	        if(velx > -0.0005 && velx < 0.0005) {
+	        	velx = 0f;
+	        }
+	        if(vely > -0.0005 && vely < 0.0005) {
+	        	vely = 0f;
+	        }
 			// Clamp our velocity to worlds max.
             clampVelocity();
 			// Alter Position
