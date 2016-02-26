@@ -39,6 +39,9 @@ public class NBPBox {
 	public void update(NBPWorld world) {
 		// If this box is static then do nothing!
 		if(this.type == NBPBoxType.KINETIC) {
+			// Reset our acceleration 
+			this.accy = 0f;
+			this.accx = 0f;
 			// Add our gravity to Y acceleration
 			this.accy -= world.getWorldGravity();
 			// Apply Acceleration to Velocity

@@ -70,8 +70,9 @@ public class NBPMath {
         if(kineticBox.getVelx() > 0){
         	// The kinetic box entered the static one while moving left.
             if(penDir == NBPIntersectionDirection.SIDE_LEFT) {
-            	 kineticBox.setVelx(0);
                  kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
+                 // Bounce our object based on its restitution.
+                 kineticBox.setVelx(-kineticBox.getVelx() * kineticBox.getRestitution());
             } else if(penDir == NBPIntersectionDirection.SIDE_RIGHT) {
             	// We are moving away from the static box, give it a little push out.
             	kineticBox.setX(staticBox.getX() + staticBox.getWidth());
@@ -87,6 +88,7 @@ public class NBPMath {
             }
         }
         // Do collision resolution on Y axis.
+        // TODO Will have to eventually add the box teleporting bug fix we applied on the X axis to this one (where we define top and bottom separately)
         if(kineticBox.getVely() > 0) {
             // Came from bottom
             if(penDir == NBPIntersectionDirection.TOP_BOTTOM) {
@@ -96,8 +98,11 @@ public class NBPMath {
         } else if(kineticBox.getVely() < 0) {
             // Came from top
             if(penDir == NBPIntersectionDirection.TOP_BOTTOM) {
-                kineticBox.setVely(0);
                 kineticBox.setY(staticBox.getY() + staticBox.getHeight());
+                // Reduce X velocity based on friction.
+                kineticBox.setVelx(kineticBox.getVelx()*kineticBox.getFriction());
+                // Bounce our object based on its restitution.
+                kineticBox.setVely(-kineticBox.getVely() * kineticBox.getRestitution());
             }
         }
         // TODO Handle square intersections.

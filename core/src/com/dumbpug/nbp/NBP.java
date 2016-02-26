@@ -29,9 +29,12 @@ public class NBP extends ApplicationAdapter {
 		wimg = new Texture("wbox.png");
         rimg = new Texture("rbox.png");
 
-		world = new NBPWorld(0.001f, 3f);
+		world = new NBPWorld(0.09f, 3f);
 		box1 = new NBPBox(200,200,20,40,NBPBoxType.KINETIC);
         box1.setName("box1");
+        box1.setFriction(0.94f);
+        box1.setRestitution(1f);
+        
 		box2 = new NBPBox(265,300,30,10,NBPBoxType.STATIC);
         box2.setName("box2");
 		boxStatic = new NBPBox(120,100,200,20,NBPBoxType.STATIC);
@@ -63,7 +66,7 @@ public class NBP extends ApplicationAdapter {
         if(Gdx.input.isKeyPressed(Input.Keys.W)) {
             box1.addVelImpulse(0f,3f);
         }
-
+        
 		batch.begin();
 		batch.draw(isBoxColliding(box1) ? rimg : wimg, box1.getX(), box1.getY(), box1.getWidth(), box1.getHeight());
         batch.draw(isBoxColliding(box2) ? rimg : wimg, box2.getX(), box2.getY(), box2.getWidth(), box2.getHeight());
