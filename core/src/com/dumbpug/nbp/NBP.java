@@ -32,8 +32,8 @@ public class NBP extends ApplicationAdapter {
 		world = new NBPWorld(0.09f, 4f);
 		box1 = new NBPBox(200,200,20,40,NBPBoxType.KINETIC);
         box1.setName("box1");
-        box1.setFriction(0.94f);
-        box1.setRestitution(0.6f);
+        box1.setFriction(0.98f);
+        box1.setRestitution(0.8f);
         
 		box2 = new NBPBox(265,300,30,10,NBPBoxType.STATIC);
         box2.setName("box2");

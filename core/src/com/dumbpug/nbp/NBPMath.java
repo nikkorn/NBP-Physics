@@ -12,9 +12,10 @@ public class NBPMath {
 	 *
 	 */
     public enum NBPIntersectionDirection {
-        TOP_BOTTOM,
         SIDE_LEFT,
         SIDE_RIGHT,
+        TOP,
+        BOTTOM,
         EQUAL
     }
     
@@ -92,19 +93,25 @@ public class NBPMath {
         // TODO Will have to eventually add the box teleporting bug fix we applied on the X axis to this one (where we define top and bottom separately)
         if(kineticBox.getVely() > 0) {
             // Came from bottom
-            if(penDir == NBPIntersectionDirection.TOP_BOTTOM) {
-                kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
+        	if(penDir == NBPIntersectionDirection.TOP) {
+        		kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
                 // Bounce our object based on its restitution.
                 kineticBox.setVely(-kineticBox.getVely() * kineticBox.getRestitution());
+            } else if(penDir == NBPIntersectionDirection.BOTTOM) {
+            	// We are moving away from the static box, give it a little push out.
+            	kineticBox.setY(staticBox.getY() + staticBox.getHeight());
             }
         } else if(kineticBox.getVely() < 0) {
             // Came from top
-            if(penDir == NBPIntersectionDirection.TOP_BOTTOM) {
-                kineticBox.setY(staticBox.getY() + staticBox.getHeight());
+        	if(penDir == NBPIntersectionDirection.BOTTOM) {
+        		kineticBox.setY(staticBox.getY() + staticBox.getHeight());
                 // Reduce X velocity based on friction.
                 kineticBox.setVelx(kineticBox.getVelx()*kineticBox.getFriction());
                 // Bounce our object based on its restitution.
                 kineticBox.setVely(-kineticBox.getVely() * kineticBox.getRestitution());
+            } else if(penDir == NBPIntersectionDirection.TOP) {
+            	// We are moving away from the static box, give it a little push out.
+            	kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
             }
         }
         // TODO Handle square intersections.
@@ -146,7 +153,14 @@ public class NBPMath {
         		return NBPIntersectionDirection.SIDE_RIGHT;
         	}
         } else if (intersectionHeight < intersectionWidth) {
-            return NBPIntersectionDirection.TOP_BOTTOM;
+        	// If kinetic center < static center then we entered from the top, otherwise bottom
+        	float kineticBoxCenter = kin.getY() + (kin.getHeight()/2);
+        	float staticBoxCenter  = sta.getY() + (sta.getHeight()/2);
+        	if(kineticBoxCenter < staticBoxCenter) {
+        		return NBPIntersectionDirection.TOP;
+        	} else {
+        		return NBPIntersectionDirection.BOTTOM;
+        	}
         } else {
             return NBPIntersectionDirection.EQUAL;
         }
