@@ -73,7 +73,7 @@ public class NBPMath {
             if(penDir == NBPIntersectionDirection.SIDE_LEFT) {
                  kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
                  // Bounce our object based on its restitution.
-                 kineticBox.setVelx(-kineticBox.getVelx() * kineticBox.getRestitution());
+                 kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.SIDE_RIGHT) {
             	// We are moving away from the static box, give it a little push out.
             	kineticBox.setX(staticBox.getX() + staticBox.getWidth());
@@ -83,7 +83,7 @@ public class NBPMath {
             if(penDir == NBPIntersectionDirection.SIDE_RIGHT) {
                 kineticBox.setX(staticBox.getX() + staticBox.getWidth());
                 // Bounce our object based on its restitution.
-                kineticBox.setVelx(-kineticBox.getVelx() * kineticBox.getRestitution());
+                kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.SIDE_LEFT) {
             	// We are moving away from the static box, give it a little push out.
             	kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
@@ -96,7 +96,7 @@ public class NBPMath {
         	if(penDir == NBPIntersectionDirection.TOP) {
         		kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
                 // Bounce our object based on its restitution.
-                kineticBox.setVely(-kineticBox.getVely() * kineticBox.getRestitution());
+                kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.BOTTOM) {
             	// We are moving away from the static box, give it a little push out.
             	kineticBox.setY(staticBox.getY() + staticBox.getHeight());
@@ -106,9 +106,9 @@ public class NBPMath {
         	if(penDir == NBPIntersectionDirection.BOTTOM) {
         		kineticBox.setY(staticBox.getY() + staticBox.getHeight());
                 // Reduce X velocity based on friction.
-                kineticBox.setVelx(kineticBox.getVelx()*kineticBox.getFriction());
+                kineticBox.setVelx(kineticBox.getVelx() * (kineticBox.getFriction() + staticBox.getFriction()));
                 // Bounce our object based on its restitution.
-                kineticBox.setVely(-kineticBox.getVely() * kineticBox.getRestitution());
+                kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.TOP) {
             	// We are moving away from the static box, give it a little push out.
             	kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
