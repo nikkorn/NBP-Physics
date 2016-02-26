@@ -21,6 +21,8 @@ public class NBPBox {
 	private float friction = 0f;
 	// Restitution
 	private float restitution = 0f;
+	// Reference of world this object is in.
+	private NBPWorld wrappingWorld = null;
 	
 	public NBPBox(float x, float y, float width, float height, NBPBoxType type) {
 		this.x = x;
@@ -33,7 +35,8 @@ public class NBPBox {
     public void addVelImpulse(float x, float y) {
         this.velx += x;
         this.vely += y;
-        // TODO clamp the velocity
+        // Clamp the velocity
+        clampVelocity();
     }
 	
 	public void update(NBPWorld world) {
@@ -43,25 +46,30 @@ public class NBPBox {
 			this.accy = 0f;
 			this.accx = 0f;
 			// Add our gravity to Y acceleration
-			this.accy -= world.getWorldGravity();
+			this.accy -= wrappingWorld.getWorldGravity();
 			// Apply Acceleration to Velocity
 			this.velx += accx;
 			this.vely += accy;
-            // Clamp our velocity to worlds max.
-            if(velx < -world.getWorldMaxBoxVelocity()) {
-                velx = -world.getWorldMaxBoxVelocity();
-            } else if(velx > world.getWorldMaxBoxVelocity()) {
-                velx = world.getWorldMaxBoxVelocity();
-            }
-            if(vely < -world.getWorldMaxBoxVelocity()) {
-                vely = -world.getWorldMaxBoxVelocity();
-            } else if(vely > world.getWorldMaxBoxVelocity()) {
-                vely = world.getWorldMaxBoxVelocity();
-            }
+			// Clamp our velocity to worlds max.
+            clampVelocity();
 			// Alter Position
 			this.x += velx;
 			this.y += vely;
 		}
+	}
+	
+	private void clampVelocity() {
+		 // Clamp our velocity to worlds max.
+        if(velx < -wrappingWorld.getWorldMaxBoxVelocity()) {
+            velx = -wrappingWorld.getWorldMaxBoxVelocity();
+        } else if(velx > wrappingWorld.getWorldMaxBoxVelocity()) {
+            velx = wrappingWorld.getWorldMaxBoxVelocity();
+        }
+        if(vely < -wrappingWorld.getWorldMaxBoxVelocity()) {
+            vely = -wrappingWorld.getWorldMaxBoxVelocity();
+        } else if(vely > wrappingWorld.getWorldMaxBoxVelocity()) {
+            vely = wrappingWorld.getWorldMaxBoxVelocity();
+        }
 	}
 
     public void onCollisonWithKineticBox(NBPBox collidingBox) {}
@@ -125,4 +133,8 @@ public class NBPBox {
 			this.restitution = restitution;
 		}
 	}
+
+	public NBPWorld getWrappingWorld() { return wrappingWorld; }
+
+	public void setWrappingWorld(NBPWorld wrappingWorld) { this.wrappingWorld = wrappingWorld; }
 }

@@ -50,12 +50,14 @@ public class NBPWorld {
 	public void addBox(NBPBox box) {
 		if(!boxEntities.contains(box)) {
 			boxEntities.add(box);
+			box.setWrappingWorld(this);
 		}
 	}
 	
 	public void removeBox(NBPBox box) {
 		if(boxEntities.contains(box)) {
 			boxEntities.remove(box);
+			box.setWrappingWorld(null);
 		}
 	}
 	
