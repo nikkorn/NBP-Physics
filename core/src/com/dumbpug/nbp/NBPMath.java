@@ -80,8 +80,9 @@ public class NBPMath {
         } else if(kineticBox.getVelx() < 0) {
         	// The kinetic box entered the static one while moving right.
             if(penDir == NBPIntersectionDirection.SIDE_RIGHT) {
-            	kineticBox.setVelx(0);
                 kineticBox.setX(staticBox.getX() + staticBox.getWidth());
+                // Bounce our object based on its restitution.
+                kineticBox.setVelx(-kineticBox.getVelx() * kineticBox.getRestitution());
             } else if(penDir == NBPIntersectionDirection.SIDE_LEFT) {
             	// We are moving away from the static box, give it a little push out.
             	kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
@@ -92,8 +93,9 @@ public class NBPMath {
         if(kineticBox.getVely() > 0) {
             // Came from bottom
             if(penDir == NBPIntersectionDirection.TOP_BOTTOM) {
-                kineticBox.setVely(0);
                 kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
+                // Bounce our object based on its restitution.
+                kineticBox.setVely(-kineticBox.getVely() * kineticBox.getRestitution());
             }
         } else if(kineticBox.getVely() < 0) {
             // Came from top
