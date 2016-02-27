@@ -50,7 +50,7 @@ public class NBPCluster extends ApplicationAdapter {
         for(int i = 0; i < clusterSize; i++) {
         	NBPBox cBox = new NBPBox((ran.nextFloat()*300f) + 160f,440,20,20,NBPBoxType.KINETIC);
         	world.addBox(cBox);
-        	cBox.addVelImpulse((ran.nextFloat()*6f)-3f, 0);
+        	cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
         	cBox.setFriction(ran.nextFloat());
         	cBox.setRestitution(ran.nextFloat());
         	cluster.add(cBox);

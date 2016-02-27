@@ -31,6 +31,10 @@ public class NBPWorld {
         while(!collisionsResolved) {
             collisionsResolved = true;
             for(NBPBox cbox : boxEntities) {
+                // Process the sensors attached to the current box.
+                for(NBPSensor sensor: cbox.getAttachedSensors()) {
+                    sensor.reviewIntersections(boxEntities);
+                }
                 for(NBPBox tbox : boxEntities) {
                     // Are these boxes different and do they collide?
                     if((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
@@ -46,21 +50,33 @@ public class NBPWorld {
             }
         }
 	}
-	
+
+	/**
+	 * Add a Static/Kinetic box to the world.
+	 * @param box
+     */
 	public void addBox(NBPBox box) {
 		if(!boxEntities.contains(box)) {
 			boxEntities.add(box);
 			box.setWrappingWorld(this);
 		}
 	}
-	
+
+    /**
+     * Remove a Static/Kinetic box from the world.
+     * @param box
+     */
 	public void removeBox(NBPBox box) {
 		if(boxEntities.contains(box)) {
 			boxEntities.remove(box);
 			box.setWrappingWorld(null);
 		}
 	}
-	
+
+    /**
+     * Get all boxes in the world.
+     * @return
+     */
 	public ArrayList<NBPBox> getWorldBoxes() {
 		return boxEntities;
 	}

@@ -34,6 +34,22 @@ public class NBPMath {
         }
         return false;
     }
+
+    /**
+     * Calculates whether a sensor and box intersect.
+     * @param sensor a
+     * @param box b
+     * @return intersection exists
+     */
+    public static boolean doesSensorCollideWithBox(NBPSensor sensor, NBPBox box) {
+        if(sensor.getX() < (box.getX() + box.getWidth()) &&
+                (sensor.getX() + sensor.getWidth()) > box.getX() &&
+                sensor.getY() < (box.getY() + box.getHeight()) &&
+                (sensor.getY() + sensor.getHeight()) > box.getY()) {
+            return true;
+        }
+        return false;
+    }
     
     /**
      * Handles a collision between two boxes.
@@ -47,6 +63,9 @@ public class NBPMath {
             // Kinetic/Static collision, resolve it.
             NBPBox staticBox  = (a.getType() == NBPBoxType.STATIC) ? a : b;
             NBPBox kineticBox = (a.getType() == NBPBoxType.KINETIC) ? a : b;
+            // TODO Have a think about whether we should notify boxes of collision after or before resolution.
+            staticBox.onCollisonWithKineticBox(kineticBox);
+            kineticBox.onCollisonWithStaticBox(staticBox);
             doCollisionResolution(staticBox, kineticBox);
         } else if (b.getType() == NBPBoxType.KINETIC && a.getType() == NBPBoxType.KINETIC) {
             // We have a Kinetic/Kinetic collision, one day when i get super smart i can find a

@@ -1,5 +1,7 @@
 package com.dumbpug.nbp;
 
+import java.util.ArrayList;
+
 public class NBPBox {
 	// Position
 	private float x;
@@ -23,6 +25,8 @@ public class NBPBox {
 	private float restitution = 0f;
 	// Reference of world this object is in.
 	private NBPWorld wrappingWorld = null;
+    // List of sensors that are attached to this box.
+    private ArrayList<NBPSensor> attachedSensors;
 	
 	public NBPBox(float x, float y, float width, float height, NBPBoxType type) {
 		this.x = x;
@@ -30,9 +34,10 @@ public class NBPBox {
 		this.width = width;
 		this.height = height;
 		this.type = type;
+        attachedSensors = new ArrayList<NBPSensor>();
 	}
 
-    public void addVelImpulse(float x, float y) {
+    public void applyImpulse(float x, float y) {
         this.velx += x;
         this.vely += y;
         // Clamp the velocity
@@ -61,8 +66,8 @@ public class NBPBox {
 			// Clamp our velocity to worlds max.
             clampVelocity();
 			// Alter Position
-			this.x += velx;
-			this.y += vely;
+            this.setX(this.x + velx);
+            this.setY(this.y + vely);
 		}
 	}
 	
@@ -80,15 +85,78 @@ public class NBPBox {
         }
 	}
 
+    // ----------------------------------------------------------------
+    // ------------- Methods that the user should override ------------
     public void onCollisonWithKineticBox(NBPBox collidingBox) {}
+
+    public void onCollisonWithStaticBox(NBPBox collidingBox) {}
+
+	public void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {}
+
+    public void onSensorExit(NBPSensor sensor, NBPBox exitedBox) {}
+    // ----------------------------------------------------------------
+
+    /**
+     * Get all attached sensors.
+     * @return sensors
+     */
+    public ArrayList<NBPSensor> getAttachedSensors() { return this.attachedSensors; }
+
+    /**
+     * Attach a sensor.
+     * @param sensor
+     */
+    public void attachSensor(NBPSensor sensor) {
+        // Don't bother if this sensor is already attached.
+        if(!attachedSensors.contains(sensor)) {
+            attachedSensors.add(sensor);
+            // Set the parent of the sensor to be this box.
+            sensor.setParent(this);
+        }
+    }
+
+    /**
+     * Remove a sensor.
+     * @param sensor
+     */
+    public void removeSensor(NBPSensor sensor) {
+        // Make sure that this sensor is attached.
+        if(attachedSensors.contains(sensor)) {
+            attachedSensors.remove(sensor);
+        }
+    }
 	
 	public float getX() { return x; }
 	
-	public void setX(float x) { this.x = x; }
+	public void setX(float newX) {
+        // Move attached sensors along with this box.
+        if(newX > this.x) {
+            for(NBPSensor sensor : this.attachedSensors) {
+                sensor.setX(sensor.getX() + (newX - this.x));
+            }
+        } else if(newX < this.x) {
+            for(NBPSensor sensor : this.attachedSensors) {
+                sensor.setX(sensor.getX() - (this.x - newX));
+            }
+        }
+        this.x = newX;
+    }
 	
 	public float getY() { return y; }
 	
-	public void setY(float y) { this.y = y; }
+	public void setY(float newY) {
+        // Move attached sensors along with this box.
+        if(newY > this.y) {
+            for(NBPSensor sensor : this.attachedSensors) {
+                sensor.setY(sensor.getY() + (newY - this.y));
+            }
+        } else if(newY < this.y) {
+            for(NBPSensor sensor : this.attachedSensors) {
+                sensor.setY(sensor.getY() - (this.y - newY));
+            }
+        }
+        this.y = newY;
+    }
 
 	public float getAccx() { return accx; }
 
