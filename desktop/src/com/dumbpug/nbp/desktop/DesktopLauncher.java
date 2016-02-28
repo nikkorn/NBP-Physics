@@ -6,8 +6,8 @@ import com.dumbpug.nbp.NBP;
 import com.dumbpug.nbp.NBPCluster;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new NBPCluster(), config);
-	}
+    public static void main (String[] arg) {
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        new LwjglApplication(new NBP(), config);
+    }
 }

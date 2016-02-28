@@ -5,12 +5,12 @@ package com.dumbpug.nbp;
  * Class for basic box collision detection and resolution.
  */
 public class NBPMath {
-	
-	/**
-	 * Defines a direction at which a kinetic box enters a static box.
-	 * @author Nikolas Howard
-	 *
-	 */
+
+    /**
+     * Defines a direction at which a kinetic box enters a static box.
+     * @author Nikolas Howard
+     *
+     */
     public enum NBPIntersectionDirection {
         SIDE_LEFT,
         SIDE_RIGHT,
@@ -88,49 +88,49 @@ public class NBPMath {
         NBPIntersectionDirection penDir = getIntersectionDirection(kineticBox, staticBox);
         // Do collision resolution on X axis.
         if(kineticBox.getVelx() > 0){
-        	// The kinetic box entered the static one while moving left.
+            // The kinetic box entered the static one while moving left.
             if(penDir == NBPIntersectionDirection.SIDE_LEFT) {
                  kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
                  // Bounce our object based on its restitution.
                  kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.SIDE_RIGHT) {
-            	// We are moving away from the static box, give it a little push out.
-            	kineticBox.setX(staticBox.getX() + staticBox.getWidth());
+                // We are moving away from the static box, give it a little push out.
+                kineticBox.setX(staticBox.getX() + staticBox.getWidth());
             }
         } else if(kineticBox.getVelx() < 0) {
-        	// The kinetic box entered the static one while moving right.
+            // The kinetic box entered the static one while moving right.
             if(penDir == NBPIntersectionDirection.SIDE_RIGHT) {
                 kineticBox.setX(staticBox.getX() + staticBox.getWidth());
                 // Bounce our object based on its restitution.
                 kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.SIDE_LEFT) {
-            	// We are moving away from the static box, give it a little push out.
-            	kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
+                // We are moving away from the static box, give it a little push out.
+                kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
             }
         }
         // Do collision resolution on Y axis.
         // TODO Will have to eventually add the box teleporting bug fix we applied on the X axis to this one (where we define top and bottom separately)
         if(kineticBox.getVely() > 0) {
             // Came from bottom
-        	if(penDir == NBPIntersectionDirection.TOP) {
-        		kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
+            if(penDir == NBPIntersectionDirection.TOP) {
+                kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
                 // Bounce our object based on its restitution.
                 kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.BOTTOM) {
-            	// We are moving away from the static box, give it a little push out.
-            	kineticBox.setY(staticBox.getY() + staticBox.getHeight());
+                // We are moving away from the static box, give it a little push out.
+                kineticBox.setY(staticBox.getY() + staticBox.getHeight());
             }
         } else if(kineticBox.getVely() < 0) {
             // Came from top
-        	if(penDir == NBPIntersectionDirection.BOTTOM) {
-        		kineticBox.setY(staticBox.getY() + staticBox.getHeight());
+            if(penDir == NBPIntersectionDirection.BOTTOM) {
+                kineticBox.setY(staticBox.getY() + staticBox.getHeight());
                 // Reduce X velocity based on friction.
                 kineticBox.setVelx(kineticBox.getVelx() * (kineticBox.getFriction() + staticBox.getFriction()));
                 // Bounce our object based on its restitution.
                 kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
             } else if(penDir == NBPIntersectionDirection.TOP) {
-            	// We are moving away from the static box, give it a little push out.
-            	kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
+                // We are moving away from the static box, give it a little push out.
+                kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
             }
         }
         // TODO Handle square intersections.
@@ -163,23 +163,23 @@ public class NBPMath {
         float intersectionHeight = intersectionTopRightY - intersectionBottomLeftY;
         // Return which side the static box was penetrated from.
         if(intersectionHeight > intersectionWidth) {
-        	// If kinetic center < static center then we entered on the left, otherwise right
-        	float kineticBoxCenter = kin.getX() + (kin.getWidth()/2);
-        	float staticBoxCenter  = sta.getX() + (sta.getWidth()/2);
-        	if(kineticBoxCenter < staticBoxCenter) {
-        		return NBPIntersectionDirection.SIDE_LEFT;
-        	} else {
-        		return NBPIntersectionDirection.SIDE_RIGHT;
-        	}
+            // If kinetic center < static center then we entered on the left, otherwise right
+            float kineticBoxCenter = kin.getX() + (kin.getWidth()/2);
+            float staticBoxCenter  = sta.getX() + (sta.getWidth()/2);
+            if(kineticBoxCenter < staticBoxCenter) {
+                return NBPIntersectionDirection.SIDE_LEFT;
+            } else {
+                return NBPIntersectionDirection.SIDE_RIGHT;
+            }
         } else if (intersectionHeight < intersectionWidth) {
-        	// If kinetic center < static center then we entered from the top, otherwise bottom
-        	float kineticBoxCenter = kin.getY() + (kin.getHeight()/2);
-        	float staticBoxCenter  = sta.getY() + (sta.getHeight()/2);
-        	if(kineticBoxCenter < staticBoxCenter) {
-        		return NBPIntersectionDirection.TOP;
-        	} else {
-        		return NBPIntersectionDirection.BOTTOM;
-        	}
+            // If kinetic center < static center then we entered from the top, otherwise bottom
+            float kineticBoxCenter = kin.getY() + (kin.getHeight()/2);
+            float staticBoxCenter  = sta.getY() + (sta.getHeight()/2);
+            if(kineticBoxCenter < staticBoxCenter) {
+                return NBPIntersectionDirection.TOP;
+            } else {
+                return NBPIntersectionDirection.BOTTOM;
+            }
         } else {
             return NBPIntersectionDirection.EQUAL;
         }
