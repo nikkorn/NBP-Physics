@@ -1,4 +1,4 @@
-package com.dumbpug.nbp;
+package com.dumbpug.main;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -7,6 +7,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.nbp.NBPBox;
+import com.dumbpug.nbp.NBPBoxType;
+import com.dumbpug.nbp.NBPMath;
+import com.dumbpug.nbp.NBPWorld;
 
 /**
  * Testing for the physics engine.
@@ -36,7 +40,7 @@ public class NBPCluster extends ApplicationAdapter {
         rimg = new Texture("rbox.png");
 
         world = new NBPWorld(0.09f, 4f);
-        box1 = new NBPBox(140,80,20,180,NBPBoxType.STATIC);
+        box1 = new NBPBox(140,80,20,180, NBPBoxType.STATIC);
         box1.setName("box1");
         
         box2 = new NBPBox(205,100,230,20,NBPBoxType.STATIC);

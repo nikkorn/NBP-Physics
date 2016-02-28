@@ -1,4 +1,4 @@
-package com.dumbpug.nbp;
+package com.dumbpug.main;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.nbp.*;
 
 /**
  * Testing for the physics engine.
@@ -35,7 +36,7 @@ public class NBP extends ApplicationAdapter {
         world = new NBPWorld(0.09f, 4f);
 
         // Make our movable box.
-        box1 = new NBPBox(200,200,20,40,NBPBoxType.KINETIC) {
+        box1 = new NBPBox(200,200,20,40, NBPBoxType.KINETIC) {
             @Override
             public void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {
                 if(enteredBox.getName().equals("box4")) {
