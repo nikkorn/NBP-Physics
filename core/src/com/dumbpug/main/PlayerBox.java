@@ -16,14 +16,14 @@ public class PlayerBox extends NBPBox {
         super(x, y, width, height, NBPBoxType.KINETIC);
         // Set various properties for the player.
         setName("player");
-        setFriction(0.8f);
-        setRestitution(0.2f);
+        setFriction(0.92f);
+        setRestitution(0f);
         // Create a sensor and place it at the base of our player. This sensor will
         // be used to detect when we are standing on something static, thus allowing
         // the player to jump.
-        float sensorHeight = 10;
-        float sensorWidth  = width * 0.8f;
-        float sensorPosX   = x + (width * 0.1f);
+        float sensorHeight = 2;
+        float sensorWidth  = width;
+        float sensorPosX   = x;
         float sensorPosY   = y - sensorHeight;
         // Create the sensor.
         NBPSensor baseSensor = new NBPSensor(sensorPosX, sensorPosY, sensorWidth, sensorHeight);
@@ -54,7 +54,7 @@ public class PlayerBox extends NBPBox {
         // Can we jump? (Are we on a static block?)
         if(canJump) {
             // Apply a vertical impulse.
-            applyImpulse(0f,2f);
+            applyImpulse(0f,5f);
         }
     }
 

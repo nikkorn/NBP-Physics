@@ -9,6 +9,9 @@ public class NBPBox {
     // Velocity
     private float velx;
     private float vely;
+    // TODO implement max y/x velocity JUST for this box.
+    private float maxVelX;
+    private float maxVelY;
     // Acceleration
     private float accx;
     private float accy;

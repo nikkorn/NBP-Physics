@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.nbp.*;
 
+import java.util.ArrayList;
+
 /**
  * Testing for the physics engine.
  * @author Nikolas Howard
@@ -21,10 +23,17 @@ public class NBPGrid extends ApplicationAdapter {
 
     NBPWorld world;
     PlayerBox player;
-    NBPBox box2;
-    NBPBox boxStatic;
-    NBPBox boxStatic2;
-    NBPBox box4;
+
+    private int gridBlockSize = 60;
+    private int[][] gridLayout = {
+            {1,1,1,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,1,0,1,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,1,1,1,0,1},
+            {1,0,0,1,0,0,1},
+            {1,1,1,1,1,1,1}
+    };
 
     @Override
     public void create() {
@@ -33,32 +42,25 @@ public class NBPGrid extends ApplicationAdapter {
         rimg = new Texture("rbox.png");
         simg = new Texture("sbox.png");
 
-        world = new NBPWorld(0.09f, 4f);
+        world = new NBPWorld(0.09f, 10f);
+
+        // Create our grid.
+        float gridStartX = 0;
+        float gridStartY = gridLayout.length*gridBlockSize;
+        for(int gridX = 0; gridX < gridLayout.length; gridX++) {
+            for(int gridY = 0; gridY < gridLayout.length; gridY++) {
+                if(gridLayout[gridY][gridX] == 1) {
+                    NBPBox gridBlock = new NBPBox(gridStartX + (gridX*gridBlockSize),
+                            gridStartY-(gridY*gridBlockSize), gridBlockSize, gridBlockSize, NBPBoxType.STATIC);
+                    gridBlock.setName("grid_piece");
+                    world.addBox(gridBlock);
+                }
+            }
+        }
 
         // Make our player box.
-        player = new PlayerBox(200, 200, 20, 40);
-
-        box2 = new NBPBox(30, 120, 100, 10, NBPBoxType.STATIC);
-        box2.setName("box2");
-
-        // Make bouncy box
-        boxStatic = new NBPBox(190, 120, 100, 10, NBPBoxType.STATIC);
-        boxStatic.setName("boxStatic");
-        boxStatic.setRestitution(0.5f);
-
-        boxStatic2 = new NBPBox(350, 120, 100, 10, NBPBoxType.STATIC);
-        boxStatic2.setName("boxStatic2");
-
-        // Make super slippery box.
-        box4 = new NBPBox(500, 120, 100, 10, NBPBoxType.STATIC);
-        box4.setFriction(0.2f);
-        box4.setName("box4");
-
+        player = new PlayerBox(65, 200, 20, 40);
         world.addBox(player);
-        world.addBox(box2);
-        world.addBox(boxStatic);
-        world.addBox(boxStatic2);
-        world.addBox(box4);
     }
 
     @Override
@@ -83,27 +85,14 @@ public class NBPGrid extends ApplicationAdapter {
         }
 
         batch.begin();
-        // Draw boxes
-        batch.draw(isBoxColliding(player) ? rimg : wimg, player.getX(), player.getY(), player.getWidth(), player.getHeight());
-        batch.draw(isBoxColliding(box2) ? rimg : wimg, box2.getX(), box2.getY(), box2.getWidth(), box2.getHeight());
-        batch.draw(isBoxColliding(boxStatic) ? rimg : wimg, boxStatic.getX(), boxStatic.getY(), boxStatic.getWidth(), boxStatic.getHeight());
-        batch.draw(isBoxColliding(boxStatic2) ? rimg : wimg, boxStatic2.getX(), boxStatic2.getY(), boxStatic2.getWidth(), boxStatic2.getHeight());
-        batch.draw(isBoxColliding(box4) ? rimg : wimg, box4.getX(), box4.getY(), box4.getWidth(), box4.getHeight());
+        // Draw Grid
+        for(NBPBox box : world.getWorldBoxes()) {
+            batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        }
         // Draw the sensors for player
         for (NBPSensor sensor : player.getAttachedSensors()) {
             batch.draw(simg, sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight());
         }
         batch.end();
-    }
-
-    public boolean isBoxColliding(NBPBox tBox) {
-        for (NBPBox box : world.getWorldBoxes()) {
-            if (!(tBox == box)) {
-                if (NBPMath.doBoxesCollide(tBox, box)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

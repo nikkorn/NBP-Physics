@@ -27,25 +27,16 @@ public class NBPWorld {
             box.update(this);
         }
         // Do collision detection and try to handle it.
-        boolean collisionsResolved = false;
-        while(!collisionsResolved) {
-            collisionsResolved = true;
-            for(NBPBox cbox : boxEntities) {
-                // Process the sensors attached to the current box.
-                for(NBPSensor sensor: cbox.getAttachedSensors()) {
-                    sensor.reviewIntersections(boxEntities);
-                }
-                for(NBPBox tbox : boxEntities) {
-                    // Are these boxes different and do they collide?
-                    if((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
-                        // We found a collision, we will need to re-go over after.
-                        // If this a Kinetic/Static collision then we need to re-asses collisions.
-                        if((cbox.getType() == NBPBoxType.KINETIC && tbox.getType() == NBPBoxType.STATIC) ||
-                                (tbox.getType() == NBPBoxType.KINETIC && cbox.getType() == NBPBoxType.STATIC)) {
-                            collisionsResolved = false;
-                        }
-                        NBPMath.handleCollision(tbox, cbox);
-                    }
+        for(NBPBox cbox : boxEntities) {
+            // Process the sensors attached to the current box.
+            for(NBPSensor sensor: cbox.getAttachedSensors()) {
+                sensor.reviewIntersections(boxEntities);
+            }
+            for(NBPBox tbox : boxEntities) {
+                // Are these boxes different and do they collide?
+                if((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
+                    // We found a collision.
+                    NBPMath.handleCollision(tbox, cbox);
                 }
             }
         }

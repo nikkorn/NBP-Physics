@@ -162,7 +162,7 @@ public class NBPMath {
         float intersectionWidth  = intersectionTopRightX - intersectionBottomLeftX;
         float intersectionHeight = intersectionTopRightY - intersectionBottomLeftY;
         // Return which side the static box was penetrated from.
-        if(intersectionHeight > intersectionWidth) {
+        if(intersectionHeight >= intersectionWidth) {
             // If kinetic center < static center then we entered on the left, otherwise right
             float kineticBoxCenter = kin.getX() + (kin.getWidth()/2);
             float staticBoxCenter  = sta.getX() + (sta.getWidth()/2);
@@ -171,7 +171,7 @@ public class NBPMath {
             } else {
                 return NBPIntersectionDirection.SIDE_RIGHT;
             }
-        } else if (intersectionHeight < intersectionWidth) {
+        } else if (intersectionHeight <= intersectionWidth) {
             // If kinetic center < static center then we entered from the top, otherwise bottom
             float kineticBoxCenter = kin.getY() + (kin.getHeight()/2);
             float staticBoxCenter  = sta.getY() + (sta.getHeight()/2);
