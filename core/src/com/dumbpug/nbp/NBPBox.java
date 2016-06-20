@@ -6,12 +6,15 @@ public class NBPBox {
     // Position
     private float x;
     private float y;
+    // Previous Position
+    private float lastPosX;
+    private float lastPosY;
     // Velocity
     private float velx;
     private float vely;
     // TODO implement max y/x velocity JUST for this box.
-    private float maxVelX;
-    private float maxVelY;
+    // private float maxVelX;
+    // private float maxVelY;
     // Acceleration
     private float accx;
     private float accy;
@@ -30,13 +33,21 @@ public class NBPBox {
     private NBPWorld wrappingWorld = null;
     // List of sensors that are attached to this box.
     private ArrayList<NBPSensor> attachedSensors;
+    // Point of origin
+    private NBPPoint originPoint;
+    // Last point of origin
+    private NBPPoint lastOriginPoint;
 
     public NBPBox(float x, float y, float width, float height, NBPBoxType type) {
         this.x = x;
         this.y = y;
+        this.lastPosX = x;
+        this.lastPosY = y;
         this.width = width;
         this.height = height;
         this.type = type;
+        this.originPoint = new NBPPoint(x + (width/2), y + (height/2));
+        this.lastOriginPoint = new NBPPoint(lastPosX + (width/2), y + (height/2));
         attachedSensors = new ArrayList<NBPSensor>();
     }
 
@@ -142,6 +153,7 @@ public class NBPBox {
                 sensor.setX(sensor.getX() - (this.x - newX));
             }
         }
+        this.lastPosX = x;
         this.x = newX;
     }
 
@@ -158,6 +170,7 @@ public class NBPBox {
                 sensor.setY(sensor.getY() - (this.y - newY));
             }
         }
+        this.lastPosY = y;
         this.y = newY;
     }
 
@@ -188,6 +201,10 @@ public class NBPBox {
     public void setName(String name) { this.name = name; }
 
     public float getFriction() { return friction; }
+    
+    public float getLastPosX() { return lastPosX; }
+	
+	public float getLastPosY() { return lastPosY; }
 
     public void setFriction(float friction) {
         // Friction must be a float value between 0 and 1.
@@ -216,4 +233,16 @@ public class NBPBox {
     public NBPWorld getWrappingWorld() { return wrappingWorld; }
 
     public void setWrappingWorld(NBPWorld wrappingWorld) { this.wrappingWorld = wrappingWorld; }
+
+	public NBPPoint getCurrentOriginPoint() {
+		originPoint.setX(this.x + (width/2));
+		originPoint.setY(this.y + (height/2));
+		return originPoint;
+	}
+	
+	public NBPPoint getLastOriginPoint() {
+		lastOriginPoint.setX(this.lastPosX + (width/2));
+		lastOriginPoint.setY(this.lastPosY + (height/2));
+		return lastOriginPoint;
+	}
 }

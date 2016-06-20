@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.nbp.*;
 
-import java.util.ArrayList;
-
 /**
  * Testing for the physics engine.
  * @author Nikolas Howard
