@@ -39,9 +39,9 @@ public class NBPBallistic extends ApplicationAdapter {
             NBPBox cBox = new NBPBox(100,250,10,10,NBPBoxType.KINETIC);
             world.addBox(cBox);
             cBox.setName("bullet");
-            float baseImpulse = ran.nextFloat();
-            System.out.println("Base Impulse: " + baseImpulse);
-            cBox.applyImpulse(16f, 0.39481282f * 3f);
+            float baseImpulse = ran.nextFloat(); // breaks: 0.39481282f
+            // System.out.println("Base Impulse: " + baseImpulse);
+            cBox.applyImpulse(16f, baseImpulse * 3f);
             cBox.setRestitution(0.5f);
             cluster.add(cBox);
         }
