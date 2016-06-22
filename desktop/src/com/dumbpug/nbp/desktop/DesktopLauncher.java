@@ -7,6 +7,6 @@ import com.dumbpug.main.*;
 public class DesktopLauncher {
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        new LwjglApplication(new NBPBallistic(), config);
+        new LwjglApplication(new NBPGrid(), config);
     }
 }

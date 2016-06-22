@@ -203,8 +203,8 @@ public class NBPMath {
     	NBPBox enlargedBox;
     	float enlargedBoxPosX = staticBox.getX() - (kineticBox.getWidth()/2f);
     	float enlargedBoxPosY = staticBox.getY() - (kineticBox.getHeight()/2f);
-    	float enlargedBoxWidth = staticBox.getWidth();
-    	float enlargedBoxHeight = staticBox.getHeight();
+    	float enlargedBoxWidth = staticBox.getWidth() + kineticBox.getWidth();
+    	float enlargedBoxHeight = staticBox.getHeight() + kineticBox.getHeight();
     	enlargedBox = new NBPBox(enlargedBoxPosX, enlargedBoxPosY, enlargedBoxWidth, enlargedBoxHeight, NBPBoxType.STATIC);
     	
     	// Keep list of intersection points where our movement line crosses the bounds of our static box.
@@ -250,31 +250,96 @@ public class NBPMath {
     	}
     	
     	// Go over each intersection point and ensure it is valid, it is only valid if it lies in the boundary of or movement line.
-    	ListIterator<NBPIntersectionPoint> pointIterator = extendedBoxIntersectionPoints.listIterator();
-    	while(pointIterator.hasNext()){
-    		// Does this point reside in our box?
-    		if(!doesPointResideInBoxDefinedByLine(pointIterator.next(), 
-    				kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint())) {
-    			// This intersection is not valid.
-    			pointIterator.remove();
-    		}
-    	}
+//    	ListIterator<NBPIntersectionPoint> pointIterator = extendedBoxIntersectionPoints.listIterator();
+//    	while(pointIterator.hasNext()){
+//    		// Does this point reside in our box?
+//    		if(!doesPointResideInBoxDefinedByLine(pointIterator.next(), 
+//    				kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint())) {
+//    			// This intersection is not valid.
+//    			pointIterator.remove();
+//    		}
+//    	}
     	
+    	// TEMP---------------------------
+    	NBPIntersectionPoint intersectionPoint = getClosestPoint(kineticBox.getLastOriginPoint(), extendedBoxIntersectionPoints);
+    	// Set position
+		kineticBox.setX(intersectionPoint.getX() - (kineticBox.getWidth()/2f));
+		kineticBox.setY(intersectionPoint.getY() - (kineticBox.getHeight()/2f));
+		// Change box velocity based on intersection direction
+		switch(intersectionPoint.getIntersectionDir()) {
+		case TOP:
+			// Reduce X velocity based on friction.
+            kineticBox.setVelx(kineticBox.getVelx() * (kineticBox.getFriction() + staticBox.getFriction()));
+            // Flip velocity
+			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+			break;
+		case BOTTOM:
+			 // Flip velocity
+			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+			break;
+		case SIDE_LEFT:
+			 // Flip velocity
+			kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+			break;
+		case SIDE_RIGHT:
+			 // Flip velocity
+			kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+			break;
+		case EQUAL:
+			break;
+		default:
+			break;
+		}
+		// TEMP---------------------------
+		
     	// ------------- TEMP!
-    	System.out.println("POINTS NUM: " + extendedBoxIntersectionPoints.size());
-    	for(NBPIntersectionPoint p : extendedBoxIntersectionPoints) {
-    		System.out.println("INTERSECT DIR: " + p.getIntersectionDir());
-    	}
+//    	System.out.println("POINTS NUM: " + extendedBoxIntersectionPoints.size());
+//    	for(NBPIntersectionPoint p : extendedBoxIntersectionPoints) {
+//    		System.out.println("INTERSECT DIR: " + p.getIntersectionDir());
+//    	}
     	// ------------- TEMP!
     	
-    	// If we have only one point then great, that is the new origin of the kinematic box.
-    	// Also, change box velocity based on intersection direction
-    	
-    	// If we have more than one point left then the one we want is the one that is closest to 
-    	// the last origin of our moving box.
-    	
-    	// Careful as if we have two points that share the exact same position, then we entered 
-    	// the static box exactly on a corner
+//    	if(extendedBoxIntersectionPoints.size() == 1) {
+//    		// If we have only one point then great, that is the new origin of the kinematic box.
+//    		NBPIntersectionPoint intersectionPoint = extendedBoxIntersectionPoints.get(0);
+//    		// Set position
+//    		kineticBox.setX(intersectionPoint.getX() - (kineticBox.getWidth()/2f));
+//    		kineticBox.setY(intersectionPoint.getY() - (kineticBox.getHeight()/2f));
+//    		// Change box velocity based on intersection direction
+//    		switch(intersectionPoint.getIntersectionDir()) {
+//    		case TOP:
+//    			// Reduce X velocity based on friction.
+//                kineticBox.setVelx(kineticBox.getVelx() * (kineticBox.getFriction() + staticBox.getFriction()));
+//                // Flip velocity
+//    			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+//				break;
+//			case BOTTOM:
+//				 // Flip velocity
+//				kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+//				break;
+//			case SIDE_LEFT:
+//				 // Flip velocity
+//				kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+//				break;
+//			case SIDE_RIGHT:
+//				 // Flip velocity
+//				kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+//				break;
+//			case EQUAL:
+//				break;
+//			default:
+//				break;
+//    		}
+//    	} else if(extendedBoxIntersectionPoints.size() == 0) {
+//    		// Something is super wrong!
+//    		System.out.println("NADA");
+//    	} else {
+//    		// If we have more than one point left then the one we want is the one that is closest to 
+//        	// the last origin of our moving box.
+//        	System.out.println("LOTS");
+//        	// Careful as if we have two points that share the exact same position, then we entered 
+//        	// the static box exactly on a corner
+//    	}
     }
     
     /**
@@ -304,8 +369,22 @@ public class NBPMath {
      * @param points
      * @return closest point
      */
-    public static NBPPoint getClosestPoint(NBPPoint P, ArrayList<NBPPoint> points) {
-        return null;
+    public static NBPIntersectionPoint getClosestPoint(NBPPoint P, ArrayList<NBPIntersectionPoint> points) {
+    	NBPIntersectionPoint closestPoint = null;
+    	double closestDistance = 0;
+    	for(NBPIntersectionPoint point : points) {
+    		if(closestPoint == null) {
+    			closestPoint = point;
+    			closestDistance = Math.sqrt(Math.pow((point.getX() - P.getX()), 2) + Math.pow((point.getY() - P.getY()), 2));
+    		} else {
+    			double distance = Math.sqrt(Math.pow((point.getX() - P.getX()), 2) + Math.pow((point.getY() - P.getY()), 2));
+    			if(distance < closestDistance) {
+    				closestPoint = point;
+    				closestDistance = distance;
+    			}
+    		}
+    	}
+        return closestPoint;
     }
     
     /**
