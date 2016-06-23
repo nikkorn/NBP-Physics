@@ -109,6 +109,7 @@ public class NBPBox {
 
     public void onSensorExit(NBPSensor sensor, NBPBox exitedBox) {}
     // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
 
     /**
      * Get all attached sensors.

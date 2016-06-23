@@ -5,7 +5,12 @@ package com.dumbpug.nbp;
  */
 public class NBPException extends RuntimeException {
 
-    public NBPException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public NBPException(String message) {
         super(message);
     }
 }

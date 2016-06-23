@@ -41,7 +41,7 @@ public class NBPBallistic extends ApplicationAdapter {
             cBox.setName("bullet");
             float baseImpulse = ran.nextFloat(); // breaks: 0.39481282f
             // System.out.println("Base Impulse: " + baseImpulse);
-            cBox.applyImpulse(16f, baseImpulse * 3f);
+            cBox.applyImpulse(16f, 0.39481282f * 3f);
             cBox.setRestitution(0.5f);
             cluster.add(cBox);
         }

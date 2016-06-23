@@ -28,7 +28,7 @@ public class NBPCluster extends ApplicationAdapter {
     private NBPBox box3;
 
     private ArrayList<NBPBox> cluster = new ArrayList<NBPBox>();
-    private int clusterSize = 100;
+    private int clusterSize = 500;
 
     private Random ran;
 
@@ -51,7 +51,7 @@ public class NBPCluster extends ApplicationAdapter {
         
         // Create a cluster
         for(int i = 0; i < clusterSize; i++) {
-            NBPBox cBox = new NBPBox((ran.nextFloat()*300f) + 160f,440,20,20,NBPBoxType.KINETIC);
+            NBPBox cBox = new NBPBox((ran.nextFloat()*300f) + 160f,440,5,5,NBPBoxType.KINETIC);
             world.addBox(cBox);
             cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
             cBox.setFriction(ran.nextFloat());

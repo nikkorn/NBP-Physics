@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.nbp.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by nik on 25/03/16.
