@@ -112,6 +112,8 @@ public class NBPBox {
     public void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {}
 
     public void onSensorExit(NBPSensor sensor, NBPBox exitedBox) {}
+    
+    public void onDeletion() {}
     // ----------------------------------------------------------------
     // ----------------------------------------------------------------
 

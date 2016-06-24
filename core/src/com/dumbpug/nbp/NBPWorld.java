@@ -48,6 +48,8 @@ public class NBPWorld {
         	if(cbox.isMarkedForDeletion()) {
         		cbox.setDeleted();
         		boxIterator.remove();
+        		// Call user specified behaviour on deletion.
+        		cbox.onDeletion();
         	}
         }
     }
