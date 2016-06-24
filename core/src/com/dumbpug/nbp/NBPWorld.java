@@ -1,6 +1,7 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Represents our physical world.
@@ -39,6 +40,15 @@ public class NBPWorld {
                     NBPMath.handleCollision(tbox, cbox);
                 }
             }
+        }
+        // Remove any boxes which were marked for deletion during the collision detection/resolution stage.
+        Iterator<NBPBox> boxIterator = boxEntities.iterator();
+        while(boxIterator.hasNext()) {
+        	NBPBox cbox = boxIterator.next();
+        	if(cbox.isMarkedForDeletion()) {
+        		cbox.setDeleted();
+        		boxIterator.remove();
+        	}
         }
     }
 

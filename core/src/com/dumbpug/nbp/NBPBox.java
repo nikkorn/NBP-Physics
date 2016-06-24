@@ -37,6 +37,10 @@ public class NBPBox {
     private NBPPoint originPoint;
     // Last point of origin
     private NBPPoint lastOriginPoint;
+    // Defines whether this box should be removed from the world at the end of the next physics step.
+    private boolean isMarkedForDeletion = false;
+    // Defines whether this box has been deleted.
+    private boolean isDeleted = false;
     
     public NBPBox(float x, float y, float width, float height, NBPBoxType type) {
         this.x = x;
@@ -206,6 +210,14 @@ public class NBPBox {
     public float getLastPosX() { return lastPosX; }
 	
 	public float getLastPosY() { return lastPosY; }
+	
+	public boolean isMarkedForDeletion() { return isMarkedForDeletion; }
+
+	public void markForDeletion() { this.isMarkedForDeletion = true; }
+	
+	public boolean isDeleted() { return isDeleted; }
+
+	public void setDeleted() { this.isDeleted = true; }
 
     public void setFriction(float friction) {
         // Friction must be a float value between 0 and 1.
