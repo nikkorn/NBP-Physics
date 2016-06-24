@@ -37,7 +37,7 @@ public class NBPBox {
     private NBPPoint originPoint;
     // Last point of origin
     private NBPPoint lastOriginPoint;
-
+    
     public NBPBox(float x, float y, float width, float height, NBPBoxType type) {
         this.x = x;
         this.y = y;
@@ -101,9 +101,9 @@ public class NBPBox {
 
     // ----------------------------------------------------------------
     // ------------- Methods that the user should override ------------
-    public void onCollisonWithKineticBox(NBPBox collidingBox) {}
+    public void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {}
 
-    public void onCollisonWithStaticBox(NBPBox collidingBox) {}
+    public void onCollisonWithStaticBox(NBPBox collidingBox, NBPIntersectionPoint originAtCollision) {}
 
     public void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {}
 

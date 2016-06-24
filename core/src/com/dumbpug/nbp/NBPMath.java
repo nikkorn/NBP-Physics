@@ -17,7 +17,8 @@ public class NBPMath {
         SIDE_LEFT,
         SIDE_RIGHT,
         TOP,
-        BOTTOM
+        BOTTOM,
+        NONE
     }
     
     /**
@@ -64,17 +65,20 @@ public class NBPMath {
             // Kinetic/Static collision, resolve it.
             NBPBox staticBox  = (a.getType() == NBPBoxType.STATIC) ? a : b;
             NBPBox kineticBox = (a.getType() == NBPBoxType.KINETIC) ? a : b;
-            // TODO Have a think about whether we should notify boxes of collision after or before resolution.
-            staticBox.onCollisonWithKineticBox(kineticBox);
-            kineticBox.onCollisonWithStaticBox(staticBox);
             // Do our collision resolution.
-            doCollisionResolution(staticBox, kineticBox);
+            NBPIntersectionPoint intersectionPoint = doCollisionResolution(staticBox, kineticBox);
+            // Notify boxes of collision.
+            staticBox.onCollisonWithKineticBox(kineticBox, intersectionPoint);
+            kineticBox.onCollisonWithStaticBox(staticBox, intersectionPoint);
         } else if (b.getType() == NBPBoxType.KINETIC && a.getType() == NBPBoxType.KINETIC) {
-            // We have a Kinetic/Kinetic collision, one day when i get super smart i can find a
-            // safe solution of resolving this. But for now we are happy with simply notifying
-            // both boxes of the collision.
-            a.onCollisonWithKineticBox(b);
-            b.onCollisonWithKineticBox(a);
+            // We have a Kinetic/Kinetic collision. We can't resolve this at the moment, so the best
+        	// we can do is notify each one of the collision. And while there is no actual intersection
+        	// we can pass an NBPIntersectionPoint point which points to the mid-point between the entities.
+        	float midpointX = (b.getX() + a.getX()) / 2f;
+        	float midpointY = (b.getY() + a.getY()) / 2f;
+        	NBPIntersectionPoint point = new NBPIntersectionPoint(midpointX, midpointY, NBPIntersectionDirection.NONE);
+            a.onCollisonWithKineticBox(b, point);
+            b.onCollisonWithKineticBox(a, point);
         } else {
             // TODO For some wacky reason we have a Static/Static collision, do whatever.
         }
@@ -84,8 +88,9 @@ public class NBPMath {
      * Resolves a collision between a kinematic and static box.
      * @param staticBox
      * @param kineticBox
+     * @return Origin of the kinematic object at the exact point of collision.
      */
-    private static void doCollisionResolution(NBPBox staticBox, NBPBox kineticBox) {
+    private static NBPIntersectionPoint doCollisionResolution(NBPBox staticBox, NBPBox kineticBox) {
     	// Create a new box and set its height to match the size of staticbox enlarged by the kinematicbox.
     	NBPBox enlargedBox;
     	float enlargedBoxPosX = staticBox.getX() - (kineticBox.getWidth()/2f);
@@ -164,6 +169,9 @@ public class NBPMath {
 		default:
 			break;
 		}
+		
+		// Return the origin of the kinematic object at the exact point of collision.
+		return intersectionPoint;
     }
     
     /**
