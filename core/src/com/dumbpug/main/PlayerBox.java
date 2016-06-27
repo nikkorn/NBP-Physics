@@ -22,11 +22,11 @@ public class PlayerBox extends NBPBox {
         // be used to detect when we are standing on something static, thus allowing
         // the player to jump.
         float sensorHeight = 2;
-        float sensorWidth  = width;
+        float sensorWidth  = width/2;
         float sensorPosX   = x;
         float sensorPosY   = y - sensorHeight;
         // Create the sensor.
-        NBPSensor baseSensor = new NBPSensor(sensorPosX, sensorPosY, sensorWidth, sensorHeight);
+        NBPSensor baseSensor = new NBPSensor(sensorPosX + (sensorWidth/2), sensorPosY, sensorWidth, sensorHeight);
         // Give the sensor a name, this will be checked when notified by th sensor.
         baseSensor.setName("player_base_sensor");
         // Attach the sensor to the player box.
@@ -54,7 +54,7 @@ public class PlayerBox extends NBPBox {
         // Can we jump? (Are we on a static block?)
         if(canJump) {
             // Apply a vertical impulse.
-            applyImpulse(0f,5f);
+            applyImpulse(0f,3f);
         }
     }
 

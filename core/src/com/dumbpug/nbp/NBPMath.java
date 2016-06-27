@@ -135,7 +135,7 @@ public class NBPMath {
     	
     	// Check right.
     	intersection = getIntersectionPointOFTwoLineSegments(kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint(),
-    			bottomRightPoint, topRightPoint);
+    			topRightPoint, bottomRightPoint);
     	if(intersection != null) {
     		// Our movement line intersects the right bound.
     		extendedBoxIntersectionPoints.add(new NBPIntersectionPoint(intersection, NBPIntersectionDirection.SIDE_RIGHT));
