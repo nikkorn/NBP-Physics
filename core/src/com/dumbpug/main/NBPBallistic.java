@@ -30,7 +30,7 @@ public class NBPBallistic extends ApplicationAdapter {
         batch = new SpriteBatch();
         wimg = new Texture("wbox.png");
 
-        world = new NBPWorld(0.09f, 16f);
+        world = new NBPWorld(0.09f);
         box1 = new NBPBox(480,40,20,400, NBPBoxType.STATIC);
         box1.setName("wall");
 

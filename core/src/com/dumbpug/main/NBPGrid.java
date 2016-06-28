@@ -40,7 +40,7 @@ public class NBPGrid extends ApplicationAdapter {
         rimg = new Texture("rbox.png");
         simg = new Texture("sbox.png");
 
-        world = new NBPWorld(0.09f, 10f);
+        world = new NBPWorld(0.09f);
 
         // Create our grid.
         float gridStartX = 0;

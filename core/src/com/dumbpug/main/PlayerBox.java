@@ -37,14 +37,14 @@ public class PlayerBox extends NBPBox {
      * Move the player to the left.
      */
     public void moveLeft() {
-        applyImpulse(-0.2f,0f);
+        applyImpulse(-0.15f,0f);
     }
 
     /**
      * Move the player to the right.
      */
     public void moveRight() {
-        applyImpulse(0.2f,0f);
+        applyImpulse(0.15f,0f);
     }
 
     /**
@@ -54,7 +54,7 @@ public class PlayerBox extends NBPBox {
         // Can we jump? (Are we on a static block?)
         if(canJump) {
             // Apply a vertical impulse.
-            applyImpulse(0f,3f);
+            applyImpulse(0f,3.5f);
         }
     }
 

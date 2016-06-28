@@ -53,7 +53,7 @@ public class NBPBigGrid extends ApplicationAdapter {
         rimg = new Texture("rbox.png");
         simg = new Texture("sbox.png");
 
-        world = new NBPWorld(0.09f, 10f);
+        world = new NBPWorld(0.09f);
 
         // Create our grid.
         float gridStartX = 0;
@@ -71,6 +71,7 @@ public class NBPBigGrid extends ApplicationAdapter {
 
         // Make our player box.
         player = new PlayerBox(65, 200, 16, 38);
+        player.setMaxVelocityX(2f);
         world.addBox(player);
     }
 
@@ -83,7 +84,7 @@ public class NBPBigGrid extends ApplicationAdapter {
 
         world.update();
 
-        // Test moving box1dww
+        // Test moving box1
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.moveLeft();
         } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {

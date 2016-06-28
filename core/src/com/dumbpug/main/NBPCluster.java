@@ -39,7 +39,7 @@ public class NBPCluster extends ApplicationAdapter {
         wimg = new Texture("wbox.png");
         rimg = new Texture("rbox.png");
 
-        world = new NBPWorld(0.09f, 4f);
+        world = new NBPWorld(0.09f);
         box1 = new NBPBox(140,80,20,180, NBPBoxType.STATIC);
         box1.setName("box1");
         

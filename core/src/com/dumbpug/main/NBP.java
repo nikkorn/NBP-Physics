@@ -33,7 +33,7 @@ public class NBP extends ApplicationAdapter {
         rimg = new Texture("rbox.png");
         simg = new Texture("sbox.png");
 
-        world = new NBPWorld(0.09f, 4f);
+        world = new NBPWorld(0.09f);
 
         // Make our movable box.
         box1 = new NBPBox(200,200,20,40, NBPBoxType.KINETIC) {
