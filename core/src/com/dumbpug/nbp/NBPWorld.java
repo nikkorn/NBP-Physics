@@ -1,6 +1,8 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -33,11 +35,30 @@ public class NBPWorld {
             for(NBPSensor sensor: cbox.getAttachedSensors()) {
                 sensor.reviewIntersections(boxEntities);
             }
-            for(NBPBox tbox : boxEntities) {
-                // Are these boxes different and do they collide?
-                if((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
-                    // We found a collision.
-                    NBPMath.handleCollision(tbox, cbox);
+            // Only do collision resolution for kinematic bodies.
+            if(cbox.getType() == NBPBoxType.KINETIC) {
+            	ArrayList<NBPBox> collidingB = new ArrayList<NBPBox>();
+            	// Get colliding boxes
+            	for(NBPBox tbox : boxEntities) {
+                    // Are these boxes different and do they collide?
+                    if((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
+                        // We found a collision.
+                    	collidingB.add(tbox);
+                    }
+                }
+            	// Sort colliding boxes by the size of their intersection with our moving box.
+				Collections.sort(collidingB, new Comparator<NBPBox>() {
+				    @Override
+				    public int compare(NBPBox b1, NBPBox b2) {
+				         return NBPMath.getIntersectionArea(cbox, b1) > 
+				         	NBPMath.getIntersectionArea(cbox, b2) ? -1 : 1;
+				    }
+				});
+            	// Do the actual collision handling.
+            	for(NBPBox tbox : collidingB) {
+            		if(NBPMath.doBoxesCollide(cbox, tbox)) {
+            			NBPMath.handleCollision(tbox, cbox);
+            		}
                 }
             }
         }

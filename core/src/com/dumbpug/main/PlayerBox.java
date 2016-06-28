@@ -21,7 +21,7 @@ public class PlayerBox extends NBPBox {
         // Create a sensor and place it at the base of our player. This sensor will
         // be used to detect when we are standing on something static, thus allowing
         // the player to jump.
-        float sensorHeight = 2;
+        float sensorHeight = 1;
         float sensorWidth  = width/2;
         float sensorPosX   = x;
         float sensorPosY   = y - sensorHeight;

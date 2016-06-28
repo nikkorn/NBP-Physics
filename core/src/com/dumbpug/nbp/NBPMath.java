@@ -218,4 +218,32 @@ public class NBPMath {
     	}
         return closestPoint;
     }
+    
+    /**
+     * Gets the are of intersection between two boxes.
+     * @param kin
+     * @param sta
+     * @return area of intersection
+     */
+    public static float getIntersectionArea(NBPBox kin, NBPBox sta) {
+        // Bottom-left and top-right points of box A.
+        float boxABottomLeftX = kin.getX();
+        float boxABottomLeftY = kin.getY();
+        float boxATopRightX   = kin.getX() + kin.getWidth();
+        float boxATopRightY   = kin.getY() + kin.getHeight();
+        // Bottom-left and top-right points of box B.
+        float boxBBottomLeftX = sta.getX();
+        float boxBBottomLeftY = sta.getY();
+        float boxBTopRightX   = sta.getX() + sta.getWidth();
+        float boxBTopRightY   = sta.getY() + sta.getHeight();
+        // Get the intersecting rectangle.
+        float intersectionBottomLeftX = Math.max(boxABottomLeftX, boxBBottomLeftX);
+        float intersectionBottomLeftY = Math.max(boxABottomLeftY, boxBBottomLeftY);
+        float intersectionTopRightX   = Math.min(boxATopRightX, boxBTopRightX);
+        float intersectionTopRightY   = Math.min(boxATopRightY, boxBTopRightY);
+        // Get intersection height and width.
+        float intersectionWidth  = intersectionTopRightX - intersectionBottomLeftX;
+        float intersectionHeight = intersectionTopRightY - intersectionBottomLeftY;
+        return intersectionWidth * intersectionHeight;
+    }
 }
