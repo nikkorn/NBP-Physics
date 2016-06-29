@@ -15,6 +15,8 @@ public class NBPWorld {
 	private float worldGravity;
 	// The box entities that are in our physics world.
 	private ArrayList<NBPBox> boxEntities;
+	// List holding any pending NBPBloom instances to be processed.
+	private ArrayList<NBPBloom> bloomList;
 
 	/**
 	 * Create a new instance of the NBPWorld class.
@@ -22,6 +24,7 @@ public class NBPWorld {
 	 */
 	public NBPWorld(float gravity) {
 		boxEntities = new ArrayList<NBPBox>();
+		bloomList   = new ArrayList<NBPBloom>();
 		this.worldGravity = gravity;
 	}
 
@@ -29,9 +32,19 @@ public class NBPWorld {
 	 * Update the box entities in our world.
 	 */
 	public void update() {
-		// Process box movement
+		// Process box movement.
 		for (NBPBox box : boxEntities) {
 			box.update();
+		}
+		// Apply any world blooms.
+		for (NBPBloom bloom : bloomList) {
+			// Go over all kinematic boxes.
+			for (NBPBox box : boxEntities) {
+				if((box.getType() == NBPBoxType.KINETIC) 
+						&& NBPMath.isPointInCircle(box.getCurrentOriginPoint(), new NBPPoint(bloom.getX(), bloom.getY()), bloom.getRadius())) {
+					// TODO Apply the force to this box.
+				}
+			}
 		}
 		// Do collision detection and try to handle it.
 		for (NBPBox cbox : boxEntities) {
@@ -55,7 +68,15 @@ public class NBPWorld {
 				Collections.sort(collidingB, new Comparator<NBPBox>() {
 					@Override
 					public int compare(NBPBox b1, NBPBox b2) {
-						return NBPMath.getIntersectionArea(cbox, b1) > NBPMath.getIntersectionArea(cbox, b2) ? -1 : 1;
+						float intersectionAreaB1 = NBPMath.getIntersectionArea(cbox, b1);
+						float intersectionAreaB2 = NBPMath.getIntersectionArea(cbox, b2);
+						if(intersectionAreaB1 > intersectionAreaB2) {
+							return -1;
+						} else if(intersectionAreaB1 < intersectionAreaB2) {
+							return 1;
+						} else {
+							return 0;
+						}
 					}
 				});
 				// Do the actual collision handling.
@@ -124,5 +145,13 @@ public class NBPWorld {
 	 */
 	public void setWorldGravity(float worldGravity) {
 		this.worldGravity = worldGravity;
+	}
+	
+	/**
+	 * Add a bloom to this world.
+	 * @param bloom
+	 */
+	public void addBloom(NBPBloom bloom) {
+		this.bloomList.add(bloom);
 	}
 }

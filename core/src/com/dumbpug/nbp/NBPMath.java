@@ -246,4 +246,16 @@ public class NBPMath {
         float intersectionHeight = intersectionTopRightY - intersectionBottomLeftY;
         return intersectionWidth * intersectionHeight;
     }
+    
+    /**
+     * Find whether a point lies within the bounds of a circle
+     * @param point
+     * @param circleCenter
+     * @param circleRadius
+     * @return point lies in the circle.
+     */
+    public static boolean isPointInCircle(NBPPoint point, NBPPoint circleCenter, float circleRadius) {
+    	double dist = Math.sqrt(Math.pow((circleCenter.getX() - point.getX()), 2) + Math.pow((circleCenter.getY() - point.getY()), 2));
+    	return dist <= circleRadius;
+    }
 }

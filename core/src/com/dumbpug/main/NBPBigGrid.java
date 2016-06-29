@@ -1,5 +1,7 @@
 package com.dumbpug.main;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -21,6 +23,8 @@ public class NBPBigGrid extends ApplicationAdapter {
 
     NBPWorld world;
     PlayerBox player;
+    
+    ArrayList<PlayerProjectile> projectiles = new ArrayList<PlayerProjectile>();
 
     private int gridBlockSize = 20;
     private int[][] gridLayout = {
@@ -35,13 +39,13 @@ public class NBPBigGrid extends ApplicationAdapter {
         {1,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
-        {1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
-        {1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1},
+        {1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
@@ -94,6 +98,14 @@ public class NBPBigGrid extends ApplicationAdapter {
         // Test jumping box1
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             player.jump();
+        }
+        
+        // Fire projectile on space.
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        	PlayerProjectile p = new PlayerProjectile(player.getCurrentOriginPoint().getX(),
+        			player.getCurrentOriginPoint().getY(),
+        			player.facingRight);
+        	world.addBox(p);
         }
         
         batch.begin();

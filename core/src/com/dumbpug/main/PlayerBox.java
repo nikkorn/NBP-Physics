@@ -11,6 +11,8 @@ import com.dumbpug.nbp.NBPSensor;
 public class PlayerBox extends NBPBox {
     // Can the player jump?
     private boolean canJump = false;
+    
+    public boolean facingRight = true;
 
     public PlayerBox(float x, float y, float width, float height) {
         super(x, y, width, height, NBPBoxType.KINETIC);
@@ -37,6 +39,7 @@ public class PlayerBox extends NBPBox {
      * Move the player to the left.
      */
     public void moveLeft() {
+    	facingRight = false;
         applyImpulse(-0.15f,0f);
     }
 
@@ -44,6 +47,7 @@ public class PlayerBox extends NBPBox {
      * Move the player to the right.
      */
     public void moveRight() {
+    	facingRight = true;
         applyImpulse(0.15f,0f);
     }
 
