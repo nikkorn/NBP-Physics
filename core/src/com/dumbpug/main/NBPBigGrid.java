@@ -108,6 +108,12 @@ public class NBPBigGrid extends ApplicationAdapter {
         	world.addBox(p);
         }
         
+        // test bloom
+        if (Gdx.input.isKeyPressed(Input.Keys.B)) {
+        	NBPBloom bloom = new NBPBloom(400, 40, 40, 3);
+        	world.addBloom(bloom);
+        }
+        
         batch.begin();
         // Draw Grid
         for(NBPBox box : world.getWorldBoxes()) {

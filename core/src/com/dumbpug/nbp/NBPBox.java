@@ -111,6 +111,17 @@ public class NBPBox {
 			this.setY(this.y + vely);
 		}
 	}
+	
+	/**
+     * Apply change in velocity to this NBPBox instance using an angle of direction and a force of velocity.
+     * @param angle
+     * @param force
+     */
+    public void applyVelocityInDirection(double angle, float force) {
+        float impulseX = -(float) (Math.cos(angle) * force);
+        float impulseY = -(float) (Math.sin(angle) * force);
+        this.applyImpulse(impulseX, impulseY);
+    }
 
 	/**
 	 * Clamp the velocity of this box so that it does not exceed its max.

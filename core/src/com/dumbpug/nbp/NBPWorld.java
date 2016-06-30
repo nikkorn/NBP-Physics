@@ -40,12 +40,19 @@ public class NBPWorld {
 		for (NBPBloom bloom : bloomList) {
 			// Go over all kinematic boxes.
 			for (NBPBox box : boxEntities) {
+				// Get the point of the bloom as a NBPPoint object.
+				NBPPoint bloomPoint = new NBPPoint(bloom.getX(), bloom.getY());
 				if((box.getType() == NBPBoxType.KINETIC) 
-						&& NBPMath.isPointInCircle(box.getCurrentOriginPoint(), new NBPPoint(bloom.getX(), bloom.getY()), bloom.getRadius())) {
-					// TODO Apply the force to this box.
+						&& NBPMath.isPointInCircle(box.getCurrentOriginPoint(), bloomPoint, bloom.getRadius())) {
+					// Get angle difference between our bloom and the current box.
+					float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(box.getCurrentOriginPoint(), bloomPoint);
+					// TODO Recalculate force based on the distance between our box and bloom.
+					box.applyVelocityInDirection(angleBetweenBloomAndBox, bloom.getForce());
 				}
 			}
 		}
+		// Remove processed world blooms.
+		bloomList.clear();
 		// Do collision detection and try to handle it.
 		for (NBPBox cbox : boxEntities) {
 			// Process the sensors attached to the current box.

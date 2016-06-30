@@ -143,6 +143,7 @@ public class NBPMath {
     	
     	NBPIntersectionPoint intersectionPoint = getClosestPoint(kineticBox.getLastOriginPoint(), extendedBoxIntersectionPoints);
 		// Change box velocity based on intersection direction
+    	// TODO Find out why getClosestPoint() sometimes gives us a null!!!
 		switch(intersectionPoint.getIntersectionDir()) {
 		case TOP:
 			kineticBox.setY(intersectionPoint.getY() - (kineticBox.getHeight()/2f));
@@ -257,5 +258,17 @@ public class NBPMath {
     public static boolean isPointInCircle(NBPPoint point, NBPPoint circleCenter, float circleRadius) {
     	double dist = Math.sqrt(Math.pow((circleCenter.getX() - point.getX()), 2) + Math.pow((circleCenter.getY() - point.getY()), 2));
     	return dist <= circleRadius;
+    }
+    
+    /**
+     * Get the angle between two points.
+     * @param a
+     * @param b
+     * @return
+     */
+    public static float getAngleBetweenPoints(NBPPoint a, NBPPoint b) {
+    	float deltaY = b.getY() - a.getY();
+    	float deltaX = b.getX() - a.getX();
+    	return (float) (Math.atan2(deltaY, deltaX)); 
     }
 }
