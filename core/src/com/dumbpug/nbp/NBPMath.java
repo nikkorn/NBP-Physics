@@ -256,8 +256,18 @@ public class NBPMath {
      * @return point lies in the circle.
      */
     public static boolean isPointInCircle(NBPPoint point, NBPPoint circleCenter, float circleRadius) {
-    	double dist = Math.sqrt(Math.pow((circleCenter.getX() - point.getX()), 2) + Math.pow((circleCenter.getY() - point.getY()), 2));
+    	float dist = getDistanceBetweenPoints(point, circleCenter);
     	return dist <= circleRadius;
+    }
+    
+    /**
+     * Get the distance between two points.
+     * @param pointA
+     * @param pointB
+     * @return distance.
+     */
+    public static float getDistanceBetweenPoints(NBPPoint pointA, NBPPoint pointB) {
+    	return (float) Math.sqrt(Math.pow((pointA.getX() - pointB.getX()), 2) + Math.pow((pointA.getY() - pointB.getY()), 2));
     }
     
     /**

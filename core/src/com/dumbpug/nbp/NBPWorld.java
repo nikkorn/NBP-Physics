@@ -38,16 +38,24 @@ public class NBPWorld {
 		}
 		// Apply any world blooms.
 		for (NBPBloom bloom : bloomList) {
-			// Go over all kinematic boxes.
+			// Go over all boxes.
 			for (NBPBox box : boxEntities) {
 				// Get the point of the bloom as a NBPPoint object.
 				NBPPoint bloomPoint = new NBPPoint(bloom.getX(), bloom.getY());
-				if((box.getType() == NBPBoxType.KINETIC) 
-						&& NBPMath.isPointInCircle(box.getCurrentOriginPoint(), bloomPoint, bloom.getRadius())) {
-					// Get angle difference between our bloom and the current box.
-					float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(box.getCurrentOriginPoint(), bloomPoint);
-					// TODO Recalculate force based on the distance between our box and bloom.
-					box.applyVelocityInDirection(angleBetweenBloomAndBox, bloom.getForce());
+				// Make sure this is a kinematic box.
+				if(box.getType() == NBPBoxType.KINETIC) { 
+					// && NBPMath.isPointInCircle(box.getCurrentOriginPoint(), bloomPoint, bloom.getRadius())) {
+					// Get the distance between the bloom center and the center of our kinematic box.
+					float distance = NBPMath.getDistanceBetweenPoints(bloomPoint, box.getCurrentOriginPoint());
+					// Check to see if the box is even in the range of the bloom.
+					if(distance <= bloom.getRadius()) {
+						// TODO Although it is unlikely, distance could be 0.!!!!!!!!!!!!!!!
+						// Our box was in the bloom, get angle difference between our bloom and the current box.
+						float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(box.getCurrentOriginPoint(), bloomPoint);
+						// TODO Recalculate force based on the distance between our box and bloom.
+						float force = bloom.getForce() * (bloom.getRadius()/distance);
+						box.applyVelocityInDirection(angleBetweenBloomAndBox, force);
+					}
 				}
 			}
 		}
