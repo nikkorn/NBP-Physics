@@ -23,8 +23,8 @@ public class NBPWorld {
 	 * @param gravity
 	 */
 	public NBPWorld(float gravity) {
-		boxEntities = new ArrayList<NBPBox>();
-		bloomList   = new ArrayList<NBPBloom>();
+		boxEntities       = new ArrayList<NBPBox>();
+		bloomList         = new ArrayList<NBPBloom>();
 		this.worldGravity = gravity;
 	}
 
@@ -32,6 +32,17 @@ public class NBPWorld {
 	 * Update the box entities in our world.
 	 */
 	public void update() {
+		// Remove any boxes which were marked for deletion.
+		Iterator<NBPBox> boxIterator = boxEntities.iterator();
+		while (boxIterator.hasNext()) {
+			NBPBox cbox = boxIterator.next();
+			if (cbox.isMarkedForDeletion()) {
+				cbox.setDeleted();
+				boxIterator.remove();
+				// Call user specified behaviour on deletion.
+				cbox.onDeletion();
+			}
+		}
 		// Process box movement.
 		for (NBPBox box : boxEntities) {
 			box.update();
@@ -49,11 +60,15 @@ public class NBPWorld {
 					float distance = NBPMath.getDistanceBetweenPoints(bloomPoint, box.getCurrentOriginPoint());
 					// Check to see if the box is even in the range of the bloom.
 					if(distance <= bloom.getRadius()) {
-						// TODO Although it is unlikely, distance could be 0.!!!!!!!!!!!!!!!
 						// Our box was in the bloom, get angle difference between our bloom and the current box.
 						float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(box.getCurrentOriginPoint(), bloomPoint);
-						// TODO Recalculate force based on the distance between our box and bloom.
-						float force = bloom.getForce() * (bloom.getRadius()/distance);
+						// Recalculate force based on the distance between our box and bloom. Avoid a divide by zero.
+						float force;
+						if (distance == 0) {
+							force = bloom.getForce() * 1;
+						} else {
+							force = bloom.getForce() * (bloom.getRadius()/distance);
+						}
 						box.applyVelocityInDirection(angleBetweenBloomAndBox, force);
 					}
 				}
@@ -100,18 +115,6 @@ public class NBPWorld {
 						NBPMath.handleCollision(tbox, cbox);
 					}
 				}
-			}
-		}
-		// Remove any boxes which were marked for deletion during the collision
-		// detection/resolution stage.
-		Iterator<NBPBox> boxIterator = boxEntities.iterator();
-		while (boxIterator.hasNext()) {
-			NBPBox cbox = boxIterator.next();
-			if (cbox.isMarkedForDeletion()) {
-				cbox.setDeleted();
-				boxIterator.remove();
-				// Call user specified behaviour on deletion.
-				cbox.onDeletion();
 			}
 		}
 	}

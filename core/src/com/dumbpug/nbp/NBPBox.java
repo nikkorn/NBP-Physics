@@ -85,6 +85,7 @@ public class NBPBox {
 	 * Update the state of this box.
 	 */
 	public void update() {
+		// TODO Add an onBeforeUpate()
 		// If this box is static then do nothing!
 		if (this.type == NBPBoxType.KINETIC) {
 			// Reset our acceleration
@@ -110,6 +111,7 @@ public class NBPBox {
 			this.setX(this.x + velx);
 			this.setY(this.y + vely);
 		}
+		// TODO Add an onAfterUpate()
 	}
 	
 	/**

@@ -1,6 +1,4 @@
-package com.dumbpug.main;
-
-import java.util.ArrayList;
+package com.dumbpug.main.gamedevicestesting;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -15,7 +13,7 @@ import com.dumbpug.nbp.*;
  * @author Nikolas Howard
  *
  */
-public class NBPBigGrid extends ApplicationAdapter {
+public class NBPStage extends ApplicationAdapter {
     SpriteBatch batch;
     Texture wimg;
     Texture rimg;
@@ -23,8 +21,6 @@ public class NBPBigGrid extends ApplicationAdapter {
 
     NBPWorld world;
     PlayerBox player;
-    
-    ArrayList<PlayerProjectile> projectiles = new ArrayList<PlayerProjectile>();
 
     private int gridBlockSize = 20;
     private int[][] gridLayout = {
@@ -35,19 +31,19 @@ public class NBPBigGrid extends ApplicationAdapter {
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
-        {1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
@@ -89,7 +85,7 @@ public class NBPBigGrid extends ApplicationAdapter {
         System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
 
         world.update();
-
+        
         // Test moving box1
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.moveLeft();
@@ -102,24 +98,19 @@ public class NBPBigGrid extends ApplicationAdapter {
             player.jump();
         }
         
-        // Fire projectile on space.
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-        	PlayerProjectile p = new PlayerProjectile(player.getCurrentOriginPoint().getX(),
-        			player.getCurrentOriginPoint().getY(),
-        			player.facingRight);
-        	world.addBox(p);
-        }
-        
-        // test bloom
-        if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-        	NBPBloom bloom = new NBPBloom(400, 40, 40, 3);
-        	world.addBloom(bloom);
+        // Throw a grenade.
+        if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+        	world.addBox(new Grenade(player, 4000));
         }
         
         batch.begin();
         // Draw Grid
         for(NBPBox box : world.getWorldBoxes()) {
-            batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	if (box.getName().equals("grenade")) {
+        		batch.draw(simg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else {
+        		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	}
         }
         // Draw the sensors for player
         for (NBPSensor sensor : player.getAttachedSensors()) {
