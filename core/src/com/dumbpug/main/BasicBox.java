@@ -5,17 +5,11 @@ import com.dumbpug.nbp.NBPBoxType;
 import com.dumbpug.nbp.NBPIntersectionPoint;
 import com.dumbpug.nbp.NBPSensor;
 
-public class PlayerProjectile  extends NBPBox {
-   
-    public PlayerProjectile(float x, float y, boolean movingRight) {
-        super(x, y, 10, 10, NBPBoxType.KINETIC);
-        // Set various properties for the player.
-        setName("bullet");
-        setFriction(0.6f);
-        setRestitution(0.9f);
-        // Apply initial impulse
-        this.applyImpulse(movingRight ? 8 : -8, 0f);
-    }
+public class BasicBox extends NBPBox {
+
+	public BasicBox(float x, float y, float width, float height, NBPBoxType type) {
+		super(x, y, width, height, type);
+	}
 
 	@Override
 	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
@@ -58,4 +52,5 @@ public class PlayerProjectile  extends NBPBox {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

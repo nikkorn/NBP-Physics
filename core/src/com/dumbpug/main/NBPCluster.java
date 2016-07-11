@@ -40,18 +40,18 @@ public class NBPCluster extends ApplicationAdapter {
         rimg = new Texture("rbox.png");
 
         world = new NBPWorld(0.09f);
-        box1 = new NBPBox(140,80,20,180, NBPBoxType.STATIC);
+        box1 = new BasicBox(140,80,20,180, NBPBoxType.STATIC);
         box1.setName("box1");
         
-        box2 = new NBPBox(205,100,230,20,NBPBoxType.STATIC);
+        box2 = new BasicBox(205,100,230,20,NBPBoxType.STATIC);
         box2.setName("box2");
         
-        box3 = new NBPBox(480,80,20,180,NBPBoxType.STATIC);
+        box3 = new BasicBox(480,80,20,180,NBPBoxType.STATIC);
         box3.setName("box3");
         
         // Create a cluster
         for(int i = 0; i < clusterSize; i++) {
-            NBPBox cBox = new NBPBox((ran.nextFloat()*300f) + 160f,440,5,5,NBPBoxType.KINETIC);
+            NBPBox cBox = new BasicBox((ran.nextFloat()*300f) + 160f,440,5,5,NBPBoxType.KINETIC);
             world.addBox(cBox);
             cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
             cBox.setFriction(ran.nextFloat());

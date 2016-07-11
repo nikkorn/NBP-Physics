@@ -97,7 +97,7 @@ public class NBPMath {
     	float enlargedBoxPosY = staticBox.getY() - (kineticBox.getHeight()/2f);
     	float enlargedBoxWidth = staticBox.getWidth() + kineticBox.getWidth();
     	float enlargedBoxHeight = staticBox.getHeight() + kineticBox.getHeight();
-    	enlargedBox = new NBPBox(enlargedBoxPosX, enlargedBoxPosY, enlargedBoxWidth, enlargedBoxHeight, NBPBoxType.STATIC);
+    	enlargedBox = new NBPEnlargedBox(enlargedBoxPosX, enlargedBoxPosY, enlargedBoxWidth, enlargedBoxHeight, NBPBoxType.STATIC);
     	
     	// Keep list of intersection points where our movement line crosses the bounds of our static box.
     	ArrayList<NBPIntersectionPoint> extendedBoxIntersectionPoints = new ArrayList<NBPIntersectionPoint>();

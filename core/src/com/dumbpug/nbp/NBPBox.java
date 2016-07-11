@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @author nikolas.howard
  *
  */
-public class NBPBox {
+public abstract class NBPBox {
 	// Position
 	private float x;
 	private float y;
@@ -85,7 +85,7 @@ public class NBPBox {
 	 * Update the state of this box.
 	 */
 	public void update() {
-		// TODO Add an onBeforeUpate()
+		onBeforeUpdate();
 		// If this box is static then do nothing!
 		if (this.type == NBPBoxType.KINETIC) {
 			// Reset our acceleration
@@ -96,9 +96,8 @@ public class NBPBox {
 			// Apply Acceleration to Velocity
 			this.velx += accx;
 			this.vely += accy;
-			// If the velocity is a super small number (between -0.0005 and
-			// 0.0005) just set it to zero
-			// to stop our boxes infinitely floating around.
+			// If the velocity is a super small number (between -0.0005 and 0.0005)
+			// just set it to zero to stop our boxes infinitely floating around.
 			if (velx > -0.0005 && velx < 0.0005) {
 				velx = 0f;
 			}
@@ -111,7 +110,7 @@ public class NBPBox {
 			this.setX(this.x + velx);
 			this.setY(this.y + vely);
 		}
-		// TODO Add an onAfterUpate()
+		onAfterUpdate();
 	}
 	
 	/**
@@ -143,15 +142,19 @@ public class NBPBox {
 
 	// ----------------------------------------------------------------
 	// ------------- Methods that the user should override ------------
-	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {}
+	protected abstract void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision);
 
-	protected void onCollisonWithStaticBox(NBPBox collidingBox, NBPIntersectionPoint originAtCollision) {}
+	protected abstract void onCollisonWithStaticBox(NBPBox collidingBox, NBPIntersectionPoint originAtCollision);
 
-	protected void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {}
+	protected abstract void onSensorEntry(NBPSensor sensor, NBPBox enteredBox);
+	
+	protected abstract void onSensorExit(NBPSensor sensor, NBPBox exitedBox);
+	
+	protected abstract void onBeforeUpdate();
+	
+	protected abstract void onAfterUpdate();
 
-	protected void onSensorExit(NBPSensor sensor, NBPBox exitedBox) {}
-
-	protected void onDeletion() {}
+	protected abstract void onDeletion();
 	// ----------------------------------------------------------------
 	// ----------------------------------------------------------------
 

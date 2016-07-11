@@ -2,6 +2,7 @@ package com.dumbpug.main;
 
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
+import com.dumbpug.nbp.NBPIntersectionPoint;
 import com.dumbpug.nbp.NBPSensor;
 
 /**
@@ -98,4 +99,34 @@ public class PlayerBox extends NBPBox {
             }
         }
     }
+
+	@Override
+	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onCollisonWithStaticBox(NBPBox collidingBox, NBPIntersectionPoint originAtCollision) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onBeforeUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onAfterUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onDeletion() {
+		// TODO Auto-generated method stub
+		
+	}
 }

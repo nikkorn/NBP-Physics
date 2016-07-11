@@ -31,12 +31,12 @@ public class NBPBallistic extends ApplicationAdapter {
         wimg = new Texture("wbox.png");
 
         world = new NBPWorld(0.09f);
-        box1 = new NBPBox(480,40,20,400, NBPBoxType.STATIC);
+        box1 = new BasicBox(480,40,20,400, NBPBoxType.STATIC);
         box1.setName("wall");
 
         // Create a cluster
         for(int i = 0; i < clusterSize; i++) {
-            NBPBox cBox = new NBPBox(100,250,10,10,NBPBoxType.KINETIC);
+            NBPBox cBox = new BasicBox(100,250,10,10,NBPBoxType.KINETIC);
             world.addBox(cBox);
             cBox.setName("bullet");
             float baseImpulse = ran.nextFloat(); // breaks: 0.39481282f

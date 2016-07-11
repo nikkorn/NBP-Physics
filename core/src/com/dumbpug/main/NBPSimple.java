@@ -29,10 +29,10 @@ public class NBPSimple extends ApplicationAdapter {
 
         world = new NBPWorld(0.09f);
         
-        box1 = new NBPBox(200,100,100,100, NBPBoxType.STATIC);
+        box1 = new BasicBox(200,100,100,100, NBPBoxType.STATIC);
         box1.setName("wall");
 
-        movingBox = new NBPBox(200,200,100,100,NBPBoxType.KINETIC);
+        movingBox = new BasicBox(200,200,100,100,NBPBoxType.KINETIC);
         movingBox.setName("bullet");
 
         world.addBox(movingBox);

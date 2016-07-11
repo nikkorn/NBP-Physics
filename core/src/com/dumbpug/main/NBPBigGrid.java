@@ -67,7 +67,7 @@ public class NBPBigGrid extends ApplicationAdapter {
         for(int gridX = 0; gridX < gridLayout[0].length; gridX++) {
             for(int gridY = 0; gridY < gridLayout.length; gridY++) {
                 if(gridLayout[gridY][gridX] == 1) {
-                    NBPBox gridBlock = new NBPBox(gridStartX + (gridX*gridBlockSize),
+                    NBPBox gridBlock = new BasicBox(gridStartX + (gridX*gridBlockSize),
                             gridStartY-(gridY*gridBlockSize), gridBlockSize, gridBlockSize, NBPBoxType.STATIC);
                     gridBlock.setName("grid_piece");
                     world.addBox(gridBlock);

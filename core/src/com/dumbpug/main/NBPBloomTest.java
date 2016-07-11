@@ -37,7 +37,7 @@ public class NBPBloomTest extends ApplicationAdapter {
         float gridStartY = gridSize*gridBlockSize;
         for(int gridX = 0; gridX < gridSize; gridX++) {
             for(int gridY = 0; gridY < gridSize; gridY++) {
-            	NBPBox gridBlock = new NBPBox((gridX*gridBlockSize),
+            	NBPBox gridBlock = new BasicBox((gridX*gridBlockSize),
                         gridStartY-(gridY*gridBlockSize), gridBlockSize, gridBlockSize, NBPBoxType.KINETIC);
                 gridBlock.setName("grid_piece");
                 gridBlock.setMaxVelocityX(5);

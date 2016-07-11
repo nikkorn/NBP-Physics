@@ -2,6 +2,7 @@ package com.dumbpug.main.gamedevicestesting;
 
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
+import com.dumbpug.nbp.NBPIntersectionPoint;
 import com.dumbpug.nbp.NBPSensor;
 
 /**
@@ -11,15 +12,18 @@ import com.dumbpug.nbp.NBPSensor;
 public class PlayerBox extends NBPBox {
     // Can the player jump?
     private boolean canJump = false;
-    
+    // Facing direction of player.
     public boolean facingRight = true;
 
-    public PlayerBox(float x, float y, float width, float height) {
+    public PlayerBox(float x, float y, float width, float height, int playerNumber) {
         super(x, y, width, height, NBPBoxType.KINETIC);
         // Set various properties for the player.
-        setName("player");
-        setFriction(0.92f);
-        setRestitution(0f);
+        setName("PLAYER_ " + playerNumber);
+        setFriction(C.PLAYER_FRICTION);
+        setRestitution(C.PLAYER_RESTITUTION);
+        // Set max velocity for this player.
+        setMaxVelocityX(C.PLAYER_MAX_VELOCITY);
+        setMaxVelocityY(C.PLAYER_MAX_VELOCITY);
         // Create a sensor and place it at the base of our player. This sensor will
         // be used to detect when we are standing on something static, thus allowing
         // the player to jump.
@@ -40,7 +44,15 @@ public class PlayerBox extends NBPBox {
      */
     public void moveLeft() {
     	facingRight = false;
-        applyImpulse(-0.15f,0f);
+    	// Calculate how to apply an impulse to this player so that its moving speed is defined 
+    	// by a value lower that its max velocity. In this case, a walking speed.
+    	if(this.getVelx() > -C.PLAYER_MAX_WALKING_VELOCITY) {
+    		if((-C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx()) > C.PLAYER_WALKING_IMPULSE_VALUE) {
+    			applyImpulse(-C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx(), 0f);
+    		} else {
+    			applyImpulse(-C.PLAYER_WALKING_IMPULSE_VALUE, 0f);
+    		}
+    	} 
     }
 
     /**
@@ -48,7 +60,15 @@ public class PlayerBox extends NBPBox {
      */
     public void moveRight() {
     	facingRight = true;
-        applyImpulse(0.15f,0f);
+    	// Calculate how to apply an impulse to this player so that its moving speed is defined 
+    	// by a value lower that its max velocity. In this case, a walking speed.
+    	if(this.getVelx() < C.PLAYER_MAX_WALKING_VELOCITY) {
+    		if((C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx()) < C.PLAYER_WALKING_IMPULSE_VALUE) {
+    			applyImpulse(C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx(), 0f);
+    		} else {
+    			applyImpulse(C.PLAYER_WALKING_IMPULSE_VALUE, 0f);
+    		}
+    	} 
     }
 
     /**
@@ -58,7 +78,7 @@ public class PlayerBox extends NBPBox {
         // Can we jump? (Are we on a static block?)
         if(canJump) {
             // Apply a vertical impulse.
-            applyImpulse(0f,3.5f);
+            applyImpulse(0f, C.PLAYER_JUMPING_IMPULSE);
         }
     }
 
@@ -98,4 +118,34 @@ public class PlayerBox extends NBPBox {
             }
         }
     }
+
+	@Override
+	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onCollisonWithStaticBox(NBPBox collidingBox, NBPIntersectionPoint originAtCollision) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onBeforeUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onAfterUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onDeletion() {
+		// TODO Auto-generated method stub
+		
+	}
 }

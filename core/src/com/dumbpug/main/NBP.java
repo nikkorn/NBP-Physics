@@ -36,7 +36,7 @@ public class NBP extends ApplicationAdapter {
         world = new NBPWorld(0.09f);
 
         // Make our movable box.
-        box1 = new NBPBox(200,200,20,40, NBPBoxType.KINETIC) {
+        box1 = new BasicBox(200,200,20,40, NBPBoxType.KINETIC) {
             @Override
             public void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {
                 if(enteredBox.getName().equals("box4")) {
@@ -53,25 +53,27 @@ public class NBP extends ApplicationAdapter {
         box1.setName("box1");
         box1.setFriction(0.8f);
         box1.setRestitution(0.5f);
+        box1.setMaxVelocityX(4f);
+        box1.setMaxVelocityY(4f);
 
         // Make a test sensor for box1 and attach it.
-        NBPSensor box1Sensor = new NBPSensor(200, 195, 20, 10);
+        NBPSensor box1Sensor = new NBPSensor(200, 200, 20, 1);
         box1Sensor.setName("box1_base");
         box1.attachSensor(box1Sensor);
 
-        box2 = new NBPBox(30,120,100,10,NBPBoxType.STATIC);
+        box2 = new BasicBox(30,120,100,10,NBPBoxType.STATIC);
         box2.setName("box2");
 
         // Make bouncy box
-        boxStatic = new NBPBox(190,120,100,10,NBPBoxType.STATIC);
+        boxStatic = new BasicBox(190,120,100,10,NBPBoxType.STATIC);
         boxStatic.setName("boxStatic");
         boxStatic.setRestitution(0.5f);
 
-        boxStatic2 = new NBPBox(350,120,100,10,NBPBoxType.STATIC);
+        boxStatic2 = new BasicBox(350,120,100,10,NBPBoxType.STATIC);
         boxStatic2.setName("boxStatic2");
 
         // Make super slippery box.
-        box4 = new NBPBox(500,120,100,10,NBPBoxType.STATIC);
+        box4 = new BasicBox(500,120,100,10,NBPBoxType.STATIC);
         box4.setFriction(0.2f);
         box4.setName("box4");
 
