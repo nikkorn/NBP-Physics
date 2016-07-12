@@ -1,5 +1,6 @@
 package com.dumbpug.main.gamedevicestesting;
 
+import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
 import com.dumbpug.nbp.NBPIntersectionPoint;
@@ -49,6 +50,12 @@ public class Tile extends NBPBox {
 
 	@Override
 	protected void onDeletion() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
 		// TODO Auto-generated method stub
 		
 	}

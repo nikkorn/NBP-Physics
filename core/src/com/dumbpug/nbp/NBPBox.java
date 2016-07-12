@@ -123,6 +123,32 @@ public abstract class NBPBox {
         float impulseY = -(float) (Math.sin(angle) * force);
         this.applyImpulse(impulseX, impulseY);
     }
+    
+    /**
+     * Apply a bloom to this box.
+     * @param bloom
+     */
+    public void applyBloom(NBPBloom bloom) {
+    	// Get the point of the bloom as a NBPPoint object.
+		NBPPoint bloomPoint = new NBPPoint(bloom.getX(), bloom.getY());
+		// Get the distance 
+		float distance = NBPMath.getDistanceBetweenPoints(bloomPoint, getCurrentOriginPoint());
+		// Check to see if the box is even in the range of the bloom.
+		if(distance <= bloom.getRadius()) {
+			// Our box was in the bloom, get angle difference between our bloom and the current box.
+			float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(getCurrentOriginPoint(), bloomPoint);
+			// Recalculate force based on the distance between our box and bloom. Avoid a divide by zero.
+			float force;
+			if (distance == 0) {
+				force = bloom.getForce() * 1;
+			} else {
+				force = bloom.getForce() * (1 - (distance/bloom.getRadius()));
+			}
+			// Apply the force of the bloom to this box.
+			applyVelocityInDirection(angleBetweenBloomAndBox, force);
+			onBloomPush(bloom, angleBetweenBloomAndBox, force, distance);
+		}
+    }
 
 	/**
 	 * Clamp the velocity of this box so that it does not exceed its max.
@@ -149,6 +175,8 @@ public abstract class NBPBox {
 	protected abstract void onSensorEntry(NBPSensor sensor, NBPBox enteredBox);
 	
 	protected abstract void onSensorExit(NBPSensor sensor, NBPBox exitedBox);
+	
+	protected abstract void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance);
 	
 	protected abstract void onBeforeUpdate();
 	

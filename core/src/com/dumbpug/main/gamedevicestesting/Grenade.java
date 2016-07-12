@@ -94,4 +94,10 @@ public class Grenade extends NBPBox {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		// TODO Auto-generated method stub
+		
+	}
 }

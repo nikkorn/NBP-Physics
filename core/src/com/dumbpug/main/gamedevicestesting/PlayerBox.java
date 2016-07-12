@@ -1,5 +1,6 @@
 package com.dumbpug.main.gamedevicestesting;
 
+import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
 import com.dumbpug.nbp.NBPIntersectionPoint;
@@ -147,5 +148,10 @@ public class PlayerBox extends NBPBox {
 	protected void onDeletion() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		System.out.println("I was pushed at a force of : " + force);
 	}
 }
