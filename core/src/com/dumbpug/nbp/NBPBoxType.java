@@ -5,5 +5,6 @@ package com.dumbpug.nbp;
  */
 public enum NBPBoxType {
     STATIC,
-    KINETIC
+    KINETIC,
+    GHOST
 }

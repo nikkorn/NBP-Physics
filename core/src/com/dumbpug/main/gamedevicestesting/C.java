@@ -20,6 +20,8 @@ public class C {
 	public static final float PLAYER_WALKING_IMPULSE_VALUE        = 0.2f;
 	public static final float PLAYER_JUMPING_IMPULSE              = 3.5f;
 	
+	public static final int PLAYER_MAX_HEALTH                     = 10;
+	
 	// Grenade
 	public static final float GRENADE_SIZE                        = 10f;
 	public static final float GRENADE_FRICTION                    = 0.6f;

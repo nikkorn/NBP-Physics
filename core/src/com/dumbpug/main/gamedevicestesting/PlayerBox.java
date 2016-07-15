@@ -14,7 +14,11 @@ public class PlayerBox extends NBPBox {
     // Can the player jump?
     private boolean canJump = false;
     // Facing direction of player.
-    public boolean facingRight = true;
+    public boolean facingRight = true; // TODO Remove, this will be defined by mouse position. 
+    // Health of the player
+    private int health = C.PLAYER_MAX_HEALTH; 
+    // Is the player alive?
+    private boolean isAlive = true;
 
     public PlayerBox(float x, float y, float width, float height, int playerNumber) {
         super(x, y, width, height, NBPBoxType.KINETIC);
@@ -81,6 +85,14 @@ public class PlayerBox extends NBPBox {
             // Apply a vertical impulse.
             applyImpulse(0f, C.PLAYER_JUMPING_IMPULSE);
         }
+    }
+    
+    /**
+     * Is the player still alive (has health greater than 0).
+     * @return isAlive
+     */
+    public boolean isAlive() {
+    	return this.isAlive;
     }
 
     @Override
@@ -151,7 +163,21 @@ public class PlayerBox extends NBPBox {
 	}
 
 	@Override
-	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
-		System.out.println("I was pushed at a force of : " + force);
+	protected boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		// While NBPBloom does not necessarily mean an explosion, it does in the context of this game.
+		// Reduce our players health, using the force.
+		this.health = health - ((int) force);
+		if(health <= 0) {
+			// Can't have minus number for health. 
+			health = 0;
+			// The player is no longer alive.
+			this.isAlive = false;
+			System.out.println(getName() +  " : I am DEAD!!!");
+		} else {
+			System.out.println(getName() +  " : Ouch! at " + ((((float)health)/C.PLAYER_MAX_HEALTH) * 100) + "% health");
+		}
+		
+		// Return true as we want the force to affect this player box.
+		return true;
 	}
 }

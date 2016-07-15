@@ -55,8 +55,7 @@ public class Tile extends NBPBox {
 	}
 
 	@Override
-	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
-		// TODO Auto-generated method stub
-		
+	protected boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		return true;
 	}
 }

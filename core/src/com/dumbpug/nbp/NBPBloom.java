@@ -14,6 +14,8 @@ public class NBPBloom {
 	private float x;
 	// Position Y of bloom.
 	private float y;
+	// Originator.
+	private NBPBox originator = null;
 	
 	/**
 	 * Create a new instance of the NBPBloom class.
@@ -27,6 +29,19 @@ public class NBPBloom {
 		this.setX(x);
 		this.setRadius(radius);
 		this.setForce(force);
+	}
+	
+	/**
+	 * Create a new instance of the NBPBloom class, defining an originator.
+	 * @param originator
+	 * @param x
+	 * @param y
+	 * @param radius
+	 * @param force
+	 */
+	public NBPBloom(NBPBox originator, float x, float y, float radius, float force) {
+		this(x, y, radius, force);
+		this.originator = originator;
 	}
 
 	/**
@@ -77,6 +92,14 @@ public class NBPBloom {
 		this.x = x;
 	}
 
+	/**
+	 * Get the originator of this bloom.
+	 * @return originator
+	 */
+	public NBPBox getOriginator() {
+		return originator;
+	}
+	
 	/**
 	 * Get Y position.
 	 * @return y

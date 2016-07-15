@@ -40,6 +40,7 @@ public class NBPEnlargedBox extends NBPBox {
 	}
 
 	@Override
-	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+	protected boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		return true;
 	}
 }

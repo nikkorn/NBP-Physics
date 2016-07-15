@@ -28,6 +28,8 @@ public abstract class NBPBox {
 	private float height;
 	// Box Type
 	private NBPBoxType type;
+	// Original Box Type
+	private NBPBoxType originalType;
 	// Entity name
 	private String name = "undefined";
 	// Friction
@@ -57,16 +59,17 @@ public abstract class NBPBox {
 	 * @param type
 	 */
 	public NBPBox(float x, float y, float width, float height, NBPBoxType type) {
-		this.x = x;
-		this.y = y;
-		this.lastPosX = x;
-		this.lastPosY = y;
-		this.width = width;
-		this.height = height;
-		this.type = type;
-		this.originPoint = new NBPPoint(x + (width / 2), y + (height / 2));
+		this.x               = x;
+		this.y               = y;
+		this.lastPosX        = x;
+		this.lastPosY        = y;
+		this.width           = width;
+		this.height          = height;
+		this.type            = type;
+		this.originalType    = type;
+		this.originPoint     = new NBPPoint(x + (width / 2), y + (height / 2));
 		this.lastOriginPoint = new NBPPoint(lastPosX + (width / 2), y + (height / 2));
-		attachedSensors = new ArrayList<NBPSensor>();
+		attachedSensors      = new ArrayList<NBPSensor>();
 	}
 
 	/**
@@ -145,8 +148,9 @@ public abstract class NBPBox {
 				force = bloom.getForce() * (1 - (distance/bloom.getRadius()));
 			}
 			// Apply the force of the bloom to this box.
-			applyVelocityInDirection(angleBetweenBloomAndBox, force);
-			onBloomPush(bloom, angleBetweenBloomAndBox, force, distance);
+			if(onBloomPush(bloom, angleBetweenBloomAndBox, force, distance)) {
+				applyVelocityInDirection(angleBetweenBloomAndBox, force);
+			}
 		}
     }
 
@@ -176,7 +180,14 @@ public abstract class NBPBox {
 	
 	protected abstract void onSensorExit(NBPSensor sensor, NBPBox exitedBox);
 	
-	protected abstract void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance);
+	/**
+	 * @param bloom
+	 * @param angleOfForce
+	 * @param force
+	 * @param distance
+	 * @return whether our box should be affected by this bloom.
+	 */
+	protected abstract boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance);
 	
 	protected abstract void onBeforeUpdate();
 	
@@ -185,6 +196,20 @@ public abstract class NBPBox {
 	protected abstract void onDeletion();
 	// ----------------------------------------------------------------
 	// ----------------------------------------------------------------
+	
+	/**
+	 * Make this a ghost box.
+	 */
+	public void kill() {
+		this.type = NBPBoxType.GHOST;
+	}   
+	
+	/**
+	 * Revert this box to its original type.
+	 */
+	public void revive() {
+		this.type = this.originalType;
+	}
 
 	/**
 	 * Get all attached sensors.

@@ -1,5 +1,6 @@
-package com.dumbpug.main.gamedevicestesting;
+package com.dumbpug.main.gamedevicestesting.weapons;
 
+import com.dumbpug.main.gamedevicestesting.PlayerBox;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -86,8 +87,7 @@ public class Rocket extends NBPBox {
 	}
 
 	@Override
-	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
-		// TODO Auto-generated method stub
-		
+	protected boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		return true;
 	}
 }

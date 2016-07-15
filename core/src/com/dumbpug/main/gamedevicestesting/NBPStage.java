@@ -6,6 +6,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
+import com.dumbpug.main.gamedevicestesting.weapons.Rocket;
+import com.dumbpug.main.gamedevicestesting.weapons.RubberGrenade;
+import com.dumbpug.main.gamedevicestesting.weapons.StickyGrenade;
 import com.dumbpug.nbp.*;
 
 /**
@@ -18,6 +22,9 @@ public class NBPStage extends ApplicationAdapter {
     Texture wimg;
     Texture rimg;
     Texture simg;
+    Texture oimg;
+    Texture gimg;
+    Texture pimg;
 
     NBPWorld world;
     PlayerBox player;
@@ -53,6 +60,9 @@ public class NBPStage extends ApplicationAdapter {
         wimg = new Texture("wbox.png");
         rimg = new Texture("rbox.png");
         simg = new Texture("sbox.png");
+        oimg = new Texture("obox.png");
+        gimg = new Texture("gbox.png");
+        pimg = new Texture("pbox.png");
 
         world = new NBPWorld(C.WORLD_GRAVITY);
 
@@ -80,35 +90,43 @@ public class NBPStage extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
+        // System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
 
         world.update();
         
-        // Test moving box1
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            player.moveLeft();
-        } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            player.moveRight();
-        }
+        // Only allow player to do stuff while he is alive
+        if(player.isAlive()) {
+        	// Test player horizontal movement.
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                player.moveLeft();
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                player.moveRight();
+            }
 
-        // Test jumping box1
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            player.jump();
-        }
-        
-        // Throw a grenade.
-        if (Gdx.input.isKeyPressed(Input.Keys.G)) {
-        	world.addBox(new Grenade(player, C.GRENADE_FUSE_MAX));
-        }
-        
-        // Throw a rubber grenade.
-        if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-        	world.addBox(new RubberGrenade(player, C.GRENADE_FUSE_MAX));
-//        	try {
-//				Thread.sleep(200);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+            // Test player jump
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                player.jump();
+            }
+            
+            // Throw a grenade.
+            if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+            	world.addBox(new Grenade(player, C.GRENADE_FUSE_MAX));
+            }
+            
+            // Throw a rubber grenade.
+            if (Gdx.input.isKeyPressed(Input.Keys.B)) {
+            	world.addBox(new RubberGrenade(player, C.GRENADE_FUSE_MAX));
+            }
+            
+            // Throw a sticky grenade.
+            if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+            	world.addBox(new StickyGrenade(player, C.GRENADE_FUSE_MAX));
+            }
+            
+            // Fire a Rocket.
+            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+            	world.addBox(new Rocket(player));
+            }
         }
         
         batch.begin();
@@ -118,10 +136,10 @@ public class NBPStage extends ApplicationAdapter {
         		batch.draw(simg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	} else if (box.getName().equals("RUBBER_GRENADE")) {
         		batch.draw(rimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	} else if (box.getName().equals("GREEN_TILE")) {
-        		batch.draw(simg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	} else if (box.getName().equals("RED_TILE")) {
-        		batch.draw(rimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("STICKY_GRENADE")) {
+        		batch.draw(oimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("ROCKET")) {
+        		batch.draw(pimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	} else {
         		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	}

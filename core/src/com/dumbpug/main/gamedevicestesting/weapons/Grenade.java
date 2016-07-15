@@ -1,5 +1,7 @@
-package com.dumbpug.main.gamedevicestesting;
+package com.dumbpug.main.gamedevicestesting.weapons;
 
+import com.dumbpug.main.gamedevicestesting.C;
+import com.dumbpug.main.gamedevicestesting.PlayerBox;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -16,6 +18,9 @@ public class Grenade extends NBPBox {
 	private long timeThrownInMillis;
 	// Fuse time of the grenade.
 	private long fuseTimeMillis;
+	// The player who threw the grenade.
+	private PlayerBox owner;
+	
 	   
 	/**
 	 * Create a new grenade.
@@ -34,23 +39,18 @@ public class Grenade extends NBPBox {
         // Set max velocity. 
         setMaxVelocityX(C.GRENADE_MAX_VELOCITY);
         setMaxVelocityY(C.GRENADE_MAX_VELOCITY);
+        // Set owner
+        this.owner = owner;
         // Apply initial impulse in the players facing direction
         this.applyImpulse(owner.facingRight ? C.GRENADE_INITIAL_VELOCITY : -C.GRENADE_INITIAL_VELOCITY, 0f);
     }
     
-    @Override
-    public void update() {
-    	// Do physics step.
-    	super.update();
-    	// Has the fuse run out?
-    	if ((System.currentTimeMillis() - timeThrownInMillis) >= fuseTimeMillis) {
-    		// Explode! Add a world bloom.
-    		NBPBloom grenadeExplosionBloom = new NBPBloom(this.getCurrentOriginPoint().getX(), 
-    				this.getCurrentOriginPoint().getY(), C.GRENADE_EXPLOSION_RADIUS, C.GRENADE_EXPLOSION_FORCE);
-    		this.getWrappingWorld().addBloom(grenadeExplosionBloom);
-    		// Remove this grenade box on next update.
-    		this.markForDeletion();
-    	}
+    /**
+     * Get the player who threw this.
+     * @return thrower
+     */
+    public PlayerBox getOwner() {
+    	return this.owner;
     }
 
 	@Override
@@ -85,8 +85,15 @@ public class Grenade extends NBPBox {
 
 	@Override
 	protected void onAfterUpdate() {
-		// TODO Auto-generated method stub
-		
+		// Has the fuse run out?
+    	if ((System.currentTimeMillis() - timeThrownInMillis) >= fuseTimeMillis) {
+    		// Explode! Add a world bloom.
+    		NBPBloom grenadeExplosionBloom = new NBPBloom(owner, this.getCurrentOriginPoint().getX(), 
+    				this.getCurrentOriginPoint().getY(), C.GRENADE_EXPLOSION_RADIUS, C.GRENADE_EXPLOSION_FORCE);
+    		this.getWrappingWorld().addBloom(grenadeExplosionBloom);
+    		// Remove this grenade box on next update.
+    		this.markForDeletion();
+    	}
 	}
 
 	@Override
@@ -96,8 +103,7 @@ public class Grenade extends NBPBox {
 	}
 
 	@Override
-	protected void onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
-		// TODO Auto-generated method stub
-		
+	protected boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
+		return true;
 	}
 }
