@@ -39,4 +39,21 @@ public class C {
 	public static final float RUBBER_GRENADE_RESTITUTION          = 0.96f;
 	public static final float RUBBER_GRENADE_MAX_VELOCITY         = 7f;
 	public static final float RUBBER_GRENADE_INITIAL_VELOCITY     = 7f;
+	
+	// Cluster Grenade
+	public static final float GRENADE_CLUSTER_SIZE                = GRENADE_SIZE / 2f;
+	public static final float GRENADE_CLUSTER_FORCE               = GRENADE_EXPLOSION_FORCE / 2f;
+	public static final float GRENADE_CLUSTER_RADIUS              = GRENADE_EXPLOSION_RADIUS / 2f;
+	
+	// Mine
+	public static final float MINE_SIZE                           = 10f;
+	public static final float MINE_MAX_VELOCITY                   = 6f;
+	public static final float MINE_INITIAL_VELOCITY               = 6f;
+	public static final float MINE_FRICTION                       = 0f;
+	public static final float MINE_RESTITUTION                    = 0f;
+	
+	// Proximity Mine
+	public static final float PROXIMITY_MINE_REACH                = 30f;
+	public static final float PROXIMITY_MINE_FORCE                = 10f;
+	public static final float PROXIMITY_MINE_RADIUS               = 50f;
 }

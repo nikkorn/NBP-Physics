@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Rocket;
 import com.dumbpug.main.gamedevicestesting.weapons.RubberGrenade;
@@ -121,6 +122,11 @@ public class NBPStage extends ApplicationAdapter {
             // Throw a sticky grenade.
             if (Gdx.input.isKeyPressed(Input.Keys.K)) {
             	world.addBox(new StickyGrenade(player, C.GRENADE_FUSE_MAX));
+            }
+            
+            // Throw a cluster grenade.
+            if (Gdx.input.isKeyPressed(Input.Keys.C)) {
+            	world.addBox(new ClusterGrenade(player, C.GRENADE_FUSE_MAX));
             }
             
             // Fire a Rocket.

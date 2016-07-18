@@ -15,23 +15,30 @@ public class NBPWorld {
 	private float worldGravity;
 	// The box entities that are in our physics world.
 	private ArrayList<NBPBox> boxEntities;
+	// The box entities waiting to be added to our world (added during physics update)
+	private ArrayList<NBPBox> pendingBoxEntities;
 	// List holding any pending NBPBloom instances to be processed.
 	private ArrayList<NBPBloom> bloomList;
+	// Are we currently processing a physics step.
+	private boolean inPhysicsStep = false;
 
 	/**
 	 * Create a new instance of the NBPWorld class.
 	 * @param gravity
 	 */
 	public NBPWorld(float gravity) {
-		boxEntities       = new ArrayList<NBPBox>();
-		bloomList         = new ArrayList<NBPBloom>();
-		this.worldGravity = gravity;
+		boxEntities        = new ArrayList<NBPBox>();
+		pendingBoxEntities = new ArrayList<NBPBox>();
+		bloomList          = new ArrayList<NBPBloom>();
+		this.worldGravity  = gravity;
 	}
 
 	/**
 	 * Update the box entities in our world.
 	 */
 	public void update() {
+		// Mark the start of the physics step.
+		inPhysicsStep = true;
 		// Remove any boxes which were marked for deletion.
 		Iterator<NBPBox> boxIterator = boxEntities.iterator();
 		while (boxIterator.hasNext()) {
@@ -101,6 +108,16 @@ public class NBPWorld {
 				}
 			}
 		}
+		// Mark the end of the physics step.
+		inPhysicsStep = false;
+		// Any boxes that were added as part of this physics step should be added to our actual entity list now.
+		if(pendingBoxEntities.size() > 0) {
+			for(NBPBox pendingBox : pendingBoxEntities) {
+				this.addBox(pendingBox);
+			}
+			// Clear the pending list.
+			pendingBoxEntities.clear();
+		}
 	}
 
 	/**
@@ -108,9 +125,14 @@ public class NBPWorld {
 	 * @param box
 	 */
 	public void addBox(NBPBox box) {
-		if (!boxEntities.contains(box)) {
-			boxEntities.add(box);
-			box.setWrappingWorld(this);
+		// If this addition is taking place during a physics update, then it should be queued for later addition.
+		if(inPhysicsStep) {
+			pendingBoxEntities.add(box);
+		} else {
+			if (!boxEntities.contains(box)) {
+				boxEntities.add(box);
+				box.setWrappingWorld(this);
+			}
 		}
 	}
 
