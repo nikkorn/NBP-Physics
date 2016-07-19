@@ -54,22 +54,57 @@ public class NBPMath {
     }
     
     /**
-     * Handles a collision between two boxes.
+     * Handles a collision between two boxes on an axis.
      * @param box a
      * @param box b
+     * @param NBPCollisionAxis axis
      */
-    public static void handleCollision(NBPBox a, NBPBox b) {
+    public static void handleCollision(NBPBox a, NBPBox b, NBPCollisionAxis axis) {
         // Are we dealing with a Kinetic/Static collision or a Kinetic/Kinetic one?
         if((a.getType() == NBPBoxType.KINETIC && b.getType() == NBPBoxType.STATIC) ||
                 (b.getType() == NBPBoxType.KINETIC && a.getType() == NBPBoxType.STATIC)) {
             // Kinetic/Static collision, resolve it.
             NBPBox staticBox  = (a.getType() == NBPBoxType.STATIC) ? a : b;
             NBPBox kineticBox = (a.getType() == NBPBoxType.KINETIC) ? a : b;
-            // Do our collision resolution.
-            NBPIntersectionPoint intersectionPoint = doCollisionResolution(staticBox, kineticBox);
-            // Notify boxes of collision.
-            staticBox.onCollisonWithKineticBox(kineticBox, intersectionPoint);
-            kineticBox.onCollisonWithStaticBox(staticBox, intersectionPoint);
+            // Do our collision resolution based on the specified axis.
+            switch(axis) {
+			case X:
+				 if(kineticBox.getVelx() > 0) {
+	            	kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
+	            	// Flip velocity
+	    			kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+	            	// Notify boxes of collision.
+	                staticBox.onCollisonWithKineticBox(kineticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.SIDE_LEFT));
+	                kineticBox.onCollisonWithStaticBox(staticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.SIDE_LEFT));
+	            } else if(kineticBox.getVelx() < 0) {
+	            	kineticBox.setX(staticBox.getX() + staticBox.getWidth());
+	            	// Flip velocity
+	    			kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+	            	// Notify boxes of collision.
+	                staticBox.onCollisonWithKineticBox(kineticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.SIDE_RIGHT));
+	                kineticBox.onCollisonWithStaticBox(staticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.SIDE_RIGHT));
+	            } 
+				break;
+			case Y:
+				if(kineticBox.getVely() > 0) {
+	            	kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
+	            	// Flip velocity
+	    			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+	            	// Notify boxes of collision.
+	                staticBox.onCollisonWithKineticBox(kineticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.BOTTOM));
+	                kineticBox.onCollisonWithStaticBox(staticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.BOTTOM));
+	            } else if(kineticBox.getVely() < 0) {
+	            	kineticBox.setY(staticBox.getY() + staticBox.getHeight());
+	            	// Flip velocity
+	    			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+	    			// Reduce X velocity based on friction.
+	                kineticBox.setVelx(kineticBox.getVelx() * (kineticBox.getFriction() + staticBox.getFriction()));
+	            	// Notify boxes of collision.
+	                staticBox.onCollisonWithKineticBox(kineticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.TOP));
+	                kineticBox.onCollisonWithStaticBox(staticBox, new NBPIntersectionPoint(kineticBox.getCurrentOriginPoint(), NBPIntersectionDirection.TOP));
+	            } 
+				break;
+            }
         } else if (b.getType() == NBPBoxType.KINETIC && a.getType() == NBPBoxType.KINETIC) {
             // We have a Kinetic/Kinetic collision. We can't resolve this at the moment, so the best
         	// we can do is notify each one of the collision. And while there is no actual intersection
@@ -82,97 +117,6 @@ public class NBPMath {
         } else {
             // TODO For some wacky reason we have a Static/Static collision, do whatever.
         }
-    }
-    
-    /**
-     * Resolves a collision between a kinematic and static box.
-     * @param staticBox
-     * @param kineticBox
-     * @return Origin of the kinematic object at the exact point of collision.
-     */
-    private static NBPIntersectionPoint doCollisionResolution(NBPBox staticBox, NBPBox kineticBox) {
-    	// Create a new box and set its height to match the size of staticbox enlarged by the kinematicbox.
-    	NBPBox enlargedBox;
-    	float enlargedBoxPosX = staticBox.getX() - (kineticBox.getWidth()/2f);
-    	float enlargedBoxPosY = staticBox.getY() - (kineticBox.getHeight()/2f);
-    	float enlargedBoxWidth = staticBox.getWidth() + kineticBox.getWidth();
-    	float enlargedBoxHeight = staticBox.getHeight() + kineticBox.getHeight();
-    	enlargedBox = new NBPEnlargedBox(enlargedBoxPosX, enlargedBoxPosY, enlargedBoxWidth, enlargedBoxHeight, NBPBoxType.STATIC);
-    	
-    	// Keep list of intersection points where our movement line crosses the bounds of our static box.
-    	ArrayList<NBPIntersectionPoint> extendedBoxIntersectionPoints = new ArrayList<NBPIntersectionPoint>();
-    	
-    	// Go over each edge of our enlarged box and check whether our line of movement intersects it.
-    	NBPPoint intersection;
-    	NBPPoint topLeftPoint = new NBPPoint(enlargedBox.getX(), enlargedBox.getY() + enlargedBox.getHeight());
-    	NBPPoint topRightPoint = new NBPPoint(enlargedBox.getX() + enlargedBox.getWidth() , enlargedBox.getY() + enlargedBox.getHeight());
-    	NBPPoint bottomLeftPoint = new NBPPoint(enlargedBox.getX(), enlargedBox.getY());
-    	NBPPoint bottomRightPoint = new NBPPoint(enlargedBox.getX() + enlargedBox.getWidth() , enlargedBox.getY());
-    	
-    	// Check top.
-    	intersection = getIntersectionPointOFTwoLineSegments(kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint(),
-    			topLeftPoint, topRightPoint);
-    	if(intersection != null) {
-    		// Our movement line intersects the top bound.
-    		extendedBoxIntersectionPoints.add(new NBPIntersectionPoint(intersection, NBPIntersectionDirection.TOP));
-    	}
-    	
-    	// Check bottom.
-    	intersection = getIntersectionPointOFTwoLineSegments(kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint(),
-    			bottomLeftPoint, bottomRightPoint);
-    	if(intersection != null) {
-    		// Our movement line intersects the bottom bound.
-    		extendedBoxIntersectionPoints.add(new NBPIntersectionPoint(intersection, NBPIntersectionDirection.BOTTOM));
-    	}
-    	
-    	// Check left.
-    	intersection = getIntersectionPointOFTwoLineSegments(kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint(),
-    			topLeftPoint, bottomLeftPoint);
-    	if(intersection != null) {
-    		// Our movement line intersects the left bound.
-    		extendedBoxIntersectionPoints.add(new NBPIntersectionPoint(intersection, NBPIntersectionDirection.SIDE_LEFT));
-    	}
-    	
-    	// Check right.
-    	intersection = getIntersectionPointOFTwoLineSegments(kineticBox.getLastOriginPoint(), kineticBox.getCurrentOriginPoint(),
-    			topRightPoint, bottomRightPoint);
-    	if(intersection != null) {
-    		// Our movement line intersects the right bound.
-    		extendedBoxIntersectionPoints.add(new NBPIntersectionPoint(intersection, NBPIntersectionDirection.SIDE_RIGHT));
-    	}
-    	
-    	NBPIntersectionPoint intersectionPoint = getClosestPoint(kineticBox.getLastOriginPoint(), extendedBoxIntersectionPoints);
-		// Change box velocity based on intersection direction
-    	// TODO Find out why getClosestPoint() sometimes gives us a null!!!
-		switch(intersectionPoint.getIntersectionDir()) {
-		case TOP:
-			kineticBox.setY(intersectionPoint.getY() - (kineticBox.getHeight()/2f));
-			// Reduce X velocity based on friction.
-            kineticBox.setVelx(kineticBox.getVelx() * (kineticBox.getFriction() + staticBox.getFriction()));
-            // Flip velocity
-			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
-			break;
-		case BOTTOM:
-			kineticBox.setY(intersectionPoint.getY() - (kineticBox.getHeight()/2f));
-			 // Flip velocity
-			kineticBox.setVely(-kineticBox.getVely() * (kineticBox.getRestitution() + staticBox.getRestitution()));
-			break;
-		case SIDE_LEFT:
-			kineticBox.setX(intersectionPoint.getX() - (kineticBox.getWidth()/2f));
-			 // Flip velocity
-			kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
-			break;
-		case SIDE_RIGHT:
-			kineticBox.setX(intersectionPoint.getX() - (kineticBox.getWidth()/2f));
-			 // Flip velocity
-			kineticBox.setVelx(-kineticBox.getVelx() * (kineticBox.getRestitution() + staticBox.getRestitution()));
-			break;
-		default:
-			break;
-		}
-		
-		// Return the origin of the kinematic object at the exact point of collision.
-		return intersectionPoint;
     }
     
     /**
@@ -221,31 +165,53 @@ public class NBPMath {
     }
     
     /**
-     * Gets the are of intersection between two boxes.
+     * Gets the area of intersection between two boxes.
      * @param kin
      * @param sta
      * @return area of intersection
      */
     public static float getIntersectionArea(NBPBox kin, NBPBox sta) {
+        return getIntersectionWidth(kin, sta) * getIntersectionHeight(kin, sta);
+    }
+    
+    /**
+     * Gets the width of intersection between two boxes.
+     * @param kin
+     * @param sta
+     * @return width of intersection
+     */
+    public static float getIntersectionWidth(NBPBox kin, NBPBox sta) {
         // Bottom-left and top-right points of box A.
         float boxABottomLeftX = kin.getX();
-        float boxABottomLeftY = kin.getY();
         float boxATopRightX   = kin.getX() + kin.getWidth();
-        float boxATopRightY   = kin.getY() + kin.getHeight();
         // Bottom-left and top-right points of box B.
         float boxBBottomLeftX = sta.getX();
-        float boxBBottomLeftY = sta.getY();
         float boxBTopRightX   = sta.getX() + sta.getWidth();
-        float boxBTopRightY   = sta.getY() + sta.getHeight();
         // Get the intersecting rectangle.
         float intersectionBottomLeftX = Math.max(boxABottomLeftX, boxBBottomLeftX);
-        float intersectionBottomLeftY = Math.max(boxABottomLeftY, boxBBottomLeftY);
         float intersectionTopRightX   = Math.min(boxATopRightX, boxBTopRightX);
+        // Get intersection height and width.
+        return intersectionTopRightX - intersectionBottomLeftX;
+    }
+    
+    /**
+     * Gets the height of intersection between two boxes.
+     * @param kin
+     * @param sta
+     * @return height of intersection
+     */
+    public static float getIntersectionHeight(NBPBox kin, NBPBox sta) {
+        // Bottom-left and top-right points of box A.
+        float boxABottomLeftY = kin.getY();
+        float boxATopRightY   = kin.getY() + kin.getHeight();
+        // Bottom-left and top-right points of box B.
+        float boxBBottomLeftY = sta.getY();
+        float boxBTopRightY   = sta.getY() + sta.getHeight();
+        // Get the intersecting rectangle.
+        float intersectionBottomLeftY = Math.max(boxABottomLeftY, boxBBottomLeftY);
         float intersectionTopRightY   = Math.min(boxATopRightY, boxBTopRightY);
         // Get intersection height and width.
-        float intersectionWidth  = intersectionTopRightX - intersectionBottomLeftX;
-        float intersectionHeight = intersectionTopRightY - intersectionBottomLeftY;
-        return intersectionWidth * intersectionHeight;
+        return intersectionTopRightY - intersectionBottomLeftY;
     }
     
     /**

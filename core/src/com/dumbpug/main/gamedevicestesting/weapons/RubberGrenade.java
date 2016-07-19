@@ -40,21 +40,6 @@ public class RubberGrenade extends NBPBox {
         this.applyImpulse(owner.facingRight ? C.RUBBER_GRENADE_INITIAL_VELOCITY : -C.RUBBER_GRENADE_INITIAL_VELOCITY, 0f);
     }
     
-    @Override
-    public void update() {
-    	// Do physics step.
-    	super.update();
-    	// Has the fuse run out?
-    	if ((System.currentTimeMillis() - timeThrownInMillis) >= fuseTimeMillis) {
-    		// Explode! Add a world bloom.
-    		NBPBloom grenadeExplosionBloom = new NBPBloom(this.getCurrentOriginPoint().getX(), 
-    				this.getCurrentOriginPoint().getY(), C.GRENADE_EXPLOSION_RADIUS, C.GRENADE_EXPLOSION_FORCE);
-    		this.getWrappingWorld().addBloom(grenadeExplosionBloom);
-    		// Remove this grenade box on next update.
-    		this.markForDeletion();
-    	}
-    }
-
 	@Override
 	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
 		// TODO Auto-generated method stub
@@ -81,8 +66,15 @@ public class RubberGrenade extends NBPBox {
 
 	@Override
 	protected void onBeforeUpdate() {
-		// TODO Auto-generated method stub
-		
+		// Has the fuse run out?
+    	if ((System.currentTimeMillis() - timeThrownInMillis) >= fuseTimeMillis) {
+    		// Explode! Add a world bloom.
+    		NBPBloom grenadeExplosionBloom = new NBPBloom(this.getCurrentOriginPoint().getX(), 
+    				this.getCurrentOriginPoint().getY(), C.GRENADE_EXPLOSION_RADIUS, C.GRENADE_EXPLOSION_FORCE);
+    		this.getWrappingWorld().addBloom(grenadeExplosionBloom);
+    		// Remove this grenade box on next update.
+    		this.markForDeletion();
+    	}
 	}
 
 	@Override

@@ -85,35 +85,49 @@ public abstract class NBPBox {
 	}
 
 	/**
-	 * Update the state of this box.
+	 * Do our physics update along the X axis.
 	 */
-	public void update() {
-		onBeforeUpdate();
+	public void updateAxisX() {
 		// If this box is static then do nothing!
 		if (this.type == NBPBoxType.KINETIC) {
 			// Reset our acceleration
-			this.accy = 0f;
 			this.accx = 0f;
-			// Add our gravity to Y acceleration
-			this.accy -= wrappingWorld.getWorldGravity();
 			// Apply Acceleration to Velocity
 			this.velx += accx;
-			this.vely += accy;
 			// If the velocity is a super small number (between -0.0005 and 0.0005)
 			// just set it to zero to stop our boxes infinitely floating around.
 			if (velx > -0.0005 && velx < 0.0005) {
 				velx = 0f;
 			}
+			// Clamp our velocity to worlds max.
+			clampVelocity();
+			// Alter Position
+			this.setX(this.x + velx);
+		}
+	}
+	
+	/**
+	 * Do our physics update along the Y axis.
+	 */
+	public void updateAxisY() {
+		// If this box is static then do nothing!
+		if (this.type == NBPBoxType.KINETIC) {
+			// Reset our acceleration
+			this.accy = 0f;
+			// Add our gravity to Y acceleration
+			this.accy -= wrappingWorld.getWorldGravity();
+			// Apply Acceleration to Velocity
+			this.vely += accy;
+			// If the velocity is a super small number (between -0.0005 and 0.0005)
+			// just set it to zero to stop our boxes infinitely floating around.
 			if (vely > -0.0005 && vely < 0.0005) {
 				vely = 0f;
 			}
 			// Clamp our velocity to worlds max.
 			clampVelocity();
 			// Alter Position
-			this.setX(this.x + velx);
 			this.setY(this.y + vely);
 		}
-		onAfterUpdate();
 	}
 	
 	/**

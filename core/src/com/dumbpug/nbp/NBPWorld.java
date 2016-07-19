@@ -1,8 +1,6 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -50,10 +48,6 @@ public class NBPWorld {
 				cbox.onDeletion();
 			}
 		}
-		// Process box movement.
-		for (NBPBox box : boxEntities) {
-			box.update();
-		}
 		// Apply any world blooms.
 		for (NBPBloom bloom : bloomList) {
 			// Go over all boxes.
@@ -69,45 +63,36 @@ public class NBPWorld {
 		bloomList.clear();
 		// Do collision detection and try to handle it.
 		for (NBPBox cbox : boxEntities) {
-			// Process the sensors attached to the current box.
-			for (NBPSensor sensor : cbox.getAttachedSensors()) {
-				sensor.reviewIntersections(boxEntities);
-			}
-			// Only do collision resolution for kinematic bodies.
+			cbox.onBeforeUpdate();	
+			// Update this box on the X axis.
+			cbox.updateAxisX();
 			if (cbox.getType() == NBPBoxType.KINETIC) {
-				ArrayList<NBPBox> collidingB = new ArrayList<NBPBox>();
 				// Get colliding boxes
 				for (NBPBox tbox : boxEntities) {
 					// Are these boxes different and do they collide?
 					if ((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
-						// We found a collision.
-						collidingB.add(tbox);
-					}
-				}
-				// Sort colliding boxes by the size of their intersection with
-				// our moving box.
-				Collections.sort(collidingB, new Comparator<NBPBox>() {
-					@Override
-					public int compare(NBPBox b1, NBPBox b2) {
-						float intersectionAreaB1 = NBPMath.getIntersectionArea(cbox, b1);
-						float intersectionAreaB2 = NBPMath.getIntersectionArea(cbox, b2);
-						if(intersectionAreaB1 > intersectionAreaB2) {
-							return -1;
-						} else if(intersectionAreaB1 < intersectionAreaB2) {
-							return 1;
-						} else {
-							return 0;
-						}
-					}
-				});
-				// Do the actual collision handling.
-				for (NBPBox tbox : collidingB) {
-					if (NBPMath.doBoxesCollide(cbox, tbox)) {
-						NBPMath.handleCollision(tbox, cbox);
+						NBPMath.handleCollision(tbox, cbox, NBPCollisionAxis.X);
 					}
 				}
 			}
+			// Update this box on the Y axis.
+			cbox.updateAxisY();
+			if (cbox.getType() == NBPBoxType.KINETIC) {
+				// Get colliding boxes
+				for (NBPBox tbox : boxEntities) {
+					// Are these boxes different and do they collide?
+					if ((cbox != tbox) && NBPMath.doBoxesCollide(cbox, tbox)) {
+						NBPMath.handleCollision(tbox, cbox, NBPCollisionAxis.Y);
+					}
+				}
+			}
+			// Process the sensors attached to the current box.
+			for (NBPSensor sensor : cbox.getAttachedSensors()) {
+				sensor.reviewIntersections(boxEntities);
+			}
+			cbox.onAfterUpdate();
 		}
+		
 		// Mark the end of the physics step.
 		inPhysicsStep = false;
 		// Any boxes that were added as part of this physics step should be added to our actual entity list now.

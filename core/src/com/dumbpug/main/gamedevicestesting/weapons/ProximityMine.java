@@ -1,6 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
+import com.dumbpug.main.gamedevicestesting.PlayerBox;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -13,9 +14,21 @@ public class ProximityMine extends NBPBox {
 	// Facing direction of the mine, defaults up for when it hasn't stuck to anything yet,
 	private MineDirection direction = MineDirection.UP;
 
-	public ProximityMine(float x, float y, float width, float height, NBPBoxType type) {
-		super(x, y, width, height, type);
+	/**
+	 * Create a new instance of the ProximityMine class.
+	 * @param owner
+	 */
+	public ProximityMine(PlayerBox owner) {
+		super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.GRENADE_SIZE, C.GRENADE_SIZE, NBPBoxType.KINETIC);
 		this.setName("PROXIMITY_MINE");
+        // Set various properties for the grenade.
+        setFriction(C.MINE_FRICTION);
+        setRestitution(C.MINE_RESTITUTION);
+        // Set max velocity. 
+        setMaxVelocityX(C.MINE_MAX_VELOCITY);
+        setMaxVelocityY(C.MINE_MAX_VELOCITY);
+        // Apply initial impulse in the players facing direction
+        this.applyImpulse(owner.facingRight ? C.MINE_INITIAL_VELOCITY : -C.MINE_INITIAL_VELOCITY, 0f);
 	}
 	
 	/**

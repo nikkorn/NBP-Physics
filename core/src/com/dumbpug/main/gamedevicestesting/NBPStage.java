@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
+import com.dumbpug.main.gamedevicestesting.weapons.ProximityMine;
 import com.dumbpug.main.gamedevicestesting.weapons.Rocket;
 import com.dumbpug.main.gamedevicestesting.weapons.RubberGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.StickyGrenade;
@@ -26,6 +27,7 @@ public class NBPStage extends ApplicationAdapter {
     Texture oimg;
     Texture gimg;
     Texture pimg;
+    Texture piimg;
 
     NBPWorld world;
     PlayerBox player;
@@ -64,6 +66,7 @@ public class NBPStage extends ApplicationAdapter {
         oimg = new Texture("obox.png");
         gimg = new Texture("gbox.png");
         pimg = new Texture("pbox.png");
+        piimg = new Texture("pibox.png");
 
         world = new NBPWorld(C.WORLD_GRAVITY);
 
@@ -129,6 +132,11 @@ public class NBPStage extends ApplicationAdapter {
             	world.addBox(new ClusterGrenade(player, C.GRENADE_FUSE_MAX));
             }
             
+            // Throw a proximity mine.
+            if (Gdx.input.isKeyPressed(Input.Keys.M)) {
+            	world.addBox(new ProximityMine(player));
+            }
+            
             // Fire a Rocket.
             if (Gdx.input.isKeyPressed(Input.Keys.R)) {
             	world.addBox(new Rocket(player));
@@ -146,6 +154,25 @@ public class NBPStage extends ApplicationAdapter {
         		batch.draw(oimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	} else if (box.getName().equals("ROCKET")) {
         		batch.draw(pimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("PROXIMITY_MINE")) {
+        		float directionAngle = 0f;
+        		switch(((ProximityMine) box).getFacingDirection() ) {
+				case DOWN:
+					directionAngle = 180f;
+					break;
+				case LEFT:
+					directionAngle = 270f;
+					break;
+				case RIGHT:
+					directionAngle = 90f;
+					break;
+				case UP:
+					directionAngle = 0f;
+					break;
+				default:
+					break;
+        		}
+        		batch.draw(piimg, box.getX(), box.getY(), box.getWidth()/2f, box.getHeight()/2f, box.getWidth(), box.getHeight(), 1f, 1f, directionAngle, 1, 1, 1, 1, false, false);
         	} else {
         		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	}

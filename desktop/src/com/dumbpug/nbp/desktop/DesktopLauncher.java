@@ -41,6 +41,7 @@ public class DesktopLauncher {
     		new LwjglApplication(new NBPStage(), config);
     		System.out.println("Movement: WASD      Grenade: G     Rocket: R");
     		System.out.println("   RubberGrenade: B     StickyGrenade: K");
+    		System.out.println("        Mine: M     ClusterGrenade: c");
     		break;
     	default: 
     		System.out.println("Invalid selection");
