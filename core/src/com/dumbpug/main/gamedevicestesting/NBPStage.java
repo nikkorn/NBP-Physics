@@ -27,11 +27,14 @@ public class NBPStage extends ApplicationAdapter {
     Texture oimg;
     Texture gimg;
     Texture pimg;
-    Texture piimg;
+    Texture piimgUp;
+    Texture piimgDown;
+    Texture piimgLeft;
+    Texture piimgRight;
 
-    NBPWorld world;
+    StagePhysicsWorld world;
     PlayerBox player;
-
+    
     private int[][] gridLayout = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -59,16 +62,19 @@ public class NBPStage extends ApplicationAdapter {
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        wimg = new Texture("wbox.png");
-        rimg = new Texture("rbox.png");
-        simg = new Texture("sbox.png");
-        oimg = new Texture("obox.png");
-        gimg = new Texture("gbox.png");
-        pimg = new Texture("pbox.png");
-        piimg = new Texture("pibox.png");
+        batch      = new SpriteBatch();
+        wimg       = new Texture("wbox.png");
+        rimg       = new Texture("rbox.png");
+        simg       = new Texture("sbox.png");
+        oimg       = new Texture("obox.png");
+        gimg       = new Texture("gbox.png");
+        pimg       = new Texture("pbox.png");
+        piimgUp    = new Texture("pibox_up.png");
+        piimgDown  = new Texture("pibox_down.png");
+        piimgLeft  = new Texture("pibox_left.png");
+        piimgRight = new Texture("pibox_right.png");
 
-        world = new NBPWorld(C.WORLD_GRAVITY);
+        world = new StagePhysicsWorld(C.WORLD_GRAVITY);
 
         // Create our grid.
         float gridStartX = 0;
@@ -95,7 +101,8 @@ public class NBPStage extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
-
+        
+        // Update our physics world.
         world.update();
         
         // Only allow player to do stuff while he is alive
@@ -114,32 +121,50 @@ public class NBPStage extends ApplicationAdapter {
             
             // Throw a grenade.
             if (Gdx.input.isKeyPressed(Input.Keys.G)) {
-            	world.addBox(new Grenade(player, C.GRENADE_FUSE_MAX));
+            	if(player.canFireWeapon()) {
+            		world.addBox(new Grenade(player, C.GRENADE_FUSE_MAX));
+            		player.restartWeaponCooldown();
+            	}
             }
             
             // Throw a rubber grenade.
             if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-            	world.addBox(new RubberGrenade(player, C.GRENADE_FUSE_MAX));
+            	if(player.canFireWeapon()) {
+            		world.addBox(new RubberGrenade(player, C.GRENADE_FUSE_MAX));
+            		player.restartWeaponCooldown();
+            	}
             }
             
             // Throw a sticky grenade.
             if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            	world.addBox(new StickyGrenade(player, C.GRENADE_FUSE_MAX));
+            	if(player.canFireWeapon()) {
+            		world.addBox(new StickyGrenade(player, C.GRENADE_FUSE_MAX));
+            		player.restartWeaponCooldown();
+            	}
             }
             
             // Throw a cluster grenade.
             if (Gdx.input.isKeyPressed(Input.Keys.C)) {
-            	world.addBox(new ClusterGrenade(player, C.GRENADE_FUSE_MAX));
+            	if(player.canFireWeapon()) {
+            		world.addBox(new ClusterGrenade(player, C.GRENADE_FUSE_MAX));
+            		player.restartWeaponCooldown();
+            	}
             }
             
             // Throw a proximity mine.
             if (Gdx.input.isKeyPressed(Input.Keys.M)) {
-            	world.addBox(new ProximityMine(player));
+            	if(player.canFireWeapon()) {
+            		world.addBox(new ProximityMine(player));
+            		player.restartWeaponCooldown();
+            	}
             }
             
             // Fire a Rocket.
             if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-            	world.addBox(new Rocket(player));
+            	if(player.canFireWeapon()) {
+            		world.addBox(new Rocket(player));
+            		player.restartWeaponCooldown();
+            	}
             }
         }
         
@@ -155,24 +180,20 @@ public class NBPStage extends ApplicationAdapter {
         	} else if (box.getName().equals("ROCKET")) {
         		batch.draw(pimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	} else if (box.getName().equals("PROXIMITY_MINE")) {
-        		float directionAngle = 0f;
         		switch(((ProximityMine) box).getFacingDirection() ) {
 				case DOWN:
-					directionAngle = 180f;
+	        		batch.draw(piimgDown, box.getX(), box.getY(), box.getWidth(), box.getHeight());
 					break;
 				case LEFT:
-					directionAngle = 270f;
+	        		batch.draw(piimgLeft, box.getX(), box.getY(), box.getWidth(), box.getHeight());
 					break;
 				case RIGHT:
-					directionAngle = 90f;
+	        		batch.draw(piimgRight, box.getX(), box.getY(), box.getWidth(), box.getHeight());
 					break;
 				case UP:
-					directionAngle = 0f;
-					break;
-				default:
+	        		batch.draw(piimgUp, box.getX(), box.getY(), box.getWidth(), box.getHeight());
 					break;
         		}
-        		batch.draw(piimg, box.getX(), box.getY(), box.getWidth()/2f, box.getHeight()/2f, box.getWidth(), box.getHeight(), 1f, 1f, directionAngle, 1, 1, 1, 1, false, false);
         	} else {
         		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	}

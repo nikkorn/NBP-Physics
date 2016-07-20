@@ -19,6 +19,8 @@ public class PlayerBox extends NBPBox {
     private int health = C.PLAYER_MAX_HEALTH; 
     // Is the player alive?
     private boolean isAlive = true;
+    // Time that the player last fired a weapon
+    private long lastFireTime = System.currentTimeMillis();
 
     public PlayerBox(float x, float y, float width, float height, int playerNumber) {
         super(x, y, width, height, NBPBoxType.KINETIC);
@@ -93,6 +95,21 @@ public class PlayerBox extends NBPBox {
      */
     public boolean isAlive() {
     	return this.isAlive;
+    }
+    
+    /**
+     * Returns whether the player can fire their weapon (cooldown has finished).
+     * @return can fire weapon
+     */
+    public boolean canFireWeapon() {
+    	return (System.currentTimeMillis() - this.lastFireTime) >= C.PLAYER_WEAPON_COOLDOWN;
+    }
+    
+    /**
+     * Called when player fires weapon to reset the cooldown.
+     */
+    public void restartWeaponCooldown() {
+    	this.lastFireTime = System.currentTimeMillis();
     }
 
     @Override

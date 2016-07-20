@@ -19,6 +19,7 @@ public class C {
 	public static final float PLAYER_MAX_WALKING_VELOCITY         = 2f;
 	public static final float PLAYER_WALKING_IMPULSE_VALUE        = 0.2f;
 	public static final float PLAYER_JUMPING_IMPULSE              = 3.5f;
+	public static final long PLAYER_WEAPON_COOLDOWN               = 500l;
 	
 	public static final int PLAYER_MAX_HEALTH                     = 10;
 	
@@ -56,4 +57,8 @@ public class C {
 	public static final float PROXIMITY_MINE_REACH                = 30f;
 	public static final float PROXIMITY_MINE_FORCE                = 10f;
 	public static final float PROXIMITY_MINE_RADIUS               = 50f;
+	
+	// Rocket
+	public static final float ROCKET_MAX_VELOCITY                 = 8f;
+	public static final float ROCKET_INITIAL_VELOCITY             = 8f;
 }

@@ -35,6 +35,7 @@ public class NBPWorld {
 	 * Update the box entities in our world.
 	 */
 	public void update() {
+		this.onBeforeWorldUpdate();
 		// Mark the start of the physics step.
 		inPhysicsStep = true;
 		// Remove any boxes which were marked for deletion.
@@ -103,6 +104,7 @@ public class NBPWorld {
 			// Clear the pending list.
 			pendingBoxEntities.clear();
 		}
+		this.onAfterWorldUpdate();
 	}
 
 	/**
@@ -163,4 +165,14 @@ public class NBPWorld {
 	public void addBloom(NBPBloom bloom) {
 		this.bloomList.add(bloom);
 	}
+	
+	/**
+	 * Called before an update.
+	 */
+	protected void onBeforeWorldUpdate() {}
+	
+	/**
+	 * Called after an update.
+	 */
+	protected void onAfterWorldUpdate() {}
 }

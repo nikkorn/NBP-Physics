@@ -1,5 +1,6 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
+import com.dumbpug.main.gamedevicestesting.C;
 import com.dumbpug.main.gamedevicestesting.PlayerBox;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
@@ -25,12 +26,12 @@ public class Rocket extends NBPBox {
         // Set the owner.
         this.owner = owner;
         // Set various properties for the grenade.
-        setName("rocket");
+        setName("ROCKET");
         // Set max velocity. 
-        setMaxVelocityX(8);
-        setMaxVelocityY(8);
+        setMaxVelocityX(C.ROCKET_MAX_VELOCITY);
+        setMaxVelocityY(C.ROCKET_MAX_VELOCITY);
         // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? 8 : -8, 1f);
+        this.applyImpulse(owner.facingRight ? C.ROCKET_INITIAL_VELOCITY : -C.ROCKET_INITIAL_VELOCITY, 1f);
     }
     
     @Override
