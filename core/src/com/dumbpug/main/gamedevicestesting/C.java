@@ -58,7 +58,11 @@ public class C {
 	public static final float PROXIMITY_MINE_FORCE                = 10f;
 	public static final float PROXIMITY_MINE_RADIUS               = 50f;
 	
+	// Laser Mine
+	public static final float LASER_MINE_LENGTH                   = 100f;
+	
 	// Rocket
+	public static final float ROCKET_SIZE                         = 10f;
 	public static final float ROCKET_MAX_VELOCITY                 = 8f;
 	public static final float ROCKET_INITIAL_VELOCITY             = 8f;
 }

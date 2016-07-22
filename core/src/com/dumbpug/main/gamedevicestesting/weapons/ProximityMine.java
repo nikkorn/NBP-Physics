@@ -8,7 +8,7 @@ import com.dumbpug.nbp.NBPBoxType;
 import com.dumbpug.nbp.NBPIntersectionPoint;
 import com.dumbpug.nbp.NBPSensor;
 
-public class ProximityMine extends NBPBox {
+public class ProximityMine extends NBPBox implements Mine{
 	// Defines whether this mine has hit a static box and has been set.
 	private boolean isPrimed = false;
 	// Facing direction of the mine, defaults up for when it hasn't stuck to anything yet,

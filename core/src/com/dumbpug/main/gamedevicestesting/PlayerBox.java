@@ -40,7 +40,7 @@ public class PlayerBox extends NBPBox {
         float sensorPosY   = y - sensorHeight;
         // Create the sensor.
         NBPSensor baseSensor = new NBPSensor(sensorPosX + (sensorWidth/2), sensorPosY, sensorWidth, sensorHeight);
-        // Give the sensor a name, this will be checked when notified by th sensor.
+        // Give the sensor a name, this will be checked when notified by the sensor.
         baseSensor.setName("player_base_sensor");
         // Attach the sensor to the player box.
         attachSensor(baseSensor);

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
+import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
 import com.dumbpug.main.gamedevicestesting.weapons.ProximityMine;
 import com.dumbpug.main.gamedevicestesting.weapons.Rocket;
 import com.dumbpug.main.gamedevicestesting.weapons.RubberGrenade;
@@ -159,6 +160,14 @@ public class NBPStage extends ApplicationAdapter {
             	}
             }
             
+            // Throw a laser mine.
+            if (Gdx.input.isKeyPressed(Input.Keys.L)) {
+            	if(player.canFireWeapon()) {
+            		world.addBox(new LaserMine(player));
+            		player.restartWeaponCooldown();
+            	}
+            }
+            
             // Fire a Rocket.
             if (Gdx.input.isKeyPressed(Input.Keys.R)) {
             	if(player.canFireWeapon()) {
@@ -197,10 +206,10 @@ public class NBPStage extends ApplicationAdapter {
         	} else {
         		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         	}
-        }
-        // Draw the sensors for player
-        for (NBPSensor sensor : player.getAttachedSensors()) {
-            batch.draw(simg, sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight());
+        	// Draw any sensors.
+        	for (NBPSensor sensor : box.getAttachedSensors()) {
+                batch.draw(simg, sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight());
+            }
         }
         batch.end();
     }

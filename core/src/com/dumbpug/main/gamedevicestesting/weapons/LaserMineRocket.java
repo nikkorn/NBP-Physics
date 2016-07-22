@@ -1,7 +1,6 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -9,35 +8,48 @@ import com.dumbpug.nbp.NBPIntersectionPoint;
 import com.dumbpug.nbp.NBPSensor;
 
 /**
- * Represents a grenade.
+ * Represents a rocket fired from a laser mine.
  * @author nikolas.howard
  *
  */
-public class Rocket extends NBPBox {
-	// Owner of the rocket.   
-	private PlayerBox owner;
+public class LaserMineRocket extends NBPBox {
+	// The laser mine which fired the rocket.   
+	private LaserMine ownerMine;
 	
 	/**
-	 * Create a new grenade.
+	 * Create a new Laser Mine rocket.
 	 * @param owner
 	 */
-    public Rocket(PlayerBox owner) {
-        super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.ROCKET_SIZE, C.ROCKET_SIZE, NBPBoxType.KINETIC);
+    public LaserMineRocket(LaserMine ownerMine) {
+        super(ownerMine.getCurrentOriginPoint().getX(), ownerMine.getCurrentOriginPoint().getY(), C.ROCKET_SIZE, C.ROCKET_SIZE, NBPBoxType.KINETIC);
         // Set the owner.
-        this.owner = owner;
+        this.ownerMine = ownerMine;
         // Set various properties for the grenade.
-        setName("ROCKET");
+        setName("LASER_MINE_ROCKET");
         // Set max velocity. 
         setMaxVelocityX(C.ROCKET_MAX_VELOCITY);
         setMaxVelocityY(C.ROCKET_MAX_VELOCITY);
-        // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? C.ROCKET_INITIAL_VELOCITY : -C.ROCKET_INITIAL_VELOCITY, 1f);
+        // Apply initial impulse in the mines facing direction.
+        switch(ownerMine.getFacingDirection()) {
+		case DOWN:
+			this.applyImpulse(0f, -C.ROCKET_INITIAL_VELOCITY);
+			break;
+		case LEFT:
+			this.applyImpulse(-C.ROCKET_INITIAL_VELOCITY, -0f);
+			break;
+		case RIGHT:
+			this.applyImpulse(C.ROCKET_INITIAL_VELOCITY, 0f);
+			break;
+		case UP:
+			this.applyImpulse(0f, C.ROCKET_INITIAL_VELOCITY);
+			break;
+        }
     }
     
     @Override
     protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
-    	// Make sure that we are not just intersecting with the owner.
-    	if(!collidingBox.getName().equals(owner.getName())) {
+    	// Make sure that we are not just intersecting with the mine that fired this rocket.
+    	if(collidingBox != ownerMine) {
     		// We have hit something! Explode! Add a world bloom.
     		NBPBloom rocketExplosionBloom = new NBPBloom(this.getCurrentOriginPoint().getX(), 
     				this.getCurrentOriginPoint().getY(), 60f, 6f);

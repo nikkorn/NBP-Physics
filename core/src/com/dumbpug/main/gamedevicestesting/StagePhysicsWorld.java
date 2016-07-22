@@ -1,6 +1,9 @@
 package com.dumbpug.main.gamedevicestesting;
 
 import java.util.ArrayList;
+
+import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
+import com.dumbpug.main.gamedevicestesting.weapons.Mine;
 import com.dumbpug.main.gamedevicestesting.weapons.ProximityMine;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPMath;
@@ -38,6 +41,7 @@ public class StagePhysicsWorld extends NBPWorld {
 	 * Go over all proximity/laser mines and detonate them if certain conditions are met.
 	 */
 	private void checkMines() {
+		ArrayList<Mine> minesPendingDetonation = new ArrayList<Mine>();
 		for(NBPBox box : this.getWorldBoxes()) {
 			// Is this box a proximity mine?
 			if(box.getName().equals("PROXIMITY_MINE")) {
@@ -48,8 +52,8 @@ public class StagePhysicsWorld extends NBPWorld {
 					for(PlayerBox player : players) {
 						float playerDistance = NBPMath.getDistanceBetweenPoints(player.getCurrentOriginPoint(), mine.getCurrentOriginPoint());
 						if(playerDistance <= C.PROXIMITY_MINE_REACH) {
-							// Detonate!
-							mine.detonate();
+							// Queue for detonation!
+							minesPendingDetonation.add(mine);
 							// We don't care if any other players are within range anymore.
 							break;
 						}
@@ -58,8 +62,17 @@ public class StagePhysicsWorld extends NBPWorld {
 			}
 			// Is this box a laser mine?
 			if(box.getName().equals("LASER_MINE")) {
-				// TODO handle detonation if need be.
+				LaserMine mine = (LaserMine) box;
+				// Check to see if this laser mine needs to be triggered due to a player wandering into its laser.
+				if(mine.isPlayerInLaserRange()) {
+					// Queue for detonation!
+					minesPendingDetonation.add(mine);
+				}
 			}
+		}
+		// Detonate any mines that are due for detonation.
+		for(Mine mine: minesPendingDetonation) {
+			mine.detonate();
 		}
 	}
 }
