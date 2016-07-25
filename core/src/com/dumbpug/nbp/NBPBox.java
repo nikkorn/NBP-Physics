@@ -49,6 +49,8 @@ public abstract class NBPBox {
 	private boolean isMarkedForDeletion = false;
 	// Defines whether this box has been deleted.
 	private boolean isDeleted = false;
+	// Is this box affected by gravity?
+	private boolean isAffectedByGravity = true;
 
 	/**
 	 * Creates an instance of the NBPBox class.
@@ -114,8 +116,10 @@ public abstract class NBPBox {
 		if (this.type == NBPBoxType.KINETIC) {
 			// Reset our acceleration
 			this.accy = 0f;
-			// Add our gravity to Y acceleration
-			this.accy -= wrappingWorld.getWorldGravity();
+			// Add our gravity to Y acceleration only if this box is affected by gravity.
+			if(this.isAffectedByGravity) {
+				this.accy -= wrappingWorld.getWorldGravity();
+			}
 			// Apply Acceleration to Velocity
 			this.vely += accy;
 			// If the velocity is a super small number (between -0.0005 and 0.0005)
@@ -311,6 +315,22 @@ public abstract class NBPBox {
 		this.y = newY;
 	}
 
+	/**
+	 * Gets whether this box is affected by gravity.
+	 * @return isAffectedByGravity
+	 */
+	public boolean isAffectedByGravity() {
+		return isAffectedByGravity;
+	}
+
+	/**
+	 * Sets whether this box is affected by gravity.
+	 * @param isAffectedByGravity
+	 */
+	public void setAffectedByGravity(boolean isAffectedByGravity) {
+		this.isAffectedByGravity = isAffectedByGravity;
+	}
+	
 	public float getAccx() {
 		return accx;
 	}

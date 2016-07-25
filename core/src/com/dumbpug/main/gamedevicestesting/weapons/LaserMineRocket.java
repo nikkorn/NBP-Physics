@@ -26,6 +26,8 @@ public class LaserMineRocket extends NBPBox {
         this.ownerMine = ownerMine;
         // Set various properties for the grenade.
         setName("LASER_MINE_ROCKET");
+        // This rocket is NOT affected by gravity.
+        this.setAffectedByGravity(false);
         // Set max velocity. 
         setMaxVelocityX(C.ROCKET_MAX_VELOCITY);
         setMaxVelocityY(C.ROCKET_MAX_VELOCITY);

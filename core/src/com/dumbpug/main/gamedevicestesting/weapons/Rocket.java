@@ -27,6 +27,8 @@ public class Rocket extends NBPBox {
         this.owner = owner;
         // Set various properties for the grenade.
         setName("ROCKET");
+        // This rocket is NOT affected by gravity.
+        this.setAffectedByGravity(false);
         // Set max velocity. 
         setMaxVelocityX(C.ROCKET_MAX_VELOCITY);
         setMaxVelocityY(C.ROCKET_MAX_VELOCITY);
