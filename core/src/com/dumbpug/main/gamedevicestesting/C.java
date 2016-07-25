@@ -6,6 +6,10 @@ package com.dumbpug.main.gamedevicestesting;
  *
  */
 public class C {
+	
+	// Misc
+	public static final float MISC_POINTER_SIZE                   = 5f;
+	
 	// World
 	public static final float WORLD_GRAVITY                       = 0.09f;
 	public static final float WORLD_TILE_SIZE                     = 20f;

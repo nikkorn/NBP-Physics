@@ -21,6 +21,8 @@ public class PlayerBox extends NBPBox {
     private boolean isAlive = true;
     // Time that the player last fired a weapon
     private long lastFireTime = System.currentTimeMillis();
+    // The angle of focus for this player (where we are looking).
+    private float angleOfFocus = 0f;
 
     public PlayerBox(float x, float y, float width, float height, int playerNumber) {
         super(x, y, width, height, NBPBoxType.KINETIC);
@@ -196,5 +198,13 @@ public class PlayerBox extends NBPBox {
 		
 		// Return true as we want the force to affect this player box.
 		return true;
+	}
+
+	public float getAngleOfFocus() {
+		return angleOfFocus;
+	}
+
+	public void setAngleOfFocus(float angleOfFocus) {
+		this.angleOfFocus = angleOfFocus;
 	}
 }

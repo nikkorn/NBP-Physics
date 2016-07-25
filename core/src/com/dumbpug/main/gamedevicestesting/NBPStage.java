@@ -32,6 +32,7 @@ public class NBPStage extends ApplicationAdapter {
     Texture piimgDown;
     Texture piimgLeft;
     Texture piimgRight;
+    Texture pointer;
 
     StagePhysicsWorld world;
     PlayerBox player;
@@ -74,6 +75,7 @@ public class NBPStage extends ApplicationAdapter {
         piimgDown  = new Texture("pibox_down.png");
         piimgLeft  = new Texture("pibox_left.png");
         piimgRight = new Texture("pibox_right.png");
+        pointer    = new Texture("pointer.png");
 
         world = new StagePhysicsWorld(C.WORLD_GRAVITY);
 
@@ -105,6 +107,21 @@ public class NBPStage extends ApplicationAdapter {
         
         // Update our physics world.
         world.update();
+        
+        // Mouse capture
+ 		if(!Gdx.input.isCursorCatched()){
+ 			if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+ 				Gdx.input.setCursorCatched(true);
+ 			}
+ 		} else {
+ 			if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+ 				Gdx.input.setCursorCatched(false);
+ 			}
+ 		}
+ 		
+ 		// Set the players angle of focus based on the mouse position.
+ 		float angleOfFocus = NBPMath.getAngleBetweenPoints(player.getCurrentOriginPoint(), new NBPPoint(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()));
+ 		player.setAngleOfFocus(angleOfFocus);
         
         // Only allow player to do stuff while he is alive
         if(player.isAlive()) {
@@ -210,6 +227,9 @@ public class NBPStage extends ApplicationAdapter {
         	for (NBPSensor sensor : box.getAttachedSensors()) {
                 batch.draw(simg, sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight());
             }
+        	// Draw our pointer.
+        	batch.draw(pointer, Gdx.input.getX() - (C.MISC_POINTER_SIZE/2f), 
+        			Gdx.graphics.getHeight() - (Gdx.input.getY() - (C.MISC_POINTER_SIZE/2f)), C.MISC_POINTER_SIZE, C.MISC_POINTER_SIZE);
         }
         batch.end();
     }

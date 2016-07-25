@@ -33,7 +33,7 @@ public class Rocket extends NBPBox {
         setMaxVelocityX(C.ROCKET_MAX_VELOCITY);
         setMaxVelocityY(C.ROCKET_MAX_VELOCITY);
         // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? C.ROCKET_INITIAL_VELOCITY : -C.ROCKET_INITIAL_VELOCITY, 1f);
+        this.applyImpulse((float) Math.cos(owner.getAngleOfFocus()) * C.ROCKET_INITIAL_VELOCITY, (float) Math.sin(owner.getAngleOfFocus()) * C.ROCKET_INITIAL_VELOCITY);
     }
     
     @Override

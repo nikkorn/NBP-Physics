@@ -37,7 +37,7 @@ public class RubberGrenade extends NBPBox {
         setMaxVelocityX(C.RUBBER_GRENADE_MAX_VELOCITY);
         setMaxVelocityY(C.RUBBER_GRENADE_MAX_VELOCITY);
         // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? C.RUBBER_GRENADE_INITIAL_VELOCITY : -C.RUBBER_GRENADE_INITIAL_VELOCITY, 0f);
+        this.applyImpulse((float) Math.cos(owner.getAngleOfFocus()) * C.RUBBER_GRENADE_INITIAL_VELOCITY, (float) Math.sin(owner.getAngleOfFocus()) * C.RUBBER_GRENADE_INITIAL_VELOCITY);
     }
     
 	@Override

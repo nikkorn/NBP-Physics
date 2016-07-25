@@ -30,7 +30,7 @@ public class LaserMine extends NBPBox implements Mine{
         setMaxVelocityX(C.MINE_MAX_VELOCITY);
         setMaxVelocityY(C.MINE_MAX_VELOCITY);
         // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? C.MINE_INITIAL_VELOCITY : -C.MINE_INITIAL_VELOCITY, 0f);
+        this.applyImpulse((float) Math.cos(owner.getAngleOfFocus()) * C.MINE_INITIAL_VELOCITY, (float) Math.sin(owner.getAngleOfFocus()) * C.MINE_INITIAL_VELOCITY);
 	}
 	
 	/**

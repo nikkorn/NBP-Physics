@@ -42,7 +42,7 @@ public class ClusterGrenade extends NBPBox {
         // Set owner
         this.owner = owner;
         // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? C.GRENADE_INITIAL_VELOCITY : -C.GRENADE_INITIAL_VELOCITY, 0f);
+        this.applyImpulse((float) Math.cos(owner.getAngleOfFocus()) * C.GRENADE_INITIAL_VELOCITY, (float) Math.sin(owner.getAngleOfFocus()) * C.GRENADE_INITIAL_VELOCITY);
     }
     
     /**
