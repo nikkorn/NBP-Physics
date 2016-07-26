@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.main.gamedevicestesting.input.LocalPlayerInput;
 import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
 import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
@@ -37,12 +38,14 @@ public class NBPStage extends ApplicationAdapter {
     StagePhysicsWorld world;
     PlayerBox player;
     
+    LocalPlayerInput localPlayerInput;
+    
     private int[][] gridLayout = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
+        {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1},
@@ -56,8 +59,8 @@ public class NBPStage extends ApplicationAdapter {
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
@@ -96,6 +99,9 @@ public class NBPStage extends ApplicationAdapter {
         // Make our player box.
         player = new PlayerBox(65, 200, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, 1);
         world.addBox(player);
+        
+        // Create our (local) player input interface.
+        localPlayerInput = new LocalPlayerInput(player);
     }
 
     @Override
@@ -126,14 +132,14 @@ public class NBPStage extends ApplicationAdapter {
         // Only allow player to do stuff while he is alive
         if(player.isAlive()) {
         	// Test player horizontal movement.
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            if (localPlayerInput.isLeftPressed()) {
                 player.moveLeft();
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            } else if (localPlayerInput.isRightPressed()) {
                 player.moveRight();
             }
 
             // Test player jump
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            if (localPlayerInput.isUpPressed()) {
                 player.jump();
             }
             
