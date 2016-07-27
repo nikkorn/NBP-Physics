@@ -1,7 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -19,14 +19,14 @@ public class ClusterGrenadeSegment extends NBPBox {
 	// Fuse time of the grenade.
 	private long fuseTimeMillis;
 	// The player who threw the grenade.
-	private PlayerBox owner;
+	private Player owner;
 	
 	   
 	/**
 	 * Create a new grenade.
 	 * @param owner
 	 */
-    public ClusterGrenadeSegment(PlayerBox owner, long fuseTimeMillis) {
+    public ClusterGrenadeSegment(Player owner, long fuseTimeMillis) {
         super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.GRENADE_CLUSTER_SIZE, C.GRENADE_CLUSTER_SIZE, NBPBoxType.KINETIC);
         // Set the grenade fuse time.
         this.fuseTimeMillis = fuseTimeMillis;
@@ -41,15 +41,13 @@ public class ClusterGrenadeSegment extends NBPBox {
         setMaxVelocityY(C.GRENADE_MAX_VELOCITY);
         // Set owner
         this.owner = owner;
-        // Apply initial impulse in the players facing direction
-        this.applyImpulse(owner.facingRight ? C.GRENADE_INITIAL_VELOCITY : -C.GRENADE_INITIAL_VELOCITY, 0f);
     }
     
     /**
      * Get the player who threw this.
      * @return thrower
      */
-    public PlayerBox getOwner() {
+    public Player getOwner() {
     	return this.owner;
     }
 

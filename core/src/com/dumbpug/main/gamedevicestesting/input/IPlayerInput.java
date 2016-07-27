@@ -16,6 +16,7 @@ public interface IPlayerInput {
 	public boolean isNum4Pressed();
 	public boolean isNum5Pressed();
 	public boolean isNum6Pressed();
+	public boolean isNum7Pressed();
 	public boolean isEnterPressed();
 	public boolean isRightMouseButtonDown();
 	public boolean isLeftMouseButtonDown();

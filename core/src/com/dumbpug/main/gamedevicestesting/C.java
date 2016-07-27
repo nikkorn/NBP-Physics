@@ -26,6 +26,7 @@ public class C {
 	public static final long PLAYER_WEAPON_COOLDOWN               = 500l;
 	
 	public static final int PLAYER_MAX_HEALTH                     = 10;
+	public static final int PLAYER_WEAPON_SLOTS                   = 7;
 	
 	// Grenade
 	public static final float GRENADE_SIZE                        = 10f;

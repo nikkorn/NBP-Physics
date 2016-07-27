@@ -1,5 +1,6 @@
-package com.dumbpug.main.gamedevicestesting;
+package com.dumbpug.main.gamedevicestesting.player;
 
+import com.dumbpug.main.gamedevicestesting.C;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -10,11 +11,9 @@ import com.dumbpug.nbp.NBPSensor;
  * Represents a movable player.
  * Created by nik on 28/02/16.
  */
-public class PlayerBox extends NBPBox {
+public class Player extends NBPBox {
     // Can the player jump?
     private boolean canJump = false;
-    // Facing direction of player.
-    public boolean facingRight = true; // TODO Remove, this will be defined by mouse position. 
     // Health of the player
     private int health = C.PLAYER_MAX_HEALTH; 
     // Is the player alive?
@@ -24,7 +23,7 @@ public class PlayerBox extends NBPBox {
     // The angle of focus for this player (where we are looking).
     private float angleOfFocus = 0f;
 
-    public PlayerBox(float x, float y, float width, float height, int playerNumber) {
+    public Player(float x, float y, float width, float height, int playerNumber) {
         super(x, y, width, height, NBPBoxType.KINETIC);
         // Set various properties for the player.
         setName("PLAYER_ " + playerNumber);
@@ -52,7 +51,6 @@ public class PlayerBox extends NBPBox {
      * Move the player to the left.
      */
     public void moveLeft() {
-    	facingRight = false;
     	// Calculate how to apply an impulse to this player so that its moving speed is defined 
     	// by a value lower that its max velocity. In this case, a walking speed.
     	if(this.getVelx() > -C.PLAYER_MAX_WALKING_VELOCITY) {
@@ -68,7 +66,6 @@ public class PlayerBox extends NBPBox {
      * Move the player to the right.
      */
     public void moveRight() {
-    	facingRight = true;
     	// Calculate how to apply an impulse to this player so that its moving speed is defined 
     	// by a value lower that its max velocity. In this case, a walking speed.
     	if(this.getVelx() < C.PLAYER_MAX_WALKING_VELOCITY) {

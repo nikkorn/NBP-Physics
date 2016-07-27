@@ -6,7 +6,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.main.gamedevicestesting.input.IPlayerInput;
 import com.dumbpug.main.gamedevicestesting.input.LocalPlayerInput;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
 import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
@@ -36,7 +38,7 @@ public class NBPStage extends ApplicationAdapter {
     Texture pointer;
 
     StagePhysicsWorld world;
-    PlayerBox player;
+    Player player;
     
     LocalPlayerInput localPlayerInput;
     
@@ -97,7 +99,7 @@ public class NBPStage extends ApplicationAdapter {
         }
 
         // Make our player box.
-        player = new PlayerBox(65, 200, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, 1);
+        player = new Player(65, 200, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, 1);
         world.addBox(player);
         
         // Create our (local) player input interface.
@@ -125,9 +127,61 @@ public class NBPStage extends ApplicationAdapter {
  			}
  		}
  		
- 		// Set the players angle of focus based on the mouse position.
+ 		// Process player input. TODO will eventually have to be done for ever player, not just test player.
+ 		processPlayerInput(player, localPlayerInput);
+        
+        batch.begin();
+        // Draw Grid
+        for(NBPBox box : world.getWorldBoxes()) {
+        	if (box.getName().equals("GRENADE")) {
+        		batch.draw(simg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("RUBBER_GRENADE")) {
+        		batch.draw(rimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("STICKY_GRENADE")) {
+        		batch.draw(oimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("ROCKET")) {
+        		batch.draw(pimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	} else if (box.getName().equals("PROXIMITY_MINE")) {
+        		switch(((ProximityMine) box).getFacingDirection() ) {
+				case DOWN:
+	        		batch.draw(piimgDown, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+					break;
+				case LEFT:
+	        		batch.draw(piimgLeft, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+					break;
+				case RIGHT:
+	        		batch.draw(piimgRight, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+					break;
+				case UP:
+	        		batch.draw(piimgUp, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+					break;
+        		}
+        	} else {
+        		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        	}
+        	// Draw any sensors.
+        	for (NBPSensor sensor : box.getAttachedSensors()) {
+                batch.draw(simg, sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight());
+            }
+        	// Draw our pointer.
+        	batch.draw(pointer, Gdx.input.getX() - (C.MISC_POINTER_SIZE/2f), 
+        			Gdx.graphics.getHeight() - (Gdx.input.getY() - (C.MISC_POINTER_SIZE/2f)), C.MISC_POINTER_SIZE, C.MISC_POINTER_SIZE);
+        }
+        batch.end();
+    }
+
+    /**
+     * Process a players input.
+     * @param playerEntity
+     * @param playerInput
+     */
+	private void processPlayerInput(Player playerEntity, IPlayerInput playerInput) {
+		// Set the players angle of focus based on the mouse position.
  		float angleOfFocus = NBPMath.getAngleBetweenPoints(player.getCurrentOriginPoint(), new NBPPoint(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()));
  		player.setAngleOfFocus(angleOfFocus);
+ 		
+ 		// Check for presses of number 1-6, this represents a change in active weapon.
+ 		if(playerInput.isNum1Pressed())
         
         // Only allow player to do stuff while he is alive
         if(player.isAlive()) {
@@ -199,44 +253,5 @@ public class NBPStage extends ApplicationAdapter {
             	}
             }
         }
-        
-        batch.begin();
-        // Draw Grid
-        for(NBPBox box : world.getWorldBoxes()) {
-        	if (box.getName().equals("GRENADE")) {
-        		batch.draw(simg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	} else if (box.getName().equals("RUBBER_GRENADE")) {
-        		batch.draw(rimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	} else if (box.getName().equals("STICKY_GRENADE")) {
-        		batch.draw(oimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	} else if (box.getName().equals("ROCKET")) {
-        		batch.draw(pimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	} else if (box.getName().equals("PROXIMITY_MINE")) {
-        		switch(((ProximityMine) box).getFacingDirection() ) {
-				case DOWN:
-	        		batch.draw(piimgDown, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-					break;
-				case LEFT:
-	        		batch.draw(piimgLeft, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-					break;
-				case RIGHT:
-	        		batch.draw(piimgRight, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-					break;
-				case UP:
-	        		batch.draw(piimgUp, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-					break;
-        		}
-        	} else {
-        		batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
-        	}
-        	// Draw any sensors.
-        	for (NBPSensor sensor : box.getAttachedSensors()) {
-                batch.draw(simg, sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight());
-            }
-        	// Draw our pointer.
-        	batch.draw(pointer, Gdx.input.getX() - (C.MISC_POINTER_SIZE/2f), 
-        			Gdx.graphics.getHeight() - (Gdx.input.getY() - (C.MISC_POINTER_SIZE/2f)), C.MISC_POINTER_SIZE, C.MISC_POINTER_SIZE);
-        }
-        batch.end();
-    }
+	}
 }

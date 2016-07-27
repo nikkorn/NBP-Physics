@@ -1,7 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -15,13 +15,13 @@ import com.dumbpug.nbp.NBPSensor;
  */
 public class Rocket extends NBPBox {
 	// Owner of the rocket.   
-	private PlayerBox owner;
+	private Player owner;
 	
 	/**
 	 * Create a new grenade.
 	 * @param owner
 	 */
-    public Rocket(PlayerBox owner) {
+    public Rocket(Player owner) {
         super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.ROCKET_SIZE, C.ROCKET_SIZE, NBPBoxType.KINETIC);
         // Set the owner.
         this.owner = owner;

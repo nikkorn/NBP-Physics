@@ -1,7 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -23,7 +23,7 @@ public class RubberGrenade extends NBPBox {
 	 * Create a new rubber grenade.
 	 * @param owner
 	 */
-    public RubberGrenade(PlayerBox owner, long fuseTimeMillis) {
+    public RubberGrenade(Player owner, long fuseTimeMillis) {
         super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.GRENADE_SIZE, C.GRENADE_SIZE, NBPBoxType.KINETIC);
         // Set the grenade fuse time.
         this.fuseTimeMillis = fuseTimeMillis;

@@ -2,7 +2,7 @@ package com.dumbpug.main.gamedevicestesting.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.nbp.NBPMath;
 import com.dumbpug.nbp.NBPPoint;
 
@@ -12,9 +12,9 @@ import com.dumbpug.nbp.NBPPoint;
  *
  */
 public class LocalPlayerInput implements IPlayerInput {
-	private PlayerBox player;
+	private Player player;
 	
-	public LocalPlayerInput(PlayerBox player) {
+	public LocalPlayerInput(Player player) {
 		this.player = player;
 	}
 
@@ -66,6 +66,11 @@ public class LocalPlayerInput implements IPlayerInput {
 	@Override
 	public boolean isNum6Pressed() {
 		return Gdx.input.isKeyPressed(Input.Keys.NUM_6);
+	}
+	
+	@Override
+	public boolean isNum7Pressed() {
+		return Gdx.input.isKeyPressed(Input.Keys.NUM_7);
 	}
 
 	@Override

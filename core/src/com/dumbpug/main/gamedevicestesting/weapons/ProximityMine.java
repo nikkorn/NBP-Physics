@@ -1,7 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -18,7 +18,7 @@ public class ProximityMine extends NBPBox implements Mine{
 	 * Create a new instance of the ProximityMine class.
 	 * @param owner
 	 */
-	public ProximityMine(PlayerBox owner) {
+	public ProximityMine(Player owner) {
 		super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.GRENADE_SIZE, C.GRENADE_SIZE, NBPBoxType.KINETIC);
 		this.setName("PROXIMITY_MINE");
         // Set various properties for the grenade.

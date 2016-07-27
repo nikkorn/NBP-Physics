@@ -1,7 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.main.gamedevicestesting.PlayerBox;
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -19,14 +19,14 @@ public class Grenade extends NBPBox {
 	// Fuse time of the grenade.
 	private long fuseTimeMillis;
 	// The player who threw the grenade.
-	private PlayerBox owner;
+	private Player owner;
 	
 	   
 	/**
 	 * Create a new grenade.
 	 * @param owner
 	 */
-    public Grenade(PlayerBox owner, long fuseTimeMillis) {
+    public Grenade(Player owner, long fuseTimeMillis) {
         super(owner.getCurrentOriginPoint().getX(), owner.getCurrentOriginPoint().getY(), C.GRENADE_SIZE, C.GRENADE_SIZE, NBPBoxType.KINETIC);
         // Set the grenade fuse time.
         this.fuseTimeMillis = fuseTimeMillis;
@@ -49,7 +49,7 @@ public class Grenade extends NBPBox {
      * Get the player who threw this.
      * @return thrower
      */
-    public PlayerBox getOwner() {
+    public Player getOwner() {
     	return this.owner;
     }
 
