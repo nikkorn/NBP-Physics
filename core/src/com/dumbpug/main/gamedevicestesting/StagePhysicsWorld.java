@@ -1,7 +1,6 @@
 package com.dumbpug.main.gamedevicestesting;
 
 import java.util.ArrayList;
-
 import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
 import com.dumbpug.main.gamedevicestesting.weapons.Mine;

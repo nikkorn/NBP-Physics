@@ -16,6 +16,7 @@ import com.dumbpug.main.gamedevicestesting.weapons.ProximityMine;
 import com.dumbpug.main.gamedevicestesting.weapons.Rocket;
 import com.dumbpug.main.gamedevicestesting.weapons.RubberGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.StickyGrenade;
+import com.dumbpug.main.gamedevicestesting.weapons.WeaponType;
 import com.dumbpug.nbp.*;
 
 /**
@@ -100,6 +101,8 @@ public class NBPStage extends ApplicationAdapter {
 
         // Make our player box.
         player = new Player(65, 200, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, 1);
+        // Give our player some grenades to play with.
+        player.getPlayerWeaponInventory().setWeaponAmmunition(WeaponType.GRENADE, 10);
         world.addBox(player);
         
         // Create our (local) player input interface.
@@ -176,82 +179,91 @@ public class NBPStage extends ApplicationAdapter {
      * @param playerInput
      */
 	private void processPlayerInput(Player playerEntity, IPlayerInput playerInput) {
-		// Set the players angle of focus based on the mouse position.
- 		float angleOfFocus = NBPMath.getAngleBetweenPoints(player.getCurrentOriginPoint(), new NBPPoint(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()));
- 		player.setAngleOfFocus(angleOfFocus);
+		// Set the players angle of focus.
+ 		player.setAngleOfFocus(playerInput.getAngleOfFocus());
  		
- 		// Check for presses of number 1-6, this represents a change in active weapon.
- 		if(playerInput.isNum1Pressed())
+ 		// Check for presses of number 1-7, this represents a change in active weapon.
+ 		if(playerInput.isNum1Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.GRENADE);
+ 		}
+ 		if(playerInput.isNum2Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.STICKY_GRENADE);
+ 		}
+ 		if(playerInput.isNum3Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.CLUSTER_GRENADE);
+ 		}
+ 		if(playerInput.isNum4Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.RUBBER_GRENADE);
+ 		}
+ 		if(playerInput.isNum5Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.PROXIMITY_MINE);
+ 		}
+ 		if(playerInput.isNum6Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.LASER_MINE);
+ 		}
+ 		if(playerInput.isNum7Pressed()) {
+ 			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.ROCKET);
+ 		}
         
-        // Only allow player to do stuff while he is alive
-        if(player.isAlive()) {
-        	// Test player horizontal movement.
-            if (localPlayerInput.isLeftPressed()) {
-                player.moveLeft();
-            } else if (localPlayerInput.isRightPressed()) {
-                player.moveRight();
-            }
+        // Only allow player to do stuff while he is alive.
+        if(!player.isAlive()) {
+        	return;
+        } 
+        	
+    	// Test player horizontal movement.
+        if (localPlayerInput.isLeftPressed()) {
+            player.moveLeft();
+        } else if (localPlayerInput.isRightPressed()) {
+            player.moveRight();
+        }
 
-            // Test player jump
-            if (localPlayerInput.isUpPressed()) {
-                player.jump();
-            }
-            
-            // Throw a grenade.
-            if (Gdx.input.isKeyPressed(Input.Keys.G)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new Grenade(player, C.GRENADE_FUSE_MAX));
+        // Test player jump
+        if (localPlayerInput.isUpPressed()) {
+            player.jump();
+        }
+        
+        // Handle weapon fire.
+        if(playerInput.isLeftMouseButtonDown()) {
+        	// Can the player even fire his weapon? (cool-down over)
+        	if(player.canFireWeapon()) {
+        		// Get the players active weapon.
+        		WeaponType activeWeaponType = player.getPlayerWeaponInventory().getActiveWeaponType();
+        		// Does the player have the required ammo?
+        		int ammoCount = player.getPlayerWeaponInventory().getWeaponAmmunition(activeWeaponType);
+        		if(ammoCount != 0) {
+        			// An ammo count of -1 represents infinite ammo, if we don't have infinite ammo 
+        			// then we need to remove some ammo from the inventory.
+        			if(ammoCount != -1) {
+        				player.getPlayerWeaponInventory().setWeaponAmmunition(activeWeaponType, ammoCount - 1);
+        			}
+        			// We can fire now!
+        			switch(activeWeaponType) {
+					case CLUSTER_GRENADE:
+						world.addBox(new ClusterGrenade(player, C.GRENADE_FUSE_MAX));
+						break;
+					case GRENADE:
+						world.addBox(new Grenade(player, C.GRENADE_FUSE_MAX));
+						break;
+					case LASER_MINE:
+						world.addBox(new LaserMine(player));
+						break;
+					case PROXIMITY_MINE:
+						world.addBox(new ProximityMine(player));
+						break;
+					case ROCKET:
+						world.addBox(new Rocket(player));
+						break;
+					case RUBBER_GRENADE:
+						world.addBox(new RubberGrenade(player, C.GRENADE_FUSE_MAX));
+						break;
+					case STICKY_GRENADE:
+						world.addBox(new StickyGrenade(player, C.GRENADE_FUSE_MAX));
+						break;
+        			}
+            		// We have fired our weapon, restart the weapon cool-down.
             		player.restartWeaponCooldown();
-            	}
-            }
-            
-            // Throw a rubber grenade.
-            if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new RubberGrenade(player, C.GRENADE_FUSE_MAX));
-            		player.restartWeaponCooldown();
-            	}
-            }
-            
-            // Throw a sticky grenade.
-            if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new StickyGrenade(player, C.GRENADE_FUSE_MAX));
-            		player.restartWeaponCooldown();
-            	}
-            }
-            
-            // Throw a cluster grenade.
-            if (Gdx.input.isKeyPressed(Input.Keys.C)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new ClusterGrenade(player, C.GRENADE_FUSE_MAX));
-            		player.restartWeaponCooldown();
-            	}
-            }
-            
-            // Throw a proximity mine.
-            if (Gdx.input.isKeyPressed(Input.Keys.M)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new ProximityMine(player));
-            		player.restartWeaponCooldown();
-            	}
-            }
-            
-            // Throw a laser mine.
-            if (Gdx.input.isKeyPressed(Input.Keys.L)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new LaserMine(player));
-            		player.restartWeaponCooldown();
-            	}
-            }
-            
-            // Fire a Rocket.
-            if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-            	if(player.canFireWeapon()) {
-            		world.addBox(new Rocket(player));
-            		player.restartWeaponCooldown();
-            	}
-            }
+        		} 
+        	}
         }
 	}
 }

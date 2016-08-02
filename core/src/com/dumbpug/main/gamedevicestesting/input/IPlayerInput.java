@@ -20,5 +20,7 @@ public interface IPlayerInput {
 	public boolean isEnterPressed();
 	public boolean isRightMouseButtonDown();
 	public boolean isLeftMouseButtonDown();
+	public boolean isCycleWeaponForwardButtonPressed();
+	public boolean isCycleWeaponBackwardButtonPressed();
 	public float getAngleOfFocus();
 }

@@ -22,6 +22,8 @@ public class Player extends NBPBox {
     private long lastFireTime = System.currentTimeMillis();
     // The angle of focus for this player (where we are looking).
     private float angleOfFocus = 0f;
+    // The weapon inventory of this player.
+    private PlayerWeaponInventory playerWeaponInventory;
 
     public Player(float x, float y, float width, float height, int playerNumber) {
         super(x, y, width, height, NBPBoxType.KINETIC);
@@ -45,6 +47,8 @@ public class Player extends NBPBox {
         baseSensor.setName("player_base_sensor");
         // Attach the sensor to the player box.
         attachSensor(baseSensor);
+        // Initialise a default player weapon inventory.
+        playerWeaponInventory = new PlayerWeaponInventory();
     }
 
     /**
@@ -197,11 +201,35 @@ public class Player extends NBPBox {
 		return true;
 	}
 
+	/**
+	 * Get the angle of focus for this player.
+	 * @return angle of focus.
+	 */
 	public float getAngleOfFocus() {
 		return angleOfFocus;
 	}
 
+	/**
+	 * Set the angle of focus for this player.
+	 * @param angle of focus.
+	 */
 	public void setAngleOfFocus(float angleOfFocus) {
 		this.angleOfFocus = angleOfFocus;
+	}
+
+	/**
+	 * Get this players weapon inventory.
+	 * @return playerWeaponInventory
+	 */
+	public PlayerWeaponInventory getPlayerWeaponInventory() {
+		return playerWeaponInventory;
+	}
+
+	/**
+	 * Set this players weapon inventory.
+	 * @param playerWeaponInventory
+	 */
+	public void setPlayerWeaponInventory(PlayerWeaponInventory playerWeaponInventory) {
+		this.playerWeaponInventory = playerWeaponInventory;
 	}
 }

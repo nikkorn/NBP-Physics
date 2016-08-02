@@ -92,4 +92,14 @@ public class LocalPlayerInput implements IPlayerInput {
 	public float getAngleOfFocus() {
 		return NBPMath.getAngleBetweenPoints(player.getCurrentOriginPoint(), new NBPPoint(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()));
 	}
+
+	@Override
+	public boolean isCycleWeaponForwardButtonPressed() {
+		return Gdx.input.isKeyPressed(Input.Keys.E);
+	}
+
+	@Override
+	public boolean isCycleWeaponBackwardButtonPressed() {
+		return Gdx.input.isKeyPressed(Input.Keys.Q);
+	}
 }

@@ -1,6 +1,8 @@
 package com.dumbpug.main.gamedevicestesting.player;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import com.dumbpug.main.gamedevicestesting.weapons.WeaponType;
 
 /**
@@ -10,7 +12,9 @@ import com.dumbpug.main.gamedevicestesting.weapons.WeaponType;
  */
 public class PlayerWeaponInventory {
 	// Map of weapon types to the amount of ammunition carried by the player.
-	private HashMap<WeaponType, Integer> weaponInventory = new HashMap<WeaponType, Integer>();
+	private LinkedHashMap<WeaponType, Integer> weaponInventory = new LinkedHashMap<WeaponType, Integer>();
+	// Keys of inventory item positions.
+	private List<WeaponType> inventoryKeys;
 	// The active weapon type.
 	private WeaponType activeWeaponType = null;
 	
@@ -22,6 +26,10 @@ public class PlayerWeaponInventory {
 		for(WeaponType weaponType : WeaponType.values()) {
 			weaponInventory.put(weaponType, 0);
 		}
+		// Get keys of inventory item positions.
+		inventoryKeys = new ArrayList<WeaponType>(weaponInventory.keySet());
+		// Default the active weapon type to be the first.
+		this.setActiveWeaponType(inventoryKeys.get(0));
 	}
 	
 	/**
@@ -32,30 +40,66 @@ public class PlayerWeaponInventory {
 		for(WeaponType weaponType : WeaponType.values()) {
 			weaponInventory.put(weaponType, 0);
 		}
+		// Get keys of inventory item positions.
+		inventoryKeys = new ArrayList<WeaponType>(weaponInventory.keySet());
 		// Set the active weapon type.
 		this.setActiveWeaponType(activeWeaponType);
 	}
 	
-	public void goForwardToNextWeaponWithAmmunition() {
+	/**
+	 * Iterates forwards through the inventory until we find a weapon with ammo and sets this as active
+	 * @return weapon with ammo available
+	 */
+	public boolean goForwardToNextWeaponWithAmmunition() {
 		if(!doesWeaponWithAmmoExist()) {
 			// There are no weapons with ammo.
-			return;
+			return false;
 		}
 		// Get current position in inventory
 		int inventoryPos = (activeWeaponType != null) ? activeWeaponType.ordinal() : 0;
-		// TODO Check weapon ammo counts after the current position.
-		// TODO Check weapon ammo counts before the current position.
+		// Check weapon ammo counts after the current position.
+		for(int inventoryIndex = (inventoryPos + 1); inventoryIndex < weaponInventory.size(); inventoryIndex++) {
+			if(weaponInventory.get(inventoryKeys.get(inventoryIndex)) != 0) {
+				this.setActiveWeaponType(inventoryKeys.get(inventoryIndex));
+				return true;
+			}
+		}
+		// Check weapon ammo counts up to the current position.
+		for(int inventoryIndex = 0; inventoryIndex <= inventoryPos; inventoryIndex++) {
+			if(weaponInventory.get(inventoryKeys.get(inventoryIndex)) != 0) {
+				this.setActiveWeaponType(inventoryKeys.get(inventoryIndex));
+				return true;
+			}
+		}
+		return false;
 	}
 	
-    public void goBackwardToNextWeaponWithAmmunition() {
+	/**
+	 * Iterates backwards through the inventory until we find a weapon with ammo and sets this as active
+	 * @return weapon with ammo available
+	 */
+    public boolean goBackwardToNextWeaponWithAmmunition() {
     	if(!doesWeaponWithAmmoExist()) {
     		// There are no weapons with ammo.
-			return;
+			return false;
 		}
     	// Get current position in inventory
 		int inventoryPos = (activeWeaponType != null) ? activeWeaponType.ordinal() : 0;
-		// TODO Check weapon ammo counts before the current position.
-		// TODO Check weapon ammo counts after the current position.
+		// Check weapon ammo counts before the current position.
+		for(int inventoryIndex = (inventoryPos - 1); inventoryIndex >= 0; inventoryIndex--) {
+			if(weaponInventory.get(inventoryKeys.get(inventoryIndex)) != 0) {
+				this.setActiveWeaponType(inventoryKeys.get(inventoryIndex));
+				return true;
+			}
+		}
+		// Check weapon ammo counts after the current position.
+		for(int inventoryIndex = (weaponInventory.size() - 1); inventoryIndex >= inventoryPos; inventoryIndex--) {
+			if(weaponInventory.get(inventoryKeys.get(inventoryIndex)) != 0) {
+				this.setActiveWeaponType(inventoryKeys.get(inventoryIndex));
+				return true;
+			}
+		}
+		return false;
 	}
     
     /**
@@ -104,6 +148,9 @@ public class PlayerWeaponInventory {
 	 * @param activeWeaponType
 	 */
 	public void setActiveWeaponType(WeaponType activeWeaponType) {
+		if(activeWeaponType != this.activeWeaponType) {
+			System.out.println("Weapon Set To: " + activeWeaponType);
+		}
 		this.activeWeaponType = activeWeaponType;
 	}
 }
