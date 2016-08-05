@@ -1,7 +1,7 @@
 package com.dumbpug.main.gamedevicestesting;
 
 import java.util.ArrayList;
-import com.dumbpug.main.gamedevicestesting.player.Player;
+import com.dumbpug.main.gamedevicestesting.player.PlayerBox;
 import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
 import com.dumbpug.main.gamedevicestesting.weapons.Mine;
 import com.dumbpug.main.gamedevicestesting.weapons.ProximityMine;
@@ -15,8 +15,8 @@ import com.dumbpug.nbp.NBPWorld;
  *
  */
 public class StagePhysicsWorld extends NBPWorld {
-	// Player instances that have been added to the world.
-	ArrayList<Player> players = new ArrayList<Player>();
+	// Player box instances that have been added to the world.
+	ArrayList<PlayerBox> players = new ArrayList<PlayerBox>();
 	
 	public StagePhysicsWorld(float gravity) {
 		super(gravity);
@@ -26,8 +26,8 @@ public class StagePhysicsWorld extends NBPWorld {
 	public void addBox(NBPBox box) {
 		super.addBox(box);
 		// Check to see if this box is a player, if it is grab a reference to him.
-		if(box instanceof Player) {
-			players.add((Player) box);
+		if(box instanceof PlayerBox) {
+			players.add((PlayerBox) box);
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class StagePhysicsWorld extends NBPWorld {
 				// Check that this mine is primed (ready for detonation).
 				if(mine.isPrimed()) {
 					// Check to see if any players are in the range of this mine.
-					for(Player player : players) {
+					for(PlayerBox player : players) {
 						float playerDistance = NBPMath.getDistanceBetweenPoints(player.getCurrentOriginPoint(), mine.getCurrentOriginPoint());
 						if(playerDistance <= C.PROXIMITY_MINE_REACH) {
 							// Queue for detonation!

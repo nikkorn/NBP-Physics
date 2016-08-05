@@ -1,19 +1,14 @@
 package com.dumbpug.main.gamedevicestesting.player;
 
 import com.dumbpug.main.gamedevicestesting.C;
-import com.dumbpug.nbp.NBPBloom;
-import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
-import com.dumbpug.nbp.NBPIntersectionPoint;
-import com.dumbpug.nbp.NBPSensor;
+import com.dumbpug.nbp.NBPPoint;
 
 /**
- * Represents a movable player.
+ * Represents a player.
  * Created by nik on 28/02/16.
  */
-public class Player extends NBPBox {
-    // Can the player jump?
-    private boolean canJump = false;
+public class Player {
     // Health of the player
     private int health = C.PLAYER_MAX_HEALTH; 
     // Is the player alive?
@@ -24,72 +19,36 @@ public class Player extends NBPBox {
     private float angleOfFocus = 0f;
     // The weapon inventory of this player.
     private PlayerWeaponInventory playerWeaponInventory;
+    // The physics box for this player.
+    private PlayerBox playerPhysicsBox;
 
     public Player(float x, float y, float width, float height, int playerNumber) {
-        super(x, y, width, height, NBPBoxType.KINETIC);
-        // Set various properties for the player.
-        setName("PLAYER_ " + playerNumber);
-        setFriction(C.PLAYER_FRICTION);
-        setRestitution(C.PLAYER_RESTITUTION);
-        // Set max velocity for this player.
-        setMaxVelocityX(C.PLAYER_MAX_VELOCITY);
-        setMaxVelocityY(C.PLAYER_MAX_VELOCITY);
-        // Create a sensor and place it at the base of our player. This sensor will
-        // be used to detect when we are standing on something static, thus allowing
-        // the player to jump.
-        float sensorHeight = 1;
-        float sensorWidth  = width/2;
-        float sensorPosX   = x;
-        float sensorPosY   = y - sensorHeight;
-        // Create the sensor.
-        NBPSensor baseSensor = new NBPSensor(sensorPosX + (sensorWidth/2), sensorPosY, sensorWidth, sensorHeight);
-        // Give the sensor a name, this will be checked when notified by the sensor.
-        baseSensor.setName("player_base_sensor");
-        // Attach the sensor to the player box.
-        attachSensor(baseSensor);
         // Initialise a default player weapon inventory.
         playerWeaponInventory = new PlayerWeaponInventory();
+        // Initialise our players physics box.
+        playerPhysicsBox = new PlayerBox(this, x, y, width, height, NBPBoxType.KINETIC);
+        playerPhysicsBox.setName("PLAYER_ " + playerNumber);
     }
-
+    
     /**
      * Move the player to the left.
      */
     public void moveLeft() {
-    	// Calculate how to apply an impulse to this player so that its moving speed is defined 
-    	// by a value lower that its max velocity. In this case, a walking speed.
-    	if(this.getVelx() > -C.PLAYER_MAX_WALKING_VELOCITY) {
-    		if((-C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx()) > C.PLAYER_WALKING_IMPULSE_VALUE) {
-    			applyImpulse(-C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx(), 0f);
-    		} else {
-    			applyImpulse(-C.PLAYER_WALKING_IMPULSE_VALUE, 0f);
-    		}
-    	} 
+    	playerPhysicsBox.moveLeft();
     }
 
     /**
      * Move the player to the right.
      */
     public void moveRight() {
-    	// Calculate how to apply an impulse to this player so that its moving speed is defined 
-    	// by a value lower that its max velocity. In this case, a walking speed.
-    	if(this.getVelx() < C.PLAYER_MAX_WALKING_VELOCITY) {
-    		if((C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx()) < C.PLAYER_WALKING_IMPULSE_VALUE) {
-    			applyImpulse(C.PLAYER_MAX_WALKING_VELOCITY - this.getVelx(), 0f);
-    		} else {
-    			applyImpulse(C.PLAYER_WALKING_IMPULSE_VALUE, 0f);
-    		}
-    	} 
+    	playerPhysicsBox.moveRight();
     }
 
     /**
      * Make the player jump if he can.
      */
     public void jump() {
-        // Can we jump? (Are we on a static block?)
-        if(canJump) {
-            // Apply a vertical impulse.
-            applyImpulse(0f, C.PLAYER_JUMPING_IMPULSE);
-        }
+    	playerPhysicsBox.jump();
     }
     
     /**
@@ -114,92 +73,6 @@ public class Player extends NBPBox {
     public void restartWeaponCooldown() {
     	this.lastFireTime = System.currentTimeMillis();
     }
-
-    @Override
-    public void onSensorEntry(NBPSensor sensor, NBPBox enteredBox) {
-        // Check that this sensor is the one we have placed at the bottom of the box.
-        if(sensor.getName().equals("player_base_sensor")) {
-            // If we are on any static block then we can jump off of it.
-            if(enteredBox.getType() == NBPBoxType.STATIC) {
-                // Set a flag to show that the player can now jump.
-                this.canJump = true;
-            }
-        }
-    }
-
-    @Override
-    public void onSensorExit(NBPSensor sensor, NBPBox exitedBox) {
-        // We have lifted off of a box, if this is a static box then check whether the sensor is
-        // now not intersecting with any static boxes. if not then the player can no longer jump.
-        // Firstly, make sure that this is the sensor that we placed at the base of the player.
-        if(sensor.getName().equals("player_base_sensor")) {
-            // Check that the sensor left a static box.
-            if(exitedBox.getType() == NBPBoxType.STATIC) {
-                // Get all other intersecting boxes for this sensor, if none are static
-                // then we can no longer jump as we are not resting on anything.
-                boolean isRestingOnStaticBox = false;
-                for(NBPBox box : sensor.getIntersectingBoxes()) {
-                    // Is this intersecting box static?
-                    if(box.getType() == NBPBoxType.STATIC) {
-                        // We are still standing on a static box so we can still jump.
-                        isRestingOnStaticBox = true;
-                        break;
-                    }
-                }
-                // Set the flag to show whether we can still jump.
-                this.canJump = isRestingOnStaticBox;
-            }
-        }
-    }
-
-	@Override
-	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void onCollisonWithStaticBox(NBPBox collidingBox, NBPIntersectionPoint originAtCollision) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void onBeforeUpdate() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void onAfterUpdate() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void onDeletion() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected boolean onBloomPush(NBPBloom bloom, float angleOfForce, float force, float distance) {
-		// While NBPBloom does not necessarily mean an explosion, it does in the context of this game.
-		// Reduce our players health, using the force.
-		this.health = health - ((int) force);
-		if(health <= 0) {
-			// Can't have minus number for health. 
-			health = 0;
-			// The player is no longer alive.
-			this.isAlive = false;
-			System.out.println(getName() +  " : I am DEAD!!!");
-		} else {
-			System.out.println(getName() +  " : Ouch! at " + ((((float)health)/C.PLAYER_MAX_HEALTH) * 100) + "% health");
-		}
-		
-		// Return true as we want the force to affect this player box.
-		return true;
-	}
 
 	/**
 	 * Get the angle of focus for this player.
@@ -231,5 +104,53 @@ public class Player extends NBPBox {
 	 */
 	public void setPlayerWeaponInventory(PlayerWeaponInventory playerWeaponInventory) {
 		this.playerWeaponInventory = playerWeaponInventory;
+	}
+	
+	/**
+	 * Deal damage to this player, reducing health and possibly killing them.
+	 * @param pointsOfDamage
+	 */
+	public void dealDamage(int pointsOfDamage) {
+		// Remove health.
+		this.health -= pointsOfDamage;
+		if(health <= 0) {
+			// Can't have minus number for health. 
+			health = 0;
+			// The player is no longer alive.
+			this.isAlive = false;
+		} 
+	}
+	
+	/**
+	 * Get this players health.
+	 * @return health
+	 */
+	public int getPlayerHealth() {
+		return this.health;
+	}
+	
+	/**
+	 * Set this players health.
+	 * @param health
+	 */
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	/**
+	 * Get this players physics box.
+	 * @return players physics box.
+	 */
+	public PlayerBox getPlayerPhysicsBox() {
+		return this.playerPhysicsBox;
+	}
+	
+	/**
+	 * Get this players current point of origin.
+	 * @return players point of origin.
+	 */
+	public NBPPoint getCurrentOriginPoint() {
+		// This players point of origin will match the origin of its physics box.
+		return playerPhysicsBox.getCurrentOriginPoint();
 	}
 }

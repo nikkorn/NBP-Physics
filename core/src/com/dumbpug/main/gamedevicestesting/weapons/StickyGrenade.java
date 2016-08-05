@@ -1,6 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.player.Player;
+import com.dumbpug.main.gamedevicestesting.player.PlayerBox;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPIntersectionPoint;
 
@@ -14,7 +15,7 @@ public class StickyGrenade extends Grenade  {
 	@Override
 	protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
 		// Sticky grenades should only stick to players who aren't the grenades owner.
-		if(collidingBox instanceof Player && (collidingBox != this.getOwner())) {
+		if(collidingBox instanceof PlayerBox && (collidingBox != this.getOwner().getPlayerPhysicsBox())) {
 			// Kill this box.
 			this.kill();
 			// TODO Make a join!

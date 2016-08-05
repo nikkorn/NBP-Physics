@@ -39,7 +39,7 @@ public class Rocket extends NBPBox {
     @Override
     protected void onCollisonWithKineticBox(NBPBox collidingBox, NBPIntersectionPoint kinematicBoxOriginAtCollision) {
     	// Make sure that we are not just intersecting with the owner.
-    	if(!collidingBox.getName().equals(owner.getName())) {
+    	if(!collidingBox.getName().equals(owner.getPlayerPhysicsBox().getName())) {
     		// We have hit something! Explode! Add a world bloom.
     		NBPBloom rocketExplosionBloom = new NBPBloom(this.getCurrentOriginPoint().getX(), 
     				this.getCurrentOriginPoint().getY(), 60f, 6f);

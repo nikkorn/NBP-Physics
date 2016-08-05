@@ -2,6 +2,7 @@ package com.dumbpug.main.gamedevicestesting.weapons;
 
 import com.dumbpug.main.gamedevicestesting.C;
 import com.dumbpug.main.gamedevicestesting.player.Player;
+import com.dumbpug.main.gamedevicestesting.player.PlayerBox;
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
 import com.dumbpug.nbp.NBPBoxType;
@@ -120,7 +121,7 @@ public class LaserMine extends NBPBox implements Mine{
 		// Is this our laser reach sensor?
 		if(sensor.getName().equals("LASER_MINE_LASER_REACH")) {
 			// We only care if the entering box is a player.
-			if(enteredBox instanceof Player) {
+			if(enteredBox instanceof PlayerBox) {
 				this.isPlayerInLaserRange = true;
 			}
 		}

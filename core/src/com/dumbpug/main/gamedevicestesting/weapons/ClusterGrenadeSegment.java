@@ -86,7 +86,7 @@ public class ClusterGrenadeSegment extends NBPBox {
 		// Has the fuse run out?
     	if ((System.currentTimeMillis() - timeThrownInMillis) >= fuseTimeMillis) {
     		// Explode! Add a world bloom.
-    		NBPBloom grenadeExplosionBloom = new NBPBloom(owner, this.getCurrentOriginPoint().getX(), 
+    		NBPBloom grenadeExplosionBloom = new NBPBloom(owner.getPlayerPhysicsBox(), this.getCurrentOriginPoint().getX(), 
     				this.getCurrentOriginPoint().getY(), C.GRENADE_CLUSTER_RADIUS, C.GRENADE_CLUSTER_FORCE);
     		this.getWrappingWorld().addBloom(grenadeExplosionBloom);
     		// Remove this grenade box on next update.

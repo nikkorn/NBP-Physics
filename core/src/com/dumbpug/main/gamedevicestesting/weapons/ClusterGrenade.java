@@ -106,7 +106,7 @@ public class ClusterGrenade extends NBPBox {
     		g4.setY(this.getY() - clusterSegmentOffset);
     		
     		// Explode! Create a world bloom.
-    		NBPBloom grenadeExplosionBloom = new NBPBloom(owner, this.getCurrentOriginPoint().getX(), 
+    		NBPBloom grenadeExplosionBloom = new NBPBloom(owner.getPlayerPhysicsBox(), this.getCurrentOriginPoint().getX(), 
     				this.getCurrentOriginPoint().getY(), C.GRENADE_EXPLOSION_RADIUS, C.GRENADE_EXPLOSION_FORCE);
     		this.getWrappingWorld().addBloom(grenadeExplosionBloom);
     		// Add everything to our physics world

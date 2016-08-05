@@ -103,7 +103,7 @@ public class NBPStage extends ApplicationAdapter {
         player = new Player(65, 200, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, 1);
         // Give our player some grenades to play with.
         player.getPlayerWeaponInventory().setWeaponAmmunition(WeaponType.GRENADE, 10);
-        world.addBox(player);
+        world.addBox(player.getPlayerPhysicsBox());
         
         // Create our (local) player input interface.
         localPlayerInput = new LocalPlayerInput(player);
