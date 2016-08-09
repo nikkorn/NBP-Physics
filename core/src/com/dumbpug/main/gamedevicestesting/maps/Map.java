@@ -16,41 +16,52 @@ public class Map {
 	private ArrayList<WeaponPoint> weaponPoints = new ArrayList<WeaponPoint>();
 	// Store the original JSON.
 	private JSONObject rawMapJSON;
+	// The name of the map.
+	private String mapName;
 	
 	/**
 	 * Build our map from the raw map JSON.
 	 * @param mapJson
+	 * @param mapName
+	 * @throws JSONException 
 	 */
-	public Map(JSONObject mapJson){
+	public Map(JSONObject mapJson, String mapName) throws JSONException{
 		// Store the raw map JSON.
-		this.setRawMapJSON(mapJson);
+		this.rawMapJSON = mapJson;
+		// Store the map name.
+		this.mapName = mapName;
 		// Get our tiles from the JSON.
-		try {
-			JSONArray tilesArray = mapJson.getJSONArray("tiles");
-			for (int i = 0; i < tilesArray.length(); i++)
-			{
-				tiles.add(tilesArray.getInt(i));
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		readTilesFromMapJSON();
 		// Get our weapon points from the JSON.
-		try {
-			JSONArray weaponPointArray = mapJson.getJSONArray("weapon_points");
-			for (int i = 0; i < weaponPointArray.length(); i++)
-			{
-				weaponPoints.add(new WeaponPoint(weaponPointArray.getJSONObject(i)));
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+		readWeaponPointsFromMapJSON();
+	}
+
+	/**
+	 * Get our tiles from the JSON.
+	 * @throws JSONException 
+	 */
+	private void readTilesFromMapJSON() throws JSONException {
+		JSONArray tilesArray = rawMapJSON.getJSONArray("tiles");
+		for (int i = 0; i < tilesArray.length(); i++)
+		{
+			tiles.add(tilesArray.getInt(i));
 		}
 	}
 	
-	// public int getTileValueAtPosition(int x, int y);
-	// public WeaponPoint getWeaponPointAtPosition(int x, int y);
+	/**
+	 * Get our weapon points from the JSON.
+	 * @throws JSONException 
+	 */
+	private void readWeaponPointsFromMapJSON() throws JSONException {
+		JSONArray weaponPointArray = rawMapJSON.getJSONArray("weapon_points");
+		for (int i = 0; i < weaponPointArray.length(); i++)
+		{
+			weaponPoints.add(new WeaponPoint(weaponPointArray.getJSONObject(i)));
+		}
+	}
 
 	/**
-	 * Set the raw map JSON.
+	 * Get the raw map JSON.
 	 * @return raw map JSON.
 	 */
 	public JSONObject getRawMapJSON() {
@@ -58,10 +69,13 @@ public class Map {
 	}
 
 	/**
-	 * Get the raw map JSON.
-	 * @param rawMapJSON
+	 * Get the name of this map.
+	 * @return map name.
 	 */
-	public void setRawMapJSON(JSONObject rawMapJSON) {
-		this.rawMapJSON = rawMapJSON;
+	public String getMapName() {
+		return mapName;
 	}
+	
+	// TODO public int getTileValueAtPosition(int x, int y);
+	// TODO public WeaponPoint getWeaponPointAtPosition(int x, int y);
 }

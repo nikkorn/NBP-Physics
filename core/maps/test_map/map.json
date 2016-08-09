@@ -1,0 +1,12 @@
+{
+    "tiles": [0, 1, 2, 3],
+    "weapon_points": [
+    	{
+    		"x": 0,
+    		"y": 0,
+    		weapon_tokens: {
+    			"ROCKET": 1
+    		}
+    	}
+    ]
+}

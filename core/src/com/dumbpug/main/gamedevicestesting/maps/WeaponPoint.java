@@ -15,24 +15,26 @@ public class WeaponPoint {
 	private int tilePositionX = 0;
 	// Y tile position.
 	private int tilePositionY = 0;
-	// last pickup time.
-	private long lastPickup   = 0l;
 	// Weapon ammo generation token count.
 	private HashMap<WeaponType, Integer> ammoGenerationTokens = new HashMap<WeaponType, Integer>();
 
 	/**
 	 * Build our weapon point from the raw JSON.
 	 * @param weaponPointJson
+	 * @throws JSONException 
 	 */
-	public WeaponPoint(JSONObject weaponPointJson){
-		try {
-			// Get position.
-			tilePositionX = weaponPointJson.getInt("x");
-			tilePositionY = weaponPointJson.getInt("y");
-			// TODO Get ammo generation tokens.
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+	public WeaponPoint(JSONObject weaponPointJson) throws JSONException{
+		// Get position.
+		tilePositionX = weaponPointJson.getInt("x");
+		tilePositionY = weaponPointJson.getInt("y");
+		// Get ammo generation tokens from the JSON.
+		JSONObject weaponAmmoTokens = weaponPointJson.getJSONObject("weapon_tokens");
+		for(WeaponType weaponType : WeaponType.values()) {
+			String weaponTypeName = weaponType.toString();
+			// If a weapon type token count is not defined in the JSON then it simply gets zero tokens.
+			int tokensForWeaponType = (weaponAmmoTokens.has(weaponTypeName)) ? weaponAmmoTokens.getInt(weaponTypeName) : 0;
+			ammoGenerationTokens.put(weaponType, tokensForWeaponType);
+		}  
 	}
 
 	public int getTilePositionX() {

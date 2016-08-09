@@ -7,12 +7,17 @@ package com.dumbpug.main.gamedevicestesting;
  */
 public class C {
 	
+	// Resources
+	public static final String RES_MAPS_DIR                       = "maps/";
+	
 	// Misc
 	public static final float MISC_POINTER_SIZE                   = 5f;
 	
 	// World
 	public static final float WORLD_GRAVITY                       = 0.09f;
 	public static final float WORLD_TILE_SIZE                     = 20f;
+	public static final int WORLD_TILE_HEIGHT                     = 22;
+	public static final int WORLD_TILE_WIDTH                      = 29;
 	
 	// Player
 	public static final float PLAYER_SIZE_WIDTH                   = 16f;
