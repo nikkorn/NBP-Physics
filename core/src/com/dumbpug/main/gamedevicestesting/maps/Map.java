@@ -2,6 +2,7 @@ package com.dumbpug.main.gamedevicestesting.maps;
 
 import java.util.ArrayList;
 import org.json.*;
+import com.dumbpug.main.gamedevicestesting.C;
 
 /**
  * Represents a map.
@@ -10,7 +11,7 @@ import org.json.*;
  *
  */
 public class Map {
-	// List of all map tiles.
+	// List of all map tiles. Starts from Bottom-Left and goes X before Y.
 	private ArrayList<Integer> tiles = new ArrayList<Integer>();
 	// List of all Weapon Points.
 	private ArrayList<WeaponPoint> weaponPoints = new ArrayList<WeaponPoint>();
@@ -46,6 +47,7 @@ public class Map {
 		{
 			tiles.add(tilesArray.getInt(i));
 		}
+		// TODO Error if tile count is wrong.
 	}
 	
 	/**
@@ -76,6 +78,25 @@ public class Map {
 		return mapName;
 	}
 	
-	// TODO public int getTileValueAtPosition(int x, int y);
-	// TODO public WeaponPoint getWeaponPointAtPosition(int x, int y);
+	/**
+	 * Get the tile value at a position.
+	 * @param x
+	 * @param y
+	 * @return Tile value.
+	 */
+	public int getTileValueAtPosition(int x, int y){
+		// Need to convert our X and Y cords to an index in our tile list.
+		int tileListIndex = 0;
+		tileListIndex += ((C.WORLD_TILE_HEIGHT - 1) - y) * C.WORLD_TILE_WIDTH;
+		tileListIndex += x;
+		return tiles.get(tileListIndex);
+	}
+	
+	/**
+	 * Get all weapon points.
+	 * @return weapon points.
+	 */
+	public ArrayList<WeaponPoint> getWeaponPoints() {
+		return this.weaponPoints;
+	}
 }
