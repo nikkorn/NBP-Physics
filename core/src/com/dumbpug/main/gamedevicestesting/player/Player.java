@@ -2,6 +2,9 @@ package com.dumbpug.main.gamedevicestesting.player;
 
 import com.dumbpug.main.gamedevicestesting.C;
 import com.dumbpug.main.gamedevicestesting.input.IPlayerInput;
+import com.dumbpug.main.gamedevicestesting.maps.SpawnPoint;
+import com.dumbpug.main.gamedevicestesting.stage.Stage;
+import com.dumbpug.main.gamedevicestesting.weapons.WeaponType;
 import com.dumbpug.nbp.NBPBoxType;
 import com.dumbpug.nbp.NBPPoint;
 
@@ -32,6 +35,71 @@ public class Player {
         playerPhysicsBox = new PlayerBox(this, x, y, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, NBPBoxType.KINETIC);
         playerPhysicsBox.setName("PLAYER_ " + playerNumber);
     }
+    
+    /**
+     * Process a players input.
+     * @param stage The active stage which called this method. 
+     */
+	public void processInput(Stage activeStage) {
+		// Get the player's input provider (if they have one).
+		IPlayerInput playerInputProvider = getPlayerInputProvider();
+		
+		// Do they have one? If not then we cannot do anything.
+		if(playerInputProvider == null) 
+			return;
+		
+		// Set the players angle of focus.
+ 		setAngleOfFocus(playerInputProvider.getAngleOfFocus());
+ 		
+ 		// Check for presses of number 1-7, this represents a change in active weapon.
+ 		if(playerInputProvider.isNum1Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.GRENADE);
+ 		}
+ 		if(playerInputProvider.isNum2Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.STICKY_GRENADE);
+ 		}
+ 		if(playerInputProvider.isNum3Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.CLUSTER_GRENADE);
+ 		}
+ 		if(playerInputProvider.isNum4Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.RUBBER_GRENADE);
+ 		}
+ 		if(playerInputProvider.isNum5Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.PROXIMITY_MINE);
+ 		}
+ 		if(playerInputProvider.isNum6Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.LASER_MINE);
+ 		}
+ 		if(playerInputProvider.isNum7Pressed()) {
+ 			getPlayerWeaponInventory().setActiveWeaponType(WeaponType.ROCKET);
+ 		}
+        
+        // Only allow player to do stuff while he is alive.
+        if(!isAlive()) {
+        	return;
+        } 
+        	
+    	// Test player horizontal movement.
+        if (playerInputProvider.isLeftPressed()) {
+            moveLeft();
+        } else if (playerInputProvider.isRightPressed()) {
+            moveRight();
+        }
+
+        // Test player jump
+        if (playerInputProvider.isUpPressed()) {
+            jump();
+        }
+        
+        // Handle weapon fire.
+        if(playerInputProvider.isLeftMouseButtonDown()) {
+        	// Can the player even fire his weapon? (cool-down over)
+        	if(canFireWeapon()) {
+        		// Fire our weapon.
+        		fireWeapon(activeStage); 
+        	}
+        }
+	}
     
     /**
      * Move the player to the left.
@@ -68,6 +136,37 @@ public class Player {
      */
     public boolean canFireWeapon() {
     	return (System.currentTimeMillis() - this.lastFireTime) >= C.PLAYER_WEAPON_COOLDOWN;
+    }
+    
+    /**
+     * Fire our weapon.
+     * @param activeStage
+     */
+    private void fireWeapon(Stage activeStage) {
+    	// Get the players active weapon.
+		WeaponType activeWeaponType = getPlayerWeaponInventory().getActiveWeaponType();
+		// Does the player have the required ammo?
+		int ammoCount = getPlayerWeaponInventory().getWeaponAmmunition(activeWeaponType);
+		if(ammoCount != 0) {
+			// An ammo count of -1 represents infinite ammo, if we don't have infinite ammo 
+			// then we need to remove some ammo from the inventory.
+			if(ammoCount != -1) {
+				getPlayerWeaponInventory().setWeaponAmmunition(activeWeaponType, ammoCount - 1);
+			}
+			// We can fire now!
+			activeStage.weaponFiredByPlayer(this);
+    		// We have fired our weapon, restart the weapon cool-down.
+			this.lastFireTime = System.currentTimeMillis();
+		} 
+    }
+    
+    /**
+     * Move this player directly to the the provided spawn point.
+     * @param spawnPoint
+     */
+    public void moveToSpawnPoint(SpawnPoint spawnPoint) {
+    	playerPhysicsBox.setX(spawnPoint.getX());
+    	playerPhysicsBox.setY(spawnPoint.getY());
     }
     
     /**

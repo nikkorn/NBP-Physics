@@ -183,7 +183,7 @@ public class NBPStage extends ApplicationAdapter {
  		if(playerInput.isNum7Pressed()) {
  			player.getPlayerWeaponInventory().setActiveWeaponType(WeaponType.ROCKET);
  		}
-        
+
         // Only allow player to do stuff while he is alive.
         if(!player.isAlive()) {
         	return;

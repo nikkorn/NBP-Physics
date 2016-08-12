@@ -21,7 +21,7 @@ public class PlayerWeaponInventory {
 	/**
 	 * Default constructor.
 	 */
-	PlayerWeaponInventory() {
+	public PlayerWeaponInventory() {
 		// The player will be assigned an ammo level of 0 for each weapon type.
 		for(WeaponType weaponType : WeaponType.values()) {
 			weaponInventory.put(weaponType, 0);
@@ -35,7 +35,7 @@ public class PlayerWeaponInventory {
 	/**
 	 * Constructor where we set the initial active weapon.
 	 */
-	PlayerWeaponInventory(WeaponType activeWeaponType) {
+	public PlayerWeaponInventory(WeaponType activeWeaponType) {
 		// The player will be assigned an ammo level of 0 for each weapon type.
 		for(WeaponType weaponType : WeaponType.values()) {
 			weaponInventory.put(weaponType, 0);
