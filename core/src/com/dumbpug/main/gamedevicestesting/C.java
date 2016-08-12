@@ -33,7 +33,6 @@ public class C {
 	public static final float PLAYER_WALKING_IMPULSE_VALUE        = 0.2f;
 	public static final float PLAYER_JUMPING_IMPULSE              = 3.5f;
 	public static final long PLAYER_WEAPON_COOLDOWN               = 500l;
-	
 	public static final int PLAYER_MAX_HEALTH                     = 10;
 	public static final int PLAYER_WEAPON_SLOTS                   = 7;
 	

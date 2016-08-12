@@ -1,6 +1,7 @@
 package com.dumbpug.main.gamedevicestesting.player;
 
 import com.dumbpug.main.gamedevicestesting.C;
+import com.dumbpug.main.gamedevicestesting.input.IPlayerInput;
 import com.dumbpug.nbp.NBPBoxType;
 import com.dumbpug.nbp.NBPPoint;
 
@@ -21,12 +22,14 @@ public class Player {
     private PlayerWeaponInventory playerWeaponInventory;
     // The physics box for this player.
     private PlayerBox playerPhysicsBox;
+    // The provider for player input.
+    private IPlayerInput playerInput = null;
 
-    public Player(float x, float y, float width, float height, int playerNumber) {
+    public Player(float x, float y, int playerNumber) {
         // Initialise a default player weapon inventory.
         playerWeaponInventory = new PlayerWeaponInventory();
         // Initialise our players physics box.
-        playerPhysicsBox = new PlayerBox(this, x, y, width, height, NBPBoxType.KINETIC);
+        playerPhysicsBox = new PlayerBox(this, x, y, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, NBPBoxType.KINETIC);
         playerPhysicsBox.setName("PLAYER_ " + playerNumber);
     }
     
@@ -152,5 +155,21 @@ public class Player {
 	public NBPPoint getCurrentOriginPoint() {
 		// This players point of origin will match the origin of its physics box.
 		return playerPhysicsBox.getCurrentOriginPoint();
+	}
+
+	/**
+	 * Get the player input provider.
+	 * @return player input provider.
+	 */
+	public IPlayerInput getPlayerInputProvider() {
+		return playerInput;
+	}
+	
+	/**
+	 * Set the player input provider.
+	 * @param playerInput
+	 */
+	public void setPlayerInputProvider(IPlayerInput playerInput) {
+		this.playerInput = playerInput;
 	}
 }
