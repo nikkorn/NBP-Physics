@@ -23,7 +23,7 @@ public class WeaponPoint {
 	 * @param weaponPointJson
 	 * @throws JSONException 
 	 */
-	public WeaponPoint(JSONObject weaponPointJson) throws JSONException{
+	public WeaponPoint(JSONObject weaponPointJson) throws JSONException {
 		// Get position.
 		tilePositionX = weaponPointJson.getInt("x");
 		tilePositionY = weaponPointJson.getInt("y");

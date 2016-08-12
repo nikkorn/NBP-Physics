@@ -1,4 +1,4 @@
-package com.dumbpug.main.gamedevicestesting;
+package com.dumbpug.main.gamedevicestesting.maps;
 
 import com.dumbpug.nbp.NBPBloom;
 import com.dumbpug.nbp.NBPBox;
@@ -7,6 +7,7 @@ import com.dumbpug.nbp.NBPIntersectionPoint;
 import com.dumbpug.nbp.NBPSensor;
 
 public class Tile extends NBPBox {
+	// TODO Add a tile type ID. 
 
 	public Tile(float x, float y, float width, float height, NBPBoxType type) {
 		super(x, y, width, height, type);

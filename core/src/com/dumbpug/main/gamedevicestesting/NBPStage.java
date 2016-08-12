@@ -1,5 +1,6 @@
 package com.dumbpug.main.gamedevicestesting;
 
+import java.util.ArrayList;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +9,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.main.gamedevicestesting.input.IPlayerInput;
 import com.dumbpug.main.gamedevicestesting.input.LocalPlayerInput;
+import com.dumbpug.main.gamedevicestesting.maps.LocalMaps;
+import com.dumbpug.main.gamedevicestesting.maps.Map;
 import com.dumbpug.main.gamedevicestesting.player.Player;
+import com.dumbpug.main.gamedevicestesting.stage.StagePhysicsWorld;
 import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
 import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
@@ -40,33 +44,8 @@ public class NBPStage extends ApplicationAdapter {
 
     StagePhysicsWorld world;
     Player player;
-    
     LocalPlayerInput localPlayerInput;
-    
-    private int[][] gridLayout = {
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,1,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-    };
+    Map stageMap;
 
     @Override
     public void create() {
@@ -83,24 +62,24 @@ public class NBPStage extends ApplicationAdapter {
         piimgRight = new Texture("pibox_right.png");
         pointer    = new Texture("pointer.png");
 
+        // Create a blank physics world.
         world = new StagePhysicsWorld(C.WORLD_GRAVITY);
-
-        // Create our grid.
-        float gridStartX = 0;
-        float gridStartY = gridLayout.length*C.WORLD_TILE_SIZE;
-        for(int gridX = 0; gridX < gridLayout[0].length; gridX++) {
-            for(int gridY = 0; gridY < gridLayout.length; gridY++) {
-                if(gridLayout[gridY][gridX] == 1) {
-                    NBPBox gridBlock = new Tile(gridStartX + (gridX*C.WORLD_TILE_SIZE),
-                            gridStartY-(gridY*C.WORLD_TILE_SIZE), C.WORLD_TILE_SIZE, C.WORLD_TILE_SIZE, NBPBoxType.STATIC);
-                    gridBlock.setName((gridX%2 == 0) ? "GREEN_TILE" : "RED_TILE");
-                    world.addBox(gridBlock);
-                }
-            }
+        
+        // Get the test local map, a map would usually be provided.
+        ArrayList<Map> localMaps = LocalMaps.getLocalMaps();
+        // We need our test map.
+        if(localMaps.size() > 0) {
+        	// Set the stage map.
+        	this.stageMap = localMaps.get(0);
+        	// Populate our physics world with world tiles.
+        	this.stageMap.populatePhysicsWorldWithTiles(world);
+        } else {
+        	System.out.println("Error: cannot load test map.");
         }
-
+   
         // Make our player box.
         player = new Player(65, 200, C.PLAYER_SIZE_WIDTH, C.PLAYER_SIZE_HEIGHT, 1);
+        
         // Give our player some grenades to play with.
         player.getPlayerWeaponInventory().setWeaponAmmunition(WeaponType.GRENADE, 10);
         world.addBox(player.getPlayerPhysicsBox());

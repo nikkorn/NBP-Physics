@@ -13,6 +13,10 @@ public class C {
 	// Misc
 	public static final float MISC_POINTER_SIZE                   = 5f;
 	
+	// Stage
+	public static final int STAGE_DEFAULT_ROUND_COUNT             = 3;
+	public static final int STAGE_DEFAULT_ROUND_TIME              = 60;
+	
 	// World
 	public static final float WORLD_GRAVITY                       = 0.09f;
 	public static final float WORLD_TILE_SIZE                     = 20f;
