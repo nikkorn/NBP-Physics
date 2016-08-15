@@ -91,12 +91,32 @@ public class Stage {
 		// What we do in an update completely depends on the state of the stage.
 		switch(stageState) {
 		case ROUND_STARTING:
+			// TODO Wait for count down.
+			// The game should now be in progress.
+			this.stageState = StageState.IN_PROGRESS;
 			break;
-		case IN_PROCESS:
+		case IN_PROGRESS:
+			// Update our physics world.
+			world.update();
+			// Process player input
+			for(Player player : this.getPlayers()) {
+				player.processInput(this);
+			}
+			// Check to see if we have a winner (last guy who is not dead)
+			// If so then the round is over. 
+			// -----------------------------------------------------------
+			// TODO Find a way to check for a draw as this will be common.
+			// -----------------------------------------------------------
+			if(getWinningPlayer() != null) {
+				this.stageState = StageState.ROUND_WON;
+			}
 			break;
 		case ROUND_WON:
+			// TODO Show the winner.
+			// TODO Go to next round if there is one, or go to results.
 			break;
 		case PENDING_RESULTS:
+			// TODO Show the results.
 			break;
 		case PENDING_EXIT:
 			break;
@@ -133,6 +153,24 @@ public class Stage {
 			break;
 		}
 	}
+	
+	/**
+	 * Try to get the last living player. If there are multiple living players then 
+	 * we simply have no winner, return null.
+	 * @return winning player.
+	 */
+	private Player getWinningPlayer() {
+		Player winningPlayer  = null;
+		int livingPlayerCount = 0;
+		for(Player player : this.getPlayers()) {
+			if(player.isAlive()) {
+				livingPlayerCount++;
+				winningPlayer = player;
+			}
+		}
+		// If there is only one living player then we have a winner! else return null.
+		return (livingPlayerCount == 1) ? winningPlayer : null;
+	}
 
 	/**
 	 * Get the stage settings.
@@ -163,6 +201,6 @@ public class Stage {
 	 * @return stage physics world.
 	 */
 	public StagePhysicsWorld getStagePhysicsWorld() {
-		return this.getStagePhysicsWorld();
+		return world;
 	}
 }

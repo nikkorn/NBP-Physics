@@ -28,6 +28,12 @@ public class Player {
     // The provider for player input.
     private IPlayerInput playerInput = null;
 
+    /**
+     * Initialise a new instance of the Player class.
+     * @param x
+     * @param y
+     * @param player number
+     */
     public Player(float x, float y, int playerNumber) {
         // Initialise a default player weapon inventory.
         playerWeaponInventory = new PlayerWeaponInventory();

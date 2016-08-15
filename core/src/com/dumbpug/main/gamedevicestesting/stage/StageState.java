@@ -7,7 +7,7 @@ package com.dumbpug.main.gamedevicestesting.stage;
  */
 public enum StageState {
 	ROUND_STARTING,
-	IN_PROCESS,
+	IN_PROGRESS,
 	ROUND_WON,
 	PENDING_RESULTS,
 	PENDING_EXIT
