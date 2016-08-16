@@ -79,7 +79,7 @@ public class NBPStage extends ApplicationAdapter {
         // Create a shared weapon inventory for all of our players.
         PlayerWeaponInventory inventory = new PlayerWeaponInventory();
         inventory.setWeaponAmmunition(WeaponType.GRENADE, 1000);
-        inventory.setWeaponAmmunition(WeaponType.CLUSTER_GRENADE, 5);
+        inventory.setWeaponAmmunition(WeaponType.ROCKET, 5);
         
         // Create stage settings.
         StageSettings settings = new StageSettings();

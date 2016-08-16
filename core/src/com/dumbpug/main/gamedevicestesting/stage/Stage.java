@@ -25,6 +25,7 @@ public class Stage {
 	private StageSettings stageSettings;
     private Map stageMap;
     private ArrayList<Player> players;
+    private ArrayList<Round> rounds;
 	
     /**
      * Initialise a new instance of the Stage class.
@@ -39,6 +40,9 @@ public class Stage {
 		// Set up our stage.
 		setupWorld();
 		setupPlayers();
+		// Add our initial round.
+		rounds = new ArrayList<Round>();
+		rounds.add(new Round());
 		// Set our initial stage state.
     	stageState = StageState.ROUND_STARTING;
 	}
@@ -91,9 +95,21 @@ public class Stage {
 		// What we do in an update completely depends on the state of the stage.
 		switch(stageState) {
 		case ROUND_STARTING:
-			// TODO Wait for count down.
-			// The game should now be in progress.
-			this.stageState = StageState.IN_PROGRESS;
+			// Get the current round.
+			Round currentRound = this.getCurrentRound();
+			// Check to make sure that the count-down for this round has started.
+			// Start it if it has not already been started.
+			if(!currentRound.hasCountdownStarted()){
+				currentRound.startCountdown();
+			}
+			// Update our physics world.
+			world.update();
+			// Get the count-down remainder. If 0 then the round should start!
+			int countdownRemainder = currentRound.getCountdownInSeconds();
+			if(countdownRemainder == 0) {
+				// The game should now be in progress.
+				this.stageState = StageState.IN_PROGRESS;
+			}
 			break;
 		case IN_PROGRESS:
 			// Update our physics world.
@@ -102,10 +118,13 @@ public class Stage {
 			for(Player player : this.getPlayers()) {
 				player.processInput(this);
 			}
-			// Check to see if we have a winner (last guy who is not dead)
-			// If so then the round is over. 
 			// -----------------------------------------------------------
-			// TODO Find a way to check for a draw as this will be common.
+			// TODO Look for a winner!!!
+			// If one guy is alive then he is the winner.
+			// If all guys are dead, then there is a draw between those who are dead but not 
+			// yet recorded as dead in the current round.
+			//
+			// TODO Check for player deaths and record them in the current round (if not already recorded).
 			// -----------------------------------------------------------
 			if(getWinningPlayer() != null) {
 				this.stageState = StageState.ROUND_WON;
@@ -202,5 +221,21 @@ public class Stage {
 	 */
 	public StagePhysicsWorld getStagePhysicsWorld() {
 		return world;
+	}
+	
+	/**
+	 * Get the stages rounds.
+	 * @return stage rounds.
+	 */
+	public ArrayList<Round> getStageRounds() {
+		return this.rounds;
+	}
+	
+	/**
+	 * Get the current round.
+	 * @return current round.
+	 */
+	public Round getCurrentRound() {
+		return this.rounds.get(rounds.size() - 1);
 	}
 }
