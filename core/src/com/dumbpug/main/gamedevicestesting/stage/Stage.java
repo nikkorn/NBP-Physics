@@ -99,45 +99,57 @@ public class Stage {
 			Round currentRound = this.getCurrentRound();
 			// Check to make sure that the count-down for this round has started.
 			// Start it if it has not already been started.
-			if(!currentRound.hasCountdownStarted()){
-				currentRound.startCountdown();
+			Countdown roundIntroCountdown = currentRound.getRoundCountdown(RoundCountdownType.INTRO);
+			if(!roundIntroCountdown.hasCountdownStarted()){
+				roundIntroCountdown.startCountdown();
 			}
 			// Update our physics world.
 			world.update();
 			// Get the count-down remainder. If 0 then the round should start!
-			int countdownRemainder = currentRound.getCountdownInSeconds();
+			int countdownRemainder = roundIntroCountdown.getCountdownInSeconds();
 			if(countdownRemainder == 0) {
 				// The game should now be in progress.
 				this.stageState = StageState.IN_PROGRESS;
 			}
 			break;
 		case IN_PROGRESS:
+			// Start the round count-down.
+			Countdown roundCountdown = this.getCurrentRound().getRoundCountdown(RoundCountdownType.IN_GAME);
+			if(!roundCountdown.hasCountdownStarted()){
+				roundCountdown.startCountdown();
+			}
 			// Update our physics world.
 			world.update();
 			// Process player input
 			for(Player player : this.getPlayers()) {
 				player.processInput(this);
 			}
-			// -----------------------------------------------------------
-			// TODO Look for a winner!!!
-			// If one guy is alive then he is the winner.
-			// If all guys are dead, then there is a draw between those who are dead but not 
-			// yet recorded as dead in the current round.
-			//
-			// TODO Check for player deaths and record them in the current round (if not already recorded).
-			// -----------------------------------------------------------
-			if(getWinningPlayer() != null) {
+			// Check for whether the round has been won.
+			if(hasRoundBeenWon()) {
 				this.stageState = StageState.ROUND_WON;
+			}
+			// Check to see if the round timer is finished.
+			// Get the count-down remainder. If 0 then the round finished with no winners!
+			int roundCountdownRemainder = roundCountdown.getCountdownInSeconds();
+			if(roundCountdownRemainder == 0) {
+				// The game should now show that time ran out for this round.
+				this.stageState = StageState.ROUND_TIME_UP;
 			}
 			break;
 		case ROUND_WON:
 			// TODO Show the winner.
 			// TODO Go to next round if there is one, or go to results.
 			break;
+		case ROUND_TIME_UP:
+			// TODO Show that time is up.
+			// TODO Go to next round if there is one, or go to results.
+			break;
 		case PENDING_RESULTS:
 			// TODO Show the results.
 			break;
 		case PENDING_EXIT:
+			break;
+		default:
 			break;
 		}
 	}
@@ -174,21 +186,42 @@ public class Stage {
 	}
 	
 	/**
-	 * Try to get the last living player. If there are multiple living players then 
-	 * we simply have no winner, return null.
-	 * @return winning player.
+	 * Check whether this round has been one, also records player deaths against the current round.
+	 * @return hasRoundBeenWon
 	 */
-	private Player getWinningPlayer() {
-		Player winningPlayer  = null;
-		int livingPlayerCount = 0;
+	private boolean hasRoundBeenWon() {
+		ArrayList<Player> winningPlayers = new ArrayList<Player>();
+		// Get the living players.
 		for(Player player : this.getPlayers()) {
 			if(player.isAlive()) {
-				livingPlayerCount++;
-				winningPlayer = player;
+				winningPlayers.add(player);
 			}
 		}
-		// If there is only one living player then we have a winner! else return null.
-		return (livingPlayerCount == 1) ? winningPlayer : null;
+		// If there is one player alive then they are the winner or this round.
+		if(winningPlayers.size() == 1) {
+			// Record this last living player as the round winner.
+			this.getCurrentRound().addRoundWinner(winningPlayers.get(0));
+			return true;
+		}
+		// If there are no living players then we need to check the round deaths to see who drew.
+		if(winningPlayers.size() == 0) {
+			// All players that have died but have not had their deaths recorded against the round have drawn.
+			for(Player player : this.getPlayers()) {
+				if(!this.getCurrentRound().getDeadPlayers().contains(player)) {
+					// Record this player as a drawing round winner.
+					this.getCurrentRound().addRoundWinner(player);
+				}
+			}
+			return true;
+		}
+		// Record player deaths against the current round.
+		for(Player player : this.getPlayers()) {
+			if(!player.isAlive() && !this.getCurrentRound().getDeadPlayers().contains(player)) {
+				this.getCurrentRound().recordPlayerDeath(player);
+			}
+		}
+		// No winners yet.
+		return false;
 	}
 
 	/**

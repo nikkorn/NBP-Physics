@@ -14,8 +14,10 @@ public class C {
 	public static final float MISC_POINTER_SIZE                   = 5f;
 	
 	// Stage
-	public static final int STAGE_DEFAULT_ROUND_COUNT             = 5;
+	public static final int STAGE_DEFAULT_ROUND_COUNT             = 3;
+	public static final int STAGE_DEFAULT_ROUND_INTRO_TIME        = 3;
 	public static final int STAGE_DEFAULT_ROUND_TIME              = 60;
+	public static final int STAGE_DEFAULT_ROUND_RESULT_TIME       = 3;
 	
 	// World
 	public static final float WORLD_GRAVITY                       = 0.09f;
