@@ -148,9 +148,6 @@ public class PlayerWeaponInventory {
 	 * @param activeWeaponType
 	 */
 	public void setActiveWeaponType(WeaponType activeWeaponType) {
-		if(activeWeaponType != this.activeWeaponType) {
-			System.out.println("Weapon Set To: " + activeWeaponType);
-		}
 		this.activeWeaponType = activeWeaponType;
 	}
 }

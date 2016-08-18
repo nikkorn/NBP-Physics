@@ -7,7 +7,12 @@ import com.dumbpug.main.gamedevicestesting.maps.SpawnPoint;
 import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.main.gamedevicestesting.player.PlayerWeaponInventory;
 import com.dumbpug.main.gamedevicestesting.round.Round;
-import com.dumbpug.main.gamedevicestesting.round.RoundCountdownType;
+import com.dumbpug.main.gamedevicestesting.stage.state.StatePendingExit;
+import com.dumbpug.main.gamedevicestesting.stage.state.StateResults;
+import com.dumbpug.main.gamedevicestesting.stage.state.StateRoundInProgress;
+import com.dumbpug.main.gamedevicestesting.stage.state.StateRoundStarting;
+import com.dumbpug.main.gamedevicestesting.stage.state.StateRoundTimeUp;
+import com.dumbpug.main.gamedevicestesting.stage.state.StateRoundWon;
 import com.dumbpug.main.gamedevicestesting.weapons.ClusterGrenade;
 import com.dumbpug.main.gamedevicestesting.weapons.Grenade;
 import com.dumbpug.main.gamedevicestesting.weapons.LaserMine;
@@ -28,7 +33,17 @@ public class Stage {
     private Map stageMap;
     private ArrayList<Player> players;
     private ArrayList<Round> rounds;
-	
+    
+    /**
+     * State handlers. State specific logic is handled by these to keep this class clean.
+     */
+    private StateRoundStarting stateRoundStarting;
+    private StateRoundInProgress stateRoundInProgress;
+    private StateRoundWon stateRoundWon;
+    private StateRoundTimeUp stateRoundTimeUp;
+    private StateResults stateResults;
+    private StatePendingExit statePendingExit;
+    
     /**
      * Initialise a new instance of the Stage class.
      * @param stageMap The map to be used for this stage.
@@ -47,6 +62,13 @@ public class Stage {
 		rounds.add(new Round());
 		// Set our initial stage state.
     	stageState = StageState.ROUND_STARTING;
+    	// Create our state handlers.
+    	stateRoundStarting   = new StateRoundStarting();
+        stateRoundInProgress = new StateRoundInProgress();
+        stateRoundWon        = new StateRoundWon();
+        stateRoundTimeUp     = new StateRoundTimeUp();
+        stateResults         = new StateResults();
+        statePendingExit     = new StatePendingExit();
 	}
 
 	/**
@@ -97,63 +119,33 @@ public class Stage {
 		// What we do in an update completely depends on the state of the stage.
 		switch(stageState) {
 		case ROUND_STARTING:
-			// Get the current round.
-			Round currentRound = this.getCurrentRound();
-			// Check to make sure that the count-down for this round has started.
-			// Start it if it has not already been started.
-			Countdown roundIntroCountdown = currentRound.getRoundCountdown(RoundCountdownType.INTRO);
-			if(!roundIntroCountdown.hasCountdownStarted()){
-				roundIntroCountdown.startCountdown();
-			}
-			// Update our physics world.
-			world.update();
-			// Get the count-down remainder. If 0 then the round should start!
-			int countdownRemainder = roundIntroCountdown.getCountdownInSeconds();
-			if(countdownRemainder == 0) {
-				// The game should now be in progress.
-				this.stageState = StageState.IN_PROGRESS;
-			}
+			stateRoundStarting.update(this);
 			break;
 		case IN_PROGRESS:
-			// Start the round count-down.
-			Countdown roundCountdown = this.getCurrentRound().getRoundCountdown(RoundCountdownType.IN_GAME);
-			if(!roundCountdown.hasCountdownStarted()){
-				roundCountdown.startCountdown();
-			}
-			// Update our physics world.
-			world.update();
-			// Process player input
-			for(Player player : this.getPlayers()) {
-				player.processInput(this);
-			}
-			// Check for whether the round has been won.
-			if(hasRoundBeenWon()) {
-				this.stageState = StageState.ROUND_WON;
-			}
-			// Check to see if the round timer is finished.
-			// Get the count-down remainder. If 0 then the round finished with no winners!
-			int roundCountdownRemainder = roundCountdown.getCountdownInSeconds();
-			if(roundCountdownRemainder == 0) {
-				// The game should now show that time ran out for this round.
-				this.stageState = StageState.ROUND_TIME_UP;
-			}
+			stateRoundInProgress.update(this);
 			break;
 		case ROUND_WON:
-			// TODO Show the winner.
-			// TODO Go to next round if there is one, or go to results.
+			stateRoundWon.update(this);
 			break;
 		case ROUND_TIME_UP:
-			// TODO Show that time is up.
-			// TODO Go to next round if there is one, or go to results.
+			stateRoundTimeUp.update(this);
 			break;
 		case PENDING_RESULTS:
-			// TODO Show the results.
+			stateResults.update(this);
 			break;
 		case PENDING_EXIT:
+			statePendingExit.update(this);
 			break;
 		default:
 			break;
 		}
+	}
+	
+	/**
+	 * Start the next round.
+	 */
+	public void startNextRound() {
+		// TODO Do it!!!!
 	}
 	
 	/**
@@ -186,45 +178,6 @@ public class Stage {
 			break;
 		}
 	}
-	
-	/**
-	 * Check whether this round has been one, also records player deaths against the current round.
-	 * @return hasRoundBeenWon
-	 */
-	private boolean hasRoundBeenWon() {
-		ArrayList<Player> winningPlayers = new ArrayList<Player>();
-		// Get the living players.
-		for(Player player : this.getPlayers()) {
-			if(player.isAlive()) {
-				winningPlayers.add(player);
-			}
-		}
-		// If there is one player alive then they are the winner or this round.
-		if(winningPlayers.size() == 1) {
-			// Record this last living player as the round winner.
-			this.getCurrentRound().addRoundWinner(winningPlayers.get(0));
-			return true;
-		}
-		// If there are no living players then we need to check the round deaths to see who drew.
-		if(winningPlayers.size() == 0) {
-			// All players that have died but have not had their deaths recorded against the round have drawn.
-			for(Player player : this.getPlayers()) {
-				if(!this.getCurrentRound().getDeadPlayers().contains(player)) {
-					// Record this player as a drawing round winner.
-					this.getCurrentRound().addRoundWinner(player);
-				}
-			}
-			return true;
-		}
-		// Record player deaths against the current round.
-		for(Player player : this.getPlayers()) {
-			if(!player.isAlive() && !this.getCurrentRound().getDeadPlayers().contains(player)) {
-				this.getCurrentRound().recordPlayerDeath(player);
-			}
-		}
-		// No winners yet.
-		return false;
-	}
 
 	/**
 	 * Get the stage settings.
@@ -240,6 +193,14 @@ public class Stage {
 	 */
 	public StageState getStageState() {
 		return stageState;
+	}
+	
+	/**
+	 * Set the state of the stage.
+	 * @param stage state.
+	 */
+	public void setStageState(StageState state) {
+		this.stageState = state;
 	}
 
 	/**
