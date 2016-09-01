@@ -145,7 +145,9 @@ public class Stage {
 	 * Start the next round.
 	 */
 	public void startNextRound() {
-		// TODO Do it!!!!
+		// TODO Add fresh round.
+		// TODO Reset EVERYTHING!.
+		// TODO Set stage state to be ROUND_STARTING.
 	}
 	
 	/**

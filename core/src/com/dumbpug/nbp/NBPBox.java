@@ -20,9 +20,6 @@ public abstract class NBPBox {
 	// The max velocity for this box
 	private float maxVelX = 50f;
 	private float maxVelY = 50f;
-	// Acceleration
-	private float accx;
-	private float accy;
 	// Size
 	private float width;
 	private float height;
@@ -92,10 +89,6 @@ public abstract class NBPBox {
 	public void updateAxisX() {
 		// If this box is static then do nothing!
 		if (this.type == NBPBoxType.KINETIC) {
-			// Reset our acceleration
-			this.accx = 0f;
-			// Apply Acceleration to Velocity
-			this.velx += accx;
 			// If the velocity is a super small number (between -0.0005 and 0.0005)
 			// just set it to zero to stop our boxes infinitely floating around.
 			if (velx > -0.0005 && velx < 0.0005) {
@@ -114,14 +107,10 @@ public abstract class NBPBox {
 	public void updateAxisY() {
 		// If this box is static then do nothing!
 		if (this.type == NBPBoxType.KINETIC) {
-			// Reset our acceleration
-			this.accy = 0f;
-			// Add our gravity to Y acceleration only if this box is affected by gravity.
+			// Add our gravity to Y velocity only if this box is affected by gravity.
 			if(this.isAffectedByGravity) {
-				this.accy -= wrappingWorld.getWorldGravity();
+				this.vely -= wrappingWorld.getWorldGravity();
 			}
-			// Apply Acceleration to Velocity
-			this.vely += accy;
 			// If the velocity is a super small number (between -0.0005 and 0.0005)
 			// just set it to zero to stop our boxes infinitely floating around.
 			if (vely > -0.0005 && vely < 0.0005) {
@@ -329,22 +318,6 @@ public abstract class NBPBox {
 	 */
 	public void setAffectedByGravity(boolean isAffectedByGravity) {
 		this.isAffectedByGravity = isAffectedByGravity;
-	}
-	
-	public float getAccx() {
-		return accx;
-	}
-
-	public void setAccx(float accx) {
-		this.accx = accx;
-	}
-
-	public float getAccy() {
-		return accy;
-	}
-
-	public void setAccy(float accy) {
-		this.accy = accy;
 	}
 
 	public float getVelx() {
