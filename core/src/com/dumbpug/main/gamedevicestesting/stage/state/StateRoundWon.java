@@ -1,5 +1,6 @@
 package com.dumbpug.main.gamedevicestesting.stage.state;
 
+import com.dumbpug.main.gamedevicestesting.player.Player;
 import com.dumbpug.main.gamedevicestesting.round.RoundCountdownType;
 import com.dumbpug.main.gamedevicestesting.stage.Countdown;
 import com.dumbpug.main.gamedevicestesting.stage.Stage;
@@ -15,10 +16,11 @@ public class StateRoundWon implements State {
 		// Start the count-down for the end of round results.
 		Countdown roundResultCountdown = stage.getCurrentRound().getRoundCountdown(RoundCountdownType.ROUND_RESULT);
 		if(!roundResultCountdown.hasCountdownStarted()){
+			// Update players of round results.
+			broadcastRoundResults(stage);
+			// Start the count-down until next round or end of stage.
 			roundResultCountdown.startCountdown();
 		}
-		// Update players of round results.
-		broadcastRoundResults(stage);
 		// Update our physics world.
 		stage.getStagePhysicsWorld().update();
 		// Get the count-down remainder. If 0 then we need to move on.
@@ -41,5 +43,10 @@ public class StateRoundWon implements State {
 	 */
 	private void broadcastRoundResults(Stage stage) {
 		// TODO Broadcast round results.
+		System.out.print("Round Winners! : ");
+		for(Player winner : stage.getCurrentRound().getRoundWinners()){
+			System.out.print(winner.getPlayerPhysicsBox().getName());
+		}
+		System.out.println();
 	}
 }

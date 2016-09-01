@@ -246,6 +246,14 @@ public class Player {
 	}
 	
 	/**
+	 * Revive this player.
+	 */
+	public void revivePlayer() {
+		this.setHealth(C.PLAYER_MAX_HEALTH);
+		this.isAlive = true;
+	}
+	
+	/**
 	 * Get this players physics box.
 	 * @return players physics box.
 	 */

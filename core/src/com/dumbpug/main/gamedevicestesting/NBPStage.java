@@ -85,7 +85,7 @@ public class NBPStage extends ApplicationAdapter {
         StageSettings settings = new StageSettings();
         settings.setSecondsPerRound(1000);
         settings.setSharedWeaponInventory(inventory);
-        settings.setNumberOfRounds(2);
+        settings.setNumberOfRounds(3);
         
         // Make our actual stage.
         stage = new Stage(stageMap, playersList, settings);

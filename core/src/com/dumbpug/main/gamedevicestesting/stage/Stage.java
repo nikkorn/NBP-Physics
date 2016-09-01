@@ -56,7 +56,7 @@ public class Stage {
 		this.stageSettings = settings;
 		// Set up our stage.
 		setupWorld();
-		setupPlayers();
+		setupPlayers(true);
 		// Add our initial round.
 		rounds = new ArrayList<Round>();
 		rounds.add(new Round());
@@ -83,8 +83,9 @@ public class Stage {
 	
 	/**
 	 * Setup the stages players.
+	 * @param isInitialSetup True if this is the first time we have set up our players.
 	 */
-	private void setupPlayers() {
+	private void setupPlayers(boolean isInitialSetup) {
 		// Get the spawn points from the map.
 		ArrayList<SpawnPoint> spawnPoints = stageMap.getPlayerSpawnPoints();
 		// Get the shared weapon inventory from the stage settings.
@@ -93,8 +94,14 @@ public class Stage {
 		for(int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
 			// Get the current player.
 			Player player = players.get(playerIndex);
-			// Firstly, we need to add the players physics box to the stage physics world.
-			world.addBox(player.getPlayerPhysicsBox());
+			// Firstly, we need to add the players physics box to the stage physics world...
+			if(isInitialSetup) {
+				// ... but only if this is the initial setup ...
+				world.addBox(player.getPlayerPhysicsBox());
+			} else {
+				// ... otherwise we can assume that our player may need reviving.
+				player.revivePlayer();
+			}
 			// Get a spawn point for this player.
 			SpawnPoint availableSpawnPoint = (playerIndex < spawnPoints.size()) ? spawnPoints.get(playerIndex): spawnPoints.get(0); 
 			player.moveToSpawnPoint(availableSpawnPoint);
@@ -145,9 +152,12 @@ public class Stage {
 	 * Start the next round.
 	 */
 	public void startNextRound() {
-		// TODO Add fresh round.
-		// TODO Reset EVERYTHING!.
-		// TODO Set stage state to be ROUND_STARTING.
+		// Add fresh round.
+		rounds.add(new Round());
+		// Reset our players.
+		setupPlayers(false);
+		// Set stage state to be ROUND_STARTING.
+		stageState = StageState.ROUND_STARTING;
 	}
 	
 	/**
