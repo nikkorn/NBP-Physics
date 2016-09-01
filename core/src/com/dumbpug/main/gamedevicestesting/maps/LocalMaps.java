@@ -35,7 +35,7 @@ public class LocalMaps {
 						Map localMap = new Map(mapJsonObject, mapDir.getName());
 						// Add the new map to our list of local maps.
 						localMaps.add(localMap);
-					} catch (FileNotFoundException | JSONException e) {
+					} catch (Exception e) {
 						// We somehow failed to create our map, try the next one.
 						System.out.println("Error: failed to create map: " + mapDir.getName());
 						continue;
