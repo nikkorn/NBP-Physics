@@ -16,8 +16,9 @@ public class C {
 	// Stage
 	public static final int STAGE_DEFAULT_ROUND_COUNT             = 3;
 	public static final int STAGE_DEFAULT_ROUND_INTRO_TIME        = 3;
-	public static final int STAGE_DEFAULT_ROUND_TIME              = 60;
+	public static final int STAGE_DEFAULT_ROUND_TIME              = 10;
 	public static final int STAGE_DEFAULT_ROUND_RESULT_TIME       = 3;
+	public static final int STAGE_DEFAULT_GAME_RESULT_TIME        = 5;
 	
 	// World
 	public static final float WORLD_GRAVITY                       = 0.09f;

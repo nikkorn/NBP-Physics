@@ -45,6 +45,11 @@ public class Stage {
     private StatePendingExit statePendingExit;
     
     /**
+     * Are we finished with this stage.
+     */
+    private boolean isStageFinished = false;
+    
+    /**
      * Initialise a new instance of the Stage class.
      * @param stageMap The map to be used for this stage.
      * @param players The list of participating players.
@@ -141,7 +146,11 @@ public class Stage {
 			stateResults.update(this);
 			break;
 		case PENDING_EXIT:
-			statePendingExit.update(this);
+			// Are we finished with this stage? 
+			if(!this.isStageFinished) {
+				statePendingExit.update(this);
+				this.isStageFinished = true;
+			}
 			break;
 		default:
 			break;
@@ -245,5 +254,13 @@ public class Stage {
 	 */
 	public Round getCurrentRound() {
 		return this.rounds.get(rounds.size() - 1);
+	}
+
+	/**
+	 * Is this stage finished with?
+	 * @return stage finished.
+	 */
+	public boolean isStageFinished() {
+		return isStageFinished;
 	}
 }

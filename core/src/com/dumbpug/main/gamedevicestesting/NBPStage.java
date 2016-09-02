@@ -109,8 +109,14 @@ public class NBPStage extends ApplicationAdapter {
  			}
  		}
  		
- 		// Update our stage.
- 		stage.update();
+ 		// Is this stage finished with? (game over)
+ 		if(stage.isStageFinished()) {
+ 			// Usually return to a lobby, but this will do
+ 			Gdx.app.exit();
+ 		} else {
+ 			// Update our stage.
+ 	 		stage.update();
+ 		}
         
         batch.begin();
         // Draw Grid
