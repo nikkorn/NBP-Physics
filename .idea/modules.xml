@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NBP-Physics.iml" filepath="$PROJECT_DIR$/NBP-Physics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NBP-Physics.iml" filepath="$PROJECT_DIR$/.idea/modules/NBP-Physics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NBP-Physics_main.iml" filepath="$PROJECT_DIR$/.idea/modules/NBP-Physics_main.iml" group="NBP-Physics" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NBP-Physics_test.iml" filepath="$PROJECT_DIR$/.idea/modules/NBP-Physics_test.iml" group="NBP-Physics" />
     </modules>
   </component>
 </project>

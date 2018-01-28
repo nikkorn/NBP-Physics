@@ -19,10 +19,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="core_main" target="1.6" />
-      <module name="core_test" target="1.6" />
-      <module name="desktop_main" target="1.6" />
-      <module name="desktop_test" target="1.6" />
+      <module name="NBP-Physics_main" target="1.8" />
+      <module name="NBP-Physics_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
