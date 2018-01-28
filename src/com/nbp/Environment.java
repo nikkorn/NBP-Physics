@@ -38,11 +38,11 @@ public class Environment {
      * @param gravity The environment gravity.
      */
     public Environment(Gravity gravity) {
-        boxEntities = new ArrayList<Box>();
+        boxEntities        = new ArrayList<Box>();
         pendingBoxEntities = new ArrayList<Box>();
-        bloomList = new ArrayList<Bloom>();
-        zoneList = new ArrayList<Zone>();
-        this.gravity = gravity;
+        bloomList          = new ArrayList<Bloom>();
+        zoneList           = new ArrayList<Zone>();
+        this.gravity       = gravity;
     }
 
     /**
@@ -109,7 +109,7 @@ public class Environment {
             }
             // Update this box on the Y axis.
             currentBox.updateAxisY(this.gravity);
-            // Resolve collisions on the X axis.
+            // Resolve collisions on the Y axis.
             if (currentBox.getType() == BoxType.KINETIC) {
                 // Get colliding boxes
                 for (Box targetBox : boxEntities) {
