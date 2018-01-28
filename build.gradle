@@ -1,2 +1,10 @@
 apply plugin: 'idea'
 apply plugin: 'java'
+
+jar {
+    from {
+        (configurations.runtime).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
