@@ -1,4 +1,4 @@
-package com.dumbpug.ohm.nbp;
+package com.nbp;
 
 import java.util.ArrayList;
 

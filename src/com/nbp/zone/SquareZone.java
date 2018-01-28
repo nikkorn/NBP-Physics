@@ -1,6 +1,8 @@
-package com.dumbpug.ohm.nbp.zone;
+package com.nbp.zone;
 
-import com.dumbpug.ohm.nbp.*;
+import com.nbp.Box;
+import com.nbp.Direction;
+import com.nbp.NBPMath;
 
 /**
  * Represents a square zone of force pushing in a specified direction.

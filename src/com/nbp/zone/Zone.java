@@ -1,7 +1,7 @@
-package com.dumbpug.ohm.nbp.zone;
+package com.nbp.zone;
 
-import com.dumbpug.ohm.nbp.Box;
-import com.dumbpug.ohm.nbp.point.Point;
+import com.nbp.Box;
+import com.nbp.point.Point;
 
 /**
  * Represents an area in a physics environment where a continuous force influences overlapping kinematic objects.

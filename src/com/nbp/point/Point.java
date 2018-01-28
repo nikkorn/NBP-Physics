@@ -1,4 +1,4 @@
-package com.dumbpug.ohm.nbp.point;
+package com.nbp.point;
 
 /**
  * Defines an x/y point in a physics world.

@@ -1,6 +1,6 @@
-package com.dumbpug.ohm.nbp;
+package com.nbp;
 
-import com.dumbpug.ohm.nbp.zone.Zone;
+import com.nbp.zone.Zone;
 import java.util.ArrayList;
 import java.util.Iterator;
 

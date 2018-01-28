@@ -1,4 +1,4 @@
-package com.dumbpug.ohm.nbp;
+package com.nbp;
 
 /**
  * The gravity applied to a physics world.

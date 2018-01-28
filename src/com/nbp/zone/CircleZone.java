@@ -1,7 +1,7 @@
-package com.dumbpug.ohm.nbp.zone;
+package com.nbp.zone;
 
-import com.dumbpug.ohm.nbp.Box;
-import com.dumbpug.ohm.nbp.NBPMath;
+import com.nbp.Box;
+import com.nbp.NBPMath;
 
 /**
  * Represents a circular zone of force pushing outwards from its origin.

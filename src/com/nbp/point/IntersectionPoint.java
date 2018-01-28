@@ -1,6 +1,6 @@
-package com.dumbpug.ohm.nbp.point;
+package com.nbp.point;
 
-import com.dumbpug.ohm.nbp.BoxEdge;
+import com.nbp.BoxEdge;
 
 /**
  * A point of intersection between a kinematic and static physics box.

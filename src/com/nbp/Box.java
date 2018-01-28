@@ -1,7 +1,7 @@
-package com.dumbpug.ohm.nbp;
+package com.nbp;
 
-import com.dumbpug.ohm.nbp.point.IntersectionPoint;
-import com.dumbpug.ohm.nbp.point.Point;
+import com.nbp.point.IntersectionPoint;
+import com.nbp.point.Point;
 import java.util.ArrayList;
 
 /**

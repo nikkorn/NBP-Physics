@@ -1,4 +1,4 @@
-package com.dumbpug.ohm.nbp;
+package com.nbp;
 
 /**
  * Defines an edge at which a kinematic box enters a static box.
