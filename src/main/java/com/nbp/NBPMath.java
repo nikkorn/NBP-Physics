@@ -120,14 +120,28 @@ public class NBPMath {
     }
 
     /**
-     * Get the angle between two points.
+     * Get the angle between two points as a 0-360 degree value.
+     * @param pointA The first point.
+     * @param pointB The second point.
+     * @param flipY Whether the Y axis is flipped.
+     * @param flipX Whether the X axis is flipped.
+     * @return The angle between the two points.
+     */
+    public static float getAngleBetweenPoints(Point pointA, Point pointB, boolean flipY, boolean flipX) {
+        float deltaY   = flipY ? pointA.getY() - pointB.getY() : pointB.getY() - pointA.getY();
+        float deltaX   = flipX ? pointA.getX() - pointB.getX() : pointB.getX() - pointA.getX();
+        double degrees = Math.toDegrees(Math.atan2(deltaY, deltaX));
+        degrees        = degrees < 0.0d ? degrees + 360.0d : degrees;
+        return (float) degrees;
+    }
+
+    /**
+     * Get the angle between two points as a 0-360 degree value.
      * @param pointA The first point.
      * @param pointB The second point.
      * @return The angle between the two points.
      */
     public static float getAngleBetweenPoints(Point pointA, Point pointB) {
-        float deltaY = pointB.getY() - pointA.getY();
-        float deltaX = pointB.getX() - pointA.getX();
-        return (float) (Math.atan2(deltaY, deltaX));
+        return getAngleBetweenPoints(pointA, pointB, false, false);
     }
 }

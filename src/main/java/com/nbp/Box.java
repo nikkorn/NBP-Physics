@@ -23,7 +23,7 @@ public abstract class Box {
     /**
      * The maximum velocity for this box.
      */
-    private float maxVelX, maxVelY = 50f;
+    private float maxVelX = 50f, maxVelY = 50f;
     /**
      * The size.
      */
@@ -165,13 +165,13 @@ public abstract class Box {
 
     /**
      * Apply change in velocity to this Box instance using an angle of direction and a force of velocity.
-     * @param angle The angle at which to apply the force.
+     * @param angle The angle at which to apply the force in degrees.
      * @param force The amount of force to apply.
      */
     public void applyVelocityInDirection(double angle, float force) {
-        float impulseX = -(float) (Math.cos(angle) * force);
-        float impulseY = -(float) (Math.sin(angle) * force);
-        this.applyImpulse(impulseX, impulseY);
+        double impulseX = Math.cos(Math.toRadians(angle)) * force;
+        double impulseY = Math.sin(Math.toRadians(angle)) * force;
+        this.applyImpulse((float) impulseX, (float) impulseY);
     }
 
     /**
