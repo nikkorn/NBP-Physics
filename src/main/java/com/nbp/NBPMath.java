@@ -66,15 +66,15 @@ public class NBPMath {
                         // Flip velocity
                         kineticBox.setVelX(-kineticBox.getVelX() * (kineticBox.getRestitution() + staticBox.getRestitution()));
                         // Notify boxes of collision.
-                        staticBox.onCollisonWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.LEFT));
-                        kineticBox.onCollisonWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.LEFT));
                     } else if (kineticBox.getVelX() < 0) {
                         kineticBox.setX(staticBox.getX() + staticBox.getWidth());
                         // Flip velocity
                         kineticBox.setVelX(-kineticBox.getVelX() * (kineticBox.getRestitution() + staticBox.getRestitution()));
                         // Notify boxes of collision.
-                        staticBox.onCollisonWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
-                        kineticBox.onCollisonWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
                     }
                     break;
                 case Y:
@@ -83,8 +83,8 @@ public class NBPMath {
                         // Flip velocity
                         kineticBox.setVelY(-kineticBox.getVelY() * (kineticBox.getRestitution() + staticBox.getRestitution()));
                         // Notify boxes of collision.
-                        staticBox.onCollisonWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
-                        kineticBox.onCollisonWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
+                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
+                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
                     } else if (kineticBox.getVelY() < 0) {
                         kineticBox.setY(staticBox.getY() + staticBox.getHeight());
                         // Flip velocity
@@ -92,8 +92,8 @@ public class NBPMath {
                         // Reduce X velocity based on friction.
                         kineticBox.setVelX(kineticBox.getVelX() * (kineticBox.getFriction() + staticBox.getFriction()));
                         // Notify boxes of collision.
-                        staticBox.onCollisonWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.TOP));
-                        kineticBox.onCollisonWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.TOP));
+                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.TOP));
+                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.TOP));
                     }
                     break;
             }
@@ -104,8 +104,8 @@ public class NBPMath {
             float midpointX = (secondBox.getX() + firstBox.getX()) / 2f;
             float midpointY = (secondBox.getY() + firstBox.getY()) / 2f;
             IntersectionPoint point = new IntersectionPoint(midpointX, midpointY, BoxEdge.NONE);
-            firstBox.onCollisonWithKineticBox(secondBox, point);
-            secondBox.onCollisonWithKineticBox(firstBox, point);
+            firstBox.onCollisionWithKineticBox(secondBox, point);
+            secondBox.onCollisionWithKineticBox(firstBox, point);
         }
     }
 

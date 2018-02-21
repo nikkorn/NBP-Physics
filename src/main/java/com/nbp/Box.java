@@ -68,6 +68,10 @@ public abstract class Box {
      * The list of sensors that are attached to this box.
      */
     private ArrayList<Sensor> attachedSensors;
+    /**
+     * The user data.
+     */
+    private Object userData = null;
 
     /**
      * Creates a new instance of the Box class.
@@ -306,6 +310,22 @@ public abstract class Box {
     }
 
     /**
+     * Get user data.
+     * @return The user data.
+     */
+    public Object getUserData() {
+        return userData;
+    }
+
+    /**
+     * Set the user data.
+     * @param userData The user data
+     */
+    public void setUserData(Object userData) {
+        this.userData = userData;
+    }
+
+    /**
      * Gets whether this box is affected by gravity.
      * @return Whether this box is affected by gravity.
      */
@@ -471,9 +491,9 @@ public abstract class Box {
         return lastOriginPoint;
     }
 
-    protected abstract void onCollisonWithKineticBox(Box collidingBox, IntersectionPoint kinematicBoxOriginAtCollision);
+    protected abstract void onCollisionWithKineticBox(Box collidingBox, IntersectionPoint kinematicBoxOriginAtCollision);
 
-    protected abstract void onCollisonWithStaticBox(Box collidingBox, IntersectionPoint originAtCollision);
+    protected abstract void onCollisionWithStaticBox(Box collidingBox, IntersectionPoint originAtCollision);
 
     protected abstract void onSensorEntry(Sensor sensor, Box enteredBox);
 
