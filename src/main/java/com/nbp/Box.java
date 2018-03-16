@@ -113,7 +113,7 @@ public abstract class Box {
      */
     public void updateAxisX(Gravity gravity) {
         // If this box is static then do nothing!
-        if (this.type == BoxType.KINETIC) {
+        if (this.type == BoxType.DYNAMIC) {
             // Add our gravity to X velocity only if this box is affected by gravity.
             if (this.isAffectedByGravity && gravity != null) {
                 switch (gravity.getDirection()) {
@@ -143,7 +143,7 @@ public abstract class Box {
      */
     public void updateAxisY(Gravity gravity) {
         // If this box is static then do nothing!
-        if (this.type == BoxType.KINETIC) {
+        if (this.type == BoxType.DYNAMIC) {
             // Add our gravity to Y velocity only if this box is affected by gravity.
             if (this.isAffectedByGravity && gravity != null) {
                 switch (gravity.getDirection()) {
@@ -491,7 +491,7 @@ public abstract class Box {
         return lastOriginPoint;
     }
 
-    protected abstract void onCollisionWithKineticBox(Box collidingBox, IntersectionPoint kinematicBoxOriginAtCollision);
+    protected abstract void onCollisionWithDynamicBox(Box collidingBox, IntersectionPoint dynamicBoxOriginAtCollision);
 
     protected abstract void onCollisionWithStaticBox(Box collidingBox, IntersectionPoint originAtCollision);
 

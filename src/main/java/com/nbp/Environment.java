@@ -72,8 +72,8 @@ public class Environment {
         for (Bloom bloom : bloomList) {
             // Go over all boxes.
             for (Box box : boxEntities) {
-                // Make sure this is a kinematic box.
-                if (box.getType() == BoxType.KINETIC) {
+                // Make sure this is a dynamic box.
+                if (box.getType() == BoxType.DYNAMIC) {
                     // Apply the bloom to this box
                     box.applyBloom(bloom);
                 }
@@ -85,8 +85,8 @@ public class Environment {
         for (Zone zone : zoneList) {
             // Go over all boxes.
             for (Box box : boxEntities) {
-                // Make sure this is a kinematic box and that it actually intersects the zone.
-                if ((box.getType() == BoxType.KINETIC) && zone.intersects(box)) {
+                // Make sure this is a dynamic box and that it actually intersects the zone.
+                if ((box.getType() == BoxType.DYNAMIC) && zone.intersects(box)) {
                     // Allow the zone of force to influence the intersecting box.
                     zone.influence(box);
                 }
@@ -98,7 +98,7 @@ public class Environment {
             // Update this box on the X axis.
             currentBox.updateAxisX(this.gravity);
             // Resolve collisions on the X axis.
-            if (currentBox.getType() == BoxType.KINETIC) {
+            if (currentBox.getType() == BoxType.DYNAMIC) {
                 // Get colliding boxes
                 for (Box targetBox : boxEntities) {
                     // Are these boxes different and do they collide?
@@ -110,7 +110,7 @@ public class Environment {
             // Update this box on the Y axis.
             currentBox.updateAxisY(this.gravity);
             // Resolve collisions on the Y axis.
-            if (currentBox.getType() == BoxType.KINETIC) {
+            if (currentBox.getType() == BoxType.DYNAMIC) {
                 // Get colliding boxes
                 for (Box targetBox : boxEntities) {
                     // Are these boxes different and do they collide?
@@ -139,7 +139,7 @@ public class Environment {
     }
 
     /**
-     * Add a Static/Kinematic box to the environment.
+     * Add a Static/Dynamic box to the environment.
      * @param box The box to add.
      */
     public void addBox(Box box) {
@@ -154,7 +154,7 @@ public class Environment {
     }
 
     /**
-     * Remove a Static/Kinematic box from the environment.
+     * Remove a Static/Dynamic box from the environment.
      * @param box The box to remove.
      */
     public void removeBox(Box box) {

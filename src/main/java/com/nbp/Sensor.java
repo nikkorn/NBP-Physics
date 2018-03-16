@@ -3,7 +3,7 @@ package com.nbp;
 import java.util.ArrayList;
 
 /**
- * A sensor which can be attached to kinematic and static physics boxes.
+ * A sensor which can be attached to dynamic and static physics boxes.
  */
 public class Sensor {
     /**

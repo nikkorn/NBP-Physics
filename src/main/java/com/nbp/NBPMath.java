@@ -52,60 +52,60 @@ public class NBPMath {
      * @param axis      The axis on which to handle this collision.
      */
     public static void handleCollision(Box firstBox, Box secondBox, CollisionAxis axis) {
-        // Are we dealing with a Kinetic/Static collision or a Kinetic/Kinetic one?
-        if ((firstBox.getType() == BoxType.KINETIC && secondBox.getType() == BoxType.STATIC) ||
-                (secondBox.getType() == BoxType.KINETIC && firstBox.getType() == BoxType.STATIC)) {
-            // Kinetic/Static collision, resolve it.
-            Box staticBox = (firstBox.getType() == BoxType.STATIC) ? firstBox : secondBox;
-            Box kineticBox = (firstBox.getType() == BoxType.KINETIC) ? firstBox : secondBox;
+        // Are we dealing with a Dynamic/Static collision or a Dynamic/Dynamic one?
+        if ((firstBox.getType() == BoxType.DYNAMIC && secondBox.getType() == BoxType.STATIC) ||
+                (secondBox.getType() == BoxType.DYNAMIC && firstBox.getType() == BoxType.STATIC)) {
+            // Dynamic/Static collision, resolve it.
+            Box staticBox  = (firstBox.getType() == BoxType.STATIC) ? firstBox : secondBox;
+            Box dynamicBox = (firstBox.getType() == BoxType.DYNAMIC) ? firstBox : secondBox;
             // Do our collision resolution based on the specified axis.
             switch (axis) {
                 case X:
-                    if (kineticBox.getVelX() > 0) {
-                        kineticBox.setX(staticBox.getX() - kineticBox.getWidth());
+                    if (dynamicBox.getVelX() > 0) {
+                        dynamicBox.setX(staticBox.getX() - dynamicBox.getWidth());
                         // Flip velocity
-                        kineticBox.setVelX(-kineticBox.getVelX() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+                        dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
                         // Notify boxes of collision.
-                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.LEFT));
-                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.LEFT));
-                    } else if (kineticBox.getVelX() < 0) {
-                        kineticBox.setX(staticBox.getX() + staticBox.getWidth());
+                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                    } else if (dynamicBox.getVelX() < 0) {
+                        dynamicBox.setX(staticBox.getX() + staticBox.getWidth());
                         // Flip velocity
-                        kineticBox.setVelX(-kineticBox.getVelX() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+                        dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
                         // Notify boxes of collision.
-                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
-                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
                     }
                     break;
                 case Y:
-                    if (kineticBox.getVelY() > 0) {
-                        kineticBox.setY(staticBox.getY() - kineticBox.getHeight());
+                    if (dynamicBox.getVelY() > 0) {
+                        dynamicBox.setY(staticBox.getY() - dynamicBox.getHeight());
                         // Flip velocity
-                        kineticBox.setVelY(-kineticBox.getVelY() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+                        dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
                         // Notify boxes of collision.
-                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
-                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
-                    } else if (kineticBox.getVelY() < 0) {
-                        kineticBox.setY(staticBox.getY() + staticBox.getHeight());
+                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
+                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
+                    } else if (dynamicBox.getVelY() < 0) {
+                        dynamicBox.setY(staticBox.getY() + staticBox.getHeight());
                         // Flip velocity
-                        kineticBox.setVelY(-kineticBox.getVelY() * (kineticBox.getRestitution() + staticBox.getRestitution()));
+                        dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
                         // Reduce X velocity based on friction.
-                        kineticBox.setVelX(kineticBox.getVelX() * (kineticBox.getFriction() + staticBox.getFriction()));
+                        dynamicBox.setVelX(dynamicBox.getVelX() * (dynamicBox.getFriction() + staticBox.getFriction()));
                         // Notify boxes of collision.
-                        staticBox.onCollisionWithKineticBox(kineticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.TOP));
-                        kineticBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(kineticBox.getCurrentOriginPoint(), BoxEdge.TOP));
+                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.TOP));
+                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.TOP));
                     }
                     break;
             }
-        } else if (secondBox.getType() == BoxType.KINETIC && firstBox.getType() == BoxType.KINETIC) {
-            // We have a Kinetic/Kinetic collision. We can't resolve this at the moment, so the best
+        } else if (secondBox.getType() == BoxType.DYNAMIC && firstBox.getType() == BoxType.DYNAMIC) {
+            // We have a Dynamic/Dynamic collision. We can't resolve this at the moment, so the best
             // we can do is notify each one of the collision. And while there is no actual intersection
             // we can pass an IntersectionPoint point which points to the mid-point between the entities.
             float midpointX = (secondBox.getX() + firstBox.getX()) / 2f;
             float midpointY = (secondBox.getY() + firstBox.getY()) / 2f;
             IntersectionPoint point = new IntersectionPoint(midpointX, midpointY, BoxEdge.NONE);
-            firstBox.onCollisionWithKineticBox(secondBox, point);
-            secondBox.onCollisionWithKineticBox(firstBox, point);
+            firstBox.onCollisionWithDynamicBox(secondBox, point);
+            secondBox.onCollisionWithDynamicBox(firstBox, point);
         }
     }
 

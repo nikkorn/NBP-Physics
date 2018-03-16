@@ -4,7 +4,7 @@ import com.nbp.Box;
 import com.nbp.point.Point;
 
 /**
- * Represents an area in a physics environment where a continuous force influences overlapping kinematic objects.
+ * Represents an area in a physics environment where a continuous force influences overlapping dynamic objects.
  */
 public abstract class Zone {
     /**
