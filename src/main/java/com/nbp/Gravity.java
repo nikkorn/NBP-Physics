@@ -9,9 +9,9 @@ public class Gravity {
      */
     private float force;
     /**
-     * The direction of gravity.
+     * The axis on which to apply gravity.
      */
-    private Direction direction;
+    private Axis axis;
     /**
      * Whether the gravity is enabled.
      */
@@ -19,12 +19,12 @@ public class Gravity {
 
     /**
      * Create a new instance of the Gravity class.
-     * @param direction The direction of gravity.
-     * @param force     The gravitational force to apply.
+     * @param axis   The axis on which gravity is applied.
+     * @param force  The gravitational force to apply.
      */
-    public Gravity(Direction direction, float force) {
-        this.direction = direction;
-        this.force     = force;
+    public Gravity(Axis axis, float force) {
+        this.axis  = axis;
+        this.force = force;
     }
 
     /**
@@ -44,19 +44,19 @@ public class Gravity {
     }
 
     /**
-     * Get the direction of gravity.
-     * @return The direction of gravity.
+     * Get the axis on which to apply gravity.
+     * @return The axis on which to apply gravity.
      */
-    public Direction getDirection() {
-        return this.direction;
+    public Axis getAxis() {
+        return this.axis;
     }
 
     /**
-     * Set the direction of gravity.
-     * @param direction The direction of gravity.
+     * Set the axis on which to apply gravity.
+     * @param axis The axis on which to apply gravity.
      */
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    public void setAxis(Axis axis) {
+        this.axis = axis;
     }
 
     /**

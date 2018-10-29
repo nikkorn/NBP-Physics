@@ -17,29 +17,49 @@ public class Sensor {
     /**
      * The sensor position.
      */
-    private float x, y;
+    private float x, y, z;
     /**
      * The sensor size.
      */
-    private float width, height;
+    private float width, height, depth;
+    /**
+     * The dimension of the sensor.
+     */
+    private Dimension dimension = Dimension.TWO_DIMENSIONS;
     /**
      * The list of intersecting boxes.
      */
     private ArrayList<Box> intersectingBoxes;
 
     /**
-     * Creates a new instance of the Sensor class.
+     * Creates a new instance of a 2D sensor.
      * @param x      The X position.
      * @param y      The Y position.
      * @param width  The width of the sensor.
      * @param height The height of the sensor.
      */
     public Sensor(float x, float y, float width, float height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this.x            = x;
+        this.y            = y;
+        this.width        = width;
+        this.height       = height;
         intersectingBoxes = new ArrayList<Box>();
+    }
+
+    /**
+     * Creates a new instance of a 3D sensor.
+     * @param x      The X position.
+     * @param y      The Y position.
+     * @param z      The Z position.
+     * @param width  The width of the sensor.
+     * @param height The height of the sensor.
+     * @param depth  The depth of the sensor.
+     */
+    public Sensor(float x, float y, float z, float width, float height, float depth) {
+        this(x, y, width, height);
+        this.z         = z;
+        this.depth     = depth;
+        this.dimension = Dimension.THREE_DIMENSIONS;
     }
 
     /**
@@ -90,79 +110,83 @@ public class Sensor {
      * Get all of the boxes that are currently intersecting with the sensor.
      * @return The boxes which are intersecting with the sensor.
      */
-    public ArrayList<Box> getIntersectingBoxes() {
-        return this.intersectingBoxes;
-    }
+    public ArrayList<Box> getIntersectingBoxes() { return this.intersectingBoxes; }
 
     /**
      * Set the box that this sensor is attached to.
      * @param parent The box that this sensor is attached to.
      */
-    public void setParent(Box parent) {
-        this.parent = parent;
-    }
+    public void setParent(Box parent) { this.parent = parent; }
 
     /**
      * Get the sensor name.
      * @return The sensor name.
      */
-    public String getName() {
-        return this.name;
-    }
+    public String getName() { return this.name; }
 
     /**
      * Set the sensor name.
      * @param name The sensor name.
      */
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
     /**
      * Get the x position.
      * @return The x position.
      */
-    public float getX() {
-        return x;
-    }
+    public float getX() { return x; }
 
     /**
      * Set the x position.
      * @param x The X position.
      */
-    public void setX(float x) {
-        this.x = x;
-    }
+    public void setX(float x) { this.x = x; }
 
     /**
      * Get the y position.
      * @return The y position.
      */
-    public float getY() {
-        return y;
-    }
+    public float getY() { return y; }
 
     /**
      * Set the y position.
      * @param y The Y position.
      */
-    public void setY(float y) {
-        this.y = y;
-    }
+    public void setY(float y) { this.y = y; }
+
+    /**
+     * Get the z position.
+     * @return The z position.
+     */
+    public float getZ() { return z; }
+
+    /**
+     * Set the z position.
+     * @param z The Z position.
+     */
+    public void setZ(float z) { this.z = z; }
 
     /**
      * Get the width of the sensor.
      * @return The width of the sensor.
      */
-    public float getWidth() {
-        return this.width;
-    }
+    public float getWidth() { return this.width; }
 
     /**
      * Get the height of the sensor.
      * @return the height of the sensor.
      */
-    public float getHeight() {
-        return this.height;
-    }
+    public float getHeight() { return this.height; }
+
+    /**
+     * Get the depth of the sensor.
+     * @return the depth of the sensor.
+     */
+    public float getDepth() { return this.depth; }
+
+    /**
+     * Get the dimension of this sensor.
+     * @return The dimension of this sensor.
+     */
+    public Dimension getDimension() { return this.dimension; }
 }

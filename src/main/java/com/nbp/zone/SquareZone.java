@@ -1,7 +1,6 @@
 package com.nbp.zone;
 
 import com.nbp.Box;
-import com.nbp.Direction;
 import com.nbp.NBPMath;
 
 /**

@@ -5,33 +5,37 @@ import com.nbp.point.Point;
 import java.util.ArrayList;
 
 /**
- * Represents a box in a physics environment.
+ * Represents either a 2D or 3D box in a physics environment.
  */
 public abstract class Box {
     /**
      * The position.
      */
-    private float x, y;
+    private float x, y, z;
     /**
      * The position of this box before the most recent position update.
      */
-    private float lastPosX, lastPosY;
+    private float lastPosX, lastPosY, lastPosZ;
     /**
      * The velocity.
      */
-    private float velX, velY;
+    private float velX, velY, velZ;
     /**
      * The maximum velocity for this box.
      */
-    private float maxVelX = 50f, maxVelY = 50f;
+    private float maxVelX = 50f, maxVelY = 50f, maxVelZ = 50f;
     /**
      * The size.
      */
-    private float width, height;
+    private float width, height, depth;
     /**
      * The type of this box, which defines its physics behaviour.
      */
     private BoxType type;
+    /**
+     * The dimension of the box.
+     */
+    private Dimension dimension = Dimension.TWO_DIMENSIONS;
     /**
      * The name of the box.
      */
@@ -74,7 +78,7 @@ public abstract class Box {
     private Object userData = null;
 
     /**
-     * Creates a new instance of the Box class.
+     * Creates a new instance of a 2D box.
      * @param x      The X position of the box.
      * @param y      The Y position of the box.
      * @param width  The width of the box.
@@ -90,13 +94,34 @@ public abstract class Box {
         this.width           = width;
         this.height          = height;
         this.type            = type;
-        this.originPoint     = new Point(x + (width / 2), y + (height / 2));
-        this.lastOriginPoint = new Point(lastPosX + (width / 2), y + (height / 2));
+        this.originPoint     = new Point(x + (width / 2f), y + (height / 2f));
+        this.lastOriginPoint = new Point(x + (width / 2f), y + (height / 2f));
         attachedSensors      = new ArrayList<Sensor>();
     }
 
     /**
-     * Apply an impulse to this box.
+     * Creates a new instance of a 3D box.
+     * @param x      The X position of the box.
+     * @param y      The Y position of the box.
+     * @param z      The Z position of the box.
+     * @param width  The width of the box.
+     * @param height The height of the box.
+     * @param depth  The depth of the box.
+     * @param type   The type of the box which defines its physics behaviour.
+     */
+    public Box(float x, float y, float z, float width, float height, float depth, BoxType type) {
+        this(x, y, width, height, type);
+        this.z               = z;
+        this.lastPosZ        = z;
+        this.depth           = depth;
+        this.type            = type;
+        this.originPoint     = new Point(x + (width / 2f), y + (height / 2f), z + (depth / 2f));
+        this.lastOriginPoint = new Point(x + (width / 2f), y + (height / 2f), z + (depth / 2f));
+        this.dimension       = Dimension.THREE_DIMENSIONS;
+    }
+
+    /**
+     * Apply an impulse to this box in 2D space.
      * @param x The amount of velocity to apply on the X axis.
      * @param y The amount of velocity to apply on the Y axis.
      */
@@ -108,63 +133,44 @@ public abstract class Box {
     }
 
     /**
-     * Do our physics update along the X axis.
-     * @param gravity The gravity to apply.
+     * Apply an impulse to this box in 3D space.
+     * @param x The amount of velocity to apply on the X axis.
+     * @param y The amount of velocity to apply on the Y axis.
+     * @param z The amount of velocity to apply on the Z axis.
      */
-    public void updateAxisX(Gravity gravity) {
-        // If this box is static then do nothing!
-        if (this.type == BoxType.DYNAMIC) {
-            // Add our gravity to X velocity only if this box is affected by gravity.
-            if (this.isAffectedByGravity && gravity != null) {
-                switch (gravity.getDirection()) {
-                    case RIGHT:
-                        this.velX += gravity.getForce();
-                        break;
-                    case LEFT:
-                        this.velX -= gravity.getForce();
-                        break;
-                }
-            }
-            // If the velocity is a super small number (between -0.0005 and 0.0005)
-            // just set it to zero to stop our boxes infinitely floating around.
-            if (velX > -0.0005 && velX < 0.0005) {
-                velX = 0f;
-            }
-            // Clamp our velocity to our max.
-            clampVelocity();
-            // Alter Position.
-            this.setX(this.x + velX);
-        }
+    public void applyImpulse(float x, float y, float z) {
+        this.velX += x;
+        this.velY += y;
+        this.velZ += z;
+        // Clamp our velocity to our max.
+        clampVelocity();
     }
 
     /**
-     * Do our physics update along the Y axis.
+     * Do our physics update along the specified axis.
+     * @param axis The axis to do the update on.
      * @param gravity The gravity to apply.
      */
-    public void updateAxisY(Gravity gravity) {
+    public void updateAxis(Axis axis, Gravity gravity) {
         // If this box is static then do nothing!
-        if (this.type == BoxType.DYNAMIC) {
-            // Add our gravity to Y velocity only if this box is affected by gravity.
-            if (this.isAffectedByGravity && gravity != null) {
-                switch (gravity.getDirection()) {
-                    case UP:
-                        this.velY += gravity.getForce();
-                        break;
-                    case DOWN:
-                        this.velY -= gravity.getForce();
-                        break;
-                }
-            }
-            // If the velocity is a super small number (between -0.0005 and 0.0005)
-            // just set it to zero to stop our boxes infinitely floating around.
-            if (velY > -0.0005 && velY < 0.0005) {
-                velY = 0f;
-            }
-            // Clamp our velocity to our max.
-            clampVelocity();
-            // Alter Position.
-            this.setY(this.y + velY);
+        if (this.type != BoxType.DYNAMIC) {
+            return;
         }
+        // Add our gravity to the axis velocity only if this box is affected by gravity.
+        if (this.isAffectedByGravity && gravity != null && gravity.getAxis() == axis) {
+            this.setVelocity(axis, this.getVelocity(axis) + gravity.getForce());
+        }
+        // Get the box's current velocity on this axis.
+        float currentVelocityOnAxis = this.getVelocity(axis);
+        // If the velocity is a super small number (between -0.0005 and 0.0005)
+        // just set it to zero to stop our boxes infinitely floating around.
+        if (currentVelocityOnAxis > -0.0005 && currentVelocityOnAxis < 0.0005) {
+            this.setVelocity(axis, 0f);
+        }
+        // Clamp our velocity to our max.
+        clampVelocity();
+        // Alter the box's position on the current axis.
+        this.setPosition(axis, this.getPosition(axis) + this.getVelocity(axis));
     }
 
     /**
@@ -206,7 +212,7 @@ public abstract class Box {
     }
 
     /**
-     * Clamp the velocity of this box so that it does not exceed its max.
+     * Clamp the velocity of this box on every axis so that it does not exceed its max for that axis.
      */
     private void clampVelocity() {
         // Clamp the velocity on the X axis.
@@ -221,21 +227,31 @@ public abstract class Box {
         } else if (velY > this.getMaxVelocityY()) {
             velY = this.getMaxVelocityY();
         }
+        // Clamp the velocity on the Z axis if this box is in 3D space.
+        if (this.dimension == Dimension.THREE_DIMENSIONS) {
+            if (velZ < -this.getMaxVelocityZ()) {
+                velZ = -this.getMaxVelocityZ();
+            } else if (velZ > this.getMaxVelocityZ()) {
+                velZ = this.getMaxVelocityZ();
+            }
+        }
     }
 
     /**
      * Get all attached sensors.
      * @return sensors The list of attached sensors.
      */
-    public ArrayList<Sensor> getAttachedSensors() {
-        return this.attachedSensors;
-    }
+    public ArrayList<Sensor> getAttachedSensors() { return this.attachedSensors; }
 
     /**
      * Attach a sensor.
      * @param sensor The sensor to attach.
      */
     public void attachSensor(Sensor sensor) {
+        // Any sensor attached to this box must match its dimension.
+        if (this.getDimension() != sensor.getDimension()) {
+            throw new RuntimeException("Cannot add sensor to box as dimensions do not match");
+        }
         // Do not bother if the sensor is already attached to this box.
         if (!attachedSensors.contains(sensor)) {
             attachedSensors.add(sensor);
@@ -252,6 +268,41 @@ public abstract class Box {
         // Make sure that this sensor is attached.
         if (attachedSensors.contains(sensor)) {
             attachedSensors.remove(sensor);
+        }
+    }
+
+    /**
+     * Get the position of the box on the specified axis.
+     * @param axis The axis for which to get the box position.
+     */
+    public float getPosition(Axis axis) {
+        switch (axis) {
+            case X:
+                return this.getX();
+            case Y:
+                return this.getY();
+            case Z:
+                return this.getZ();
+            default:
+                throw new RuntimeException("Invalid axis: " + axis);
+        }
+    }
+
+    /**
+     * Set the position of the box on the specified axis.
+     * @param axis The axis for which to set the box position.
+     * @param position The position of the box on the specified axis.
+     */
+    public void setPosition(Axis axis, float position) {
+        switch (axis) {
+            case X:
+                this.setX(position);
+            case Y:
+                this.setY(position);
+            case Z:
+                this.setZ(position);
+            default:
+                throw new RuntimeException("Invalid axis: " + axis);
         }
     }
 
@@ -279,16 +330,14 @@ public abstract class Box {
             }
         }
         this.lastPosX = x;
-        this.x = newX;
+        this.x        = newX;
     }
 
     /**
      * Get the Y position of this box.
      * @return The y position.
      */
-    public float getY() {
-        return y;
-    }
+    public float getY() { return y; }
 
     /**
      * Set the Y position of this box.
@@ -306,39 +355,67 @@ public abstract class Box {
             }
         }
         this.lastPosY = y;
-        this.y = newY;
+        this.y        = newY;
     }
 
     /**
-     * Get user data.
-     * @return The user data.
+     * Get the Z position of this box.
+     * @return The Z position.
      */
-    public Object getUserData() {
-        return userData;
+    public float getZ() { return z; }
+
+    /**
+     * Set the Z position of this box.
+     * @param newZ position
+     */
+    public void setZ(float newZ) {
+        // Move attached sensors along with this box.
+        if (newZ > this.z) {
+            for (Sensor sensor : this.attachedSensors) {
+                sensor.setZ(sensor.getZ() + (newZ - this.z));
+            }
+        } else if (newZ < this.z) {
+            for (Sensor sensor : this.attachedSensors) {
+                sensor.setZ(sensor.getZ() - (this.z - newZ));
+            }
+        }
+        this.lastPosZ = z;
+        this.z        = newZ;
     }
 
     /**
-     * Set the user data.
-     * @param userData The user data
+     * Get the velocity of the box on the specified axis.
+     * @param axis The axis for which to get the box velocity.
      */
-    public void setUserData(Object userData) {
-        this.userData = userData;
+    public float getVelocity(Axis axis) {
+        switch (axis) {
+            case X:
+                return this.getVelX();
+            case Y:
+                return this.getVelY();
+            case Z:
+                return this.getVelZ();
+            default:
+                throw new RuntimeException("Invalid axis: " + axis);
+        }
     }
 
     /**
-     * Gets whether this box is affected by gravity.
-     * @return Whether this box is affected by gravity.
+     * Set the velocity of the box on the specified axis.
+     * @param axis The axis for which to set the box velocity.
+     * @param velocity The velocity of the box on the specified axis.
      */
-    public boolean isAffectedByGravity() {
-        return isAffectedByGravity;
-    }
-
-    /**
-     * Sets whether this box is affected by gravity.
-     * @param isAffectedByGravity Whether this box is affected by gravity.
-     */
-    public void setAffectedByGravity(boolean isAffectedByGravity) {
-        this.isAffectedByGravity = isAffectedByGravity;
+    public void setVelocity(Axis axis, float velocity) {
+        switch (axis) {
+            case X:
+                this.setVelX(velocity);
+            case Y:
+                this.setVelY(velocity);
+            case Z:
+                this.setVelZ(velocity);
+            default:
+                throw new RuntimeException("Invalid axis: " + axis);
+        }
     }
 
     /**
@@ -374,6 +451,60 @@ public abstract class Box {
     }
 
     /**
+     * Get the current velocity of this box on the Z axis.
+     * @return The velocity on the Z axis.
+     */
+    public float getVelZ() {
+        return this.velZ;
+    }
+
+    /**
+     * Set the current velocity of this box on the Z axis.
+     * @param velZ The velocity on the Z axis.
+     */
+    public void setVelZ(float velZ) {
+        this.velZ = velZ;
+    }
+
+    /**
+     * Get the dimension of this box.
+     * @return The dimension of this box.
+     */
+    public Dimension getDimension() { return this.dimension; }
+
+    /**
+     * Get user data.
+     * @return The user data.
+     */
+    public Object getUserData() {
+        return userData;
+    }
+
+    /**
+     * Set the user data.
+     * @param userData The user data
+     */
+    public void setUserData(Object userData) {
+        this.userData = userData;
+    }
+
+    /**
+     * Gets whether this box is affected by gravity.
+     * @return Whether this box is affected by gravity.
+     */
+    public boolean isAffectedByGravity() {
+        return isAffectedByGravity;
+    }
+
+    /**
+     * Sets whether this box is affected by gravity.
+     * @param isAffectedByGravity Whether this box is affected by gravity.
+     */
+    public void setAffectedByGravity(boolean isAffectedByGravity) {
+        this.isAffectedByGravity = isAffectedByGravity;
+    }
+
+    /**
      * Get the width of this box.
      * @return The width of this box.
      */
@@ -387,6 +518,14 @@ public abstract class Box {
      */
     public float getHeight() {
         return this.height;
+    }
+
+    /**
+     * Get the depth of this box.
+     * @return The depth of this box.
+     */
+    public float getDepth() {
+        return this.depth;
     }
 
     public BoxType getType() {
@@ -407,6 +546,10 @@ public abstract class Box {
 
     public float getLastPosY() {
         return lastPosY;
+    }
+
+    public float getLastPosZ() {
+        return lastPosZ;
     }
 
     public boolean isMarkedForDeletion() {
@@ -439,6 +582,14 @@ public abstract class Box {
 
     public void setMaxVelocityY(float maxVelY) {
         this.maxVelY = maxVelY;
+    }
+
+    public float getMaxVelocityZ() {
+        return maxVelZ;
+    }
+
+    public void setMaxVelocityZ(float maxVelZ) {
+        this.maxVelZ = maxVelZ;
     }
 
     public float getFriction() {
@@ -476,8 +627,14 @@ public abstract class Box {
      * @return The current origin point of this box.
      */
     public Point getCurrentOriginPoint() {
+        // We will update the x/y axis for the origin point for 2D and 3D boxes.
         originPoint.setX(this.x + (width / 2));
         originPoint.setY(this.y + (height / 2));
+        // We will only update the z axis for the origin point for 3D boxes.
+        if (this.dimension == Dimension.THREE_DIMENSIONS) {
+            originPoint.setZ(this.z + (depth / 2));
+        }
+        // Return the up-to-date origin point.
         return originPoint;
     }
 
@@ -486,8 +643,14 @@ public abstract class Box {
      * @return The last origin point of this box.
      */
     public Point getLastOriginPoint() {
+        // We will update the x/y axis for the origin point for 2D and 3D boxes.
         lastOriginPoint.setX(this.lastPosX + (width / 2));
         lastOriginPoint.setY(this.lastPosY + (height / 2));
+        // We will only update the z axis for the origin point for 3D boxes.
+        if (this.dimension == Dimension.THREE_DIMENSIONS) {
+            lastOriginPoint.setZ(this.lastPosZ + (depth / 2));
+        }
+        // Return the last origin point.
         return lastOriginPoint;
     }
 
