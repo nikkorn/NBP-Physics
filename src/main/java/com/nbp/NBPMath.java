@@ -51,7 +51,7 @@ public class NBPMath {
      * @param secondBox The second box.
      * @param axis      The axis on which to handle this collision.
      */
-    public static void handleCollision(Box firstBox, Box secondBox, CollisionAxis axis) {
+    public static void handleCollision(Box firstBox, Box secondBox, Axis axis) {
         // Are we dealing with a Dynamic/Static collision or a Dynamic/Dynamic one?
         if ((firstBox.getType() == BoxType.DYNAMIC && secondBox.getType() == BoxType.STATIC) ||
                 (secondBox.getType() == BoxType.DYNAMIC && firstBox.getType() == BoxType.STATIC)) {
