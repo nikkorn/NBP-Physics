@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Represents a physics environment.
+ * Represents a 2D or 3D physics environment.
  */
 public class Environment {
     /**
@@ -61,6 +61,7 @@ public class Environment {
      * Update the box entities in this environment.
      */
     public void update() {
+        // Call any user-defined pre-update logic.
         this.onBeforeUpdate();
         // Mark the start of the physics step.
         inPhysicsStep = true;
@@ -101,35 +102,25 @@ public class Environment {
         }
         // Do collision detection and try to handle it.
         for (Box currentBox : boxes) {
+            // Call any user-defined box pre-update logic.
             currentBox.onBeforeUpdate();
-            // Update this box on the X axis.
-            currentBox.updateAxisX(this.gravity);
-            // Resolve collisions on the X axis.
+            // Only attempt to update positions and resolve collisions for dynamic boxes.
             if (currentBox.getType() == BoxType.DYNAMIC) {
-                // Get colliding boxes
-                for (Box targetBox : boxes) {
-                    // Are these boxes different and do they collide?
-                    if ((currentBox != targetBox) && NBPMath.doBoxesCollide(currentBox, targetBox)) {
-                        NBPMath.handleCollision(targetBox, currentBox, Axis.X);
-                    }
-                }
-            }
-            // Update this box on the Y axis.
-            currentBox.updateAxisY(this.gravity);
-            // Resolve collisions on the Y axis.
-            if (currentBox.getType() == BoxType.DYNAMIC) {
-                // Get colliding boxes
-                for (Box targetBox : boxes) {
-                    // Are these boxes different and do they collide?
-                    if ((currentBox != targetBox) && NBPMath.doBoxesCollide(currentBox, targetBox)) {
-                        NBPMath.handleCollision(targetBox, currentBox, Axis.Y);
-                    }
+                // Update the current box on the X axis.
+                updateBoxAxisAndHandleCollisions(currentBox, Axis.X);
+                // Update the current box on the Y axis.
+                updateBoxAxisAndHandleCollisions(currentBox, Axis.Y);
+                // Only update this box on the Z axis if this is a 3D environment.
+                if (this.dimension == Dimension.THREE_DIMENSIONS) {
+                    // Update the current box on the Z axis.
+                    updateBoxAxisAndHandleCollisions(currentBox, Axis.Z);
                 }
             }
             // Process the sensors attached to the current box.
             for (Sensor sensor : currentBox.getAttachedSensors()) {
                 sensor.reviewIntersections(boxes);
             }
+            // Call any user-defined box post-update logic.
             currentBox.onAfterUpdate();
         }
         // Mark the end of the physics step.
@@ -142,7 +133,31 @@ public class Environment {
             // Clear the pending list.
             pendingBoxes.clear();
         }
+        // Call any user-defined post-update logic.
         this.onAfterUpdate();
+    }
+
+    /**
+     * Update the specified box on a given axis and handle and resulting collisions.
+     * @param box The box to update.
+     * @param axis The axis on which to update the box.
+     */
+    private void updateBoxAxisAndHandleCollisions(Box box, Axis axis) {
+        // Get the position of the box on the specified axis.
+        float preUpdatePosition = box.getPosition(axis);
+        // Update this box on the specified axis.
+        box.updateAxis(axis, this.gravity);
+        // If the box did not move on the specified axis then there is no need to handle collisions.
+        if (box.getPosition(axis) == preUpdatePosition) {
+            return;
+        }
+        // Get any boxes that are colliding with this one.
+        for (Box targetBox : boxes) {
+            // Are these boxes different and do they collide?
+            if ((box != targetBox) && NBPMath.doBoxesCollide(box, targetBox)) {
+                NBPMath.handleCollision(targetBox, box, axis);
+            }
+        }
     }
 
     /**
