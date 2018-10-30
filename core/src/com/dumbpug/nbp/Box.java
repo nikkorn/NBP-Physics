@@ -1,8 +1,8 @@
-package nbp;
+package com.dumbpug.nbp;
 
 import java.util.ArrayList;
-import nbp.point.IntersectionPoint;
-import nbp.point.Point;
+import com.dumbpug.nbp.point.IntersectionPoint;
+import com.dumbpug.nbp.point.Point;
 
 /**
  * Represents either a 2D or 3D box in a physics environment.
@@ -297,10 +297,13 @@ public abstract class Box {
         switch (axis) {
             case X:
                 this.setX(position);
+                break;
             case Y:
                 this.setY(position);
+                break;
             case Z:
                 this.setZ(position);
+                break;
             default:
                 throw new RuntimeException("Invalid axis: " + axis);
         }
@@ -409,10 +412,13 @@ public abstract class Box {
         switch (axis) {
             case X:
                 this.setVelX(velocity);
+                break;
             case Y:
                 this.setVelY(velocity);
+                break;
             case Z:
                 this.setVelZ(velocity);
+                break;
             default:
                 throw new RuntimeException("Invalid axis: " + axis);
         }

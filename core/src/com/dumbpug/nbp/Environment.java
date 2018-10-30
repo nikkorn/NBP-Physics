@@ -1,9 +1,8 @@
-package nbp;
+package com.dumbpug.nbp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import nbp.zone.Zone;
+import com.dumbpug.nbp.zone.Zone;
 
 /**
  * Represents a 2D or 3D physics environment.

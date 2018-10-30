@@ -1,6 +1,6 @@
-package nbp.point;
+package com.dumbpug.nbp.point;
 
-import nbp.Dimension;
+import com.dumbpug.nbp.Dimension;
 
 /**
  * Defines an x/y point in a physics world.

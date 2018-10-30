@@ -1,4 +1,4 @@
-package nbp;
+package com.dumbpug.nbp;
 
 /**
  * The type of physics box, defining its characteristics.

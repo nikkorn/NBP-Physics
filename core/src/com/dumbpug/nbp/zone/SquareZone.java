@@ -1,7 +1,7 @@
-package nbp.zone;
+package com.dumbpug.nbp.zone;
 
-import nbp.Axis;
-import nbp.Box;
+import com.dumbpug.nbp.Axis;
+import com.dumbpug.nbp.Box;
 
 /**
  * Represents a square zone of force pushing in a specified direction.

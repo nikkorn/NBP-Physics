@@ -1,7 +1,7 @@
-package nbp;
+package com.dumbpug.nbp;
 
-import nbp.point.IntersectionPoint;
-import nbp.point.Point;
+import com.dumbpug.nbp.point.IntersectionPoint;
+import com.dumbpug.nbp.point.Point;
 
 /**
  * Helper class for basic box collision detection and resolution.

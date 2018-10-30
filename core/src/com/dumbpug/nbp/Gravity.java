@@ -1,4 +1,4 @@
-package nbp;
+package com.dumbpug.nbp;
 
 /**
  * The gravity applied to a physics world.

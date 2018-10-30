@@ -1,4 +1,4 @@
-package nbp;
+package com.dumbpug.nbp;
 
 /**
  * Represents a force bloom, place it anywhere in the physics world to create a force explosion.
