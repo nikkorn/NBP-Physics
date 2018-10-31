@@ -1,4 +1,4 @@
-package com.dumbpug.nbp.harness.launchers;
+package com.dumbpug.harness.launchers;
 
 import java.util.ArrayList;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -7,13 +7,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.dumbpug.harness.Basic2DBox;
 import com.dumbpug.nbp.Axis;
 import com.dumbpug.nbp.Box;
 import com.dumbpug.nbp.BoxType;
 import com.dumbpug.nbp.Dimension;
 import com.dumbpug.nbp.Environment;
 import com.dumbpug.nbp.Gravity;
-import com.dumbpug.nbp.harness.Basic2DBox;
 
 /**
  * A simple launcher displaying a bouncing dynamic 2D box on a static one.

@@ -3,8 +3,8 @@ package com.dumbpug.nbp.desktop;
 import java.util.Scanner;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.dumbpug.nbp.harness.launchers.Cluster2DLauncher;
-import com.dumbpug.nbp.harness.launchers.Simple2DLauncher;
+import com.dumbpug.harness.launchers.Cluster2DLauncher;
+import com.dumbpug.harness.launchers.Simple2DLauncher;
 
 /**
  * The desktop launcher.

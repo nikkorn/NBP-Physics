@@ -1,4 +1,4 @@
-package com.dumbpug.nbp.harness;
+package com.dumbpug.harness;
 
 import com.dumbpug.nbp.Bloom;
 import com.dumbpug.nbp.Box;
