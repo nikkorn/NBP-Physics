@@ -51,11 +51,7 @@ public abstract class Box {
     /**
      * The point of origin.
      */
-    private Point originPoint;
-    /**
-     * The point of origin of this box before the most recent position update.
-     */
-    private Point lastOriginPoint;
+    private Point origin = null;
     /**
      * Defines whether this box should be removed from the environment at the end of the next physics step.
      */
@@ -86,17 +82,13 @@ public abstract class Box {
      * @param type   The type of the box which defines its physics behaviour.
      */
     public Box(float x, float y, float width, float height, BoxType type) {
-        this.name            = null;
-        this.x               = x;
-        this.y               = y;
-        this.lastPosX        = x;
-        this.lastPosY        = y;
-        this.width           = width;
-        this.height          = height;
-        this.type            = type;
-        this.originPoint     = new Point(x + (width / 2f), y + (height / 2f));
-        this.lastOriginPoint = new Point(x + (width / 2f), y + (height / 2f));
-        attachedSensors      = new ArrayList<Sensor>();
+        this.name       = null;
+        this.x          = x;
+        this.y          = y;
+        this.width      = width;
+        this.height     = height;
+        this.type       = type;
+        attachedSensors = new ArrayList<Sensor>();
     }
 
     /**
@@ -111,13 +103,10 @@ public abstract class Box {
      */
     public Box(float x, float y, float z, float width, float height, float depth, BoxType type) {
         this(x, y, width, height, type);
-        this.z               = z;
-        this.lastPosZ        = z;
-        this.depth           = depth;
-        this.type            = type;
-        this.originPoint     = new Point(x + (width / 2f), y + (height / 2f), z + (depth / 2f));
-        this.lastOriginPoint = new Point(x + (width / 2f), y + (height / 2f), z + (depth / 2f));
-        this.dimension       = Dimension.THREE_DIMENSIONS;
+        this.z         = z;
+        this.depth     = depth;
+        this.type      = type;
+        this.dimension = Dimension.THREE_DIMENSIONS;
     }
 
     /**
@@ -145,17 +134,32 @@ public abstract class Box {
         // Clamp our velocity to our max.
         clampVelocity();
     }
+    
+    /**
+     * Do our physics update along every axis relevant for the box dimension.
+     * @param gravity The gravity to apply.
+     */
+    public void update(Gravity gravity) {
+        // If this box is static then do nothing!
+        if (this.type != BoxType.DYNAMIC) {
+            return;
+        }
+        // Update this box on the x,y and potentially z axis.
+        this.updateOnAxis(Axis.X, gravity);
+        this.updateOnAxis(Axis.Y, gravity);
+        if (this.dimension == Dimension.THREE_DIMENSIONS) {
+        	this.updateOnAxis(Axis.Z, gravity);
+        }
+        // Clamp our velocity to our max.
+        clampVelocity();
+    }
 
     /**
      * Do our physics update along the specified axis.
      * @param axis The axis to do the update on.
      * @param gravity The gravity to apply.
      */
-    public void updateAxis(Axis axis, Gravity gravity) {
-        // If this box is static then do nothing!
-        if (this.type != BoxType.DYNAMIC) {
-            return;
-        }
+    private void updateOnAxis(Axis axis, Gravity gravity) {
         // Add our gravity to the axis velocity only if this box is affected by gravity.
         if (this.isAffectedByGravity && gravity != null && gravity.getAxis() == axis) {
             this.setVelocity(axis, this.getVelocity(axis) + gravity.getForce());
@@ -191,12 +195,14 @@ public abstract class Box {
     public void applyBloom(Bloom bloom) {
         // Get the point of the bloom as a Point object.
         Point bloomPoint = new Point(bloom.getX(), bloom.getY());
+        // Get the origin of this box.
+        Point origin = this.getOrigin();
         // Get the distance between the bloom and this box.
-        float distance = NBPMath.getDistanceBetweenPoints(bloomPoint, getCurrentOriginPoint());
+        float distance = NBPMath.getDistanceBetweenPoints(bloomPoint, origin);
         // Check to see if the box is even in the range of the bloom.
         if (distance <= bloom.getRadius()) {
             // Our box was in the bloom, get angle difference between our bloom and the current box.
-            float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(getCurrentOriginPoint(), bloomPoint);
+            float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(origin, bloomPoint);
             // Recalculate force based on the distance between our box and bloom. Avoid a divide by zero.
             float force;
             if (distance == 0) {
@@ -632,33 +638,31 @@ public abstract class Box {
      * Get the current origin point of this box.
      * @return The current origin point of this box.
      */
-    public Point getCurrentOriginPoint() {
-        // We will update the x/y axis for the origin point for 2D and 3D boxes.
-        originPoint.setX(this.x + (width / 2));
-        originPoint.setY(this.y + (height / 2));
-        // We will only update the z axis for the origin point for 3D boxes.
-        if (this.dimension == Dimension.THREE_DIMENSIONS) {
-            originPoint.setZ(this.z + (depth / 2));
-        }
-        // Return the up-to-date origin point.
-        return originPoint;
+    public Point getOrigin() {
+    	// Create or update the box origin.
+    	if (this.origin == null) {
+    		// Are we creating a 2D or 3D point?
+    		if (this.dimension == Dimension.THREE_DIMENSIONS) {
+    			// The origin is a point in 3D space.
+    			this.origin = new Point(this.getX(), this.getY(), this.getZ());
+    		} else {
+    			// The origin is a point in 2D space.
+    			this.origin = new Point(this.getX(), this.getY());
+    		}
+    	} else {
+    		// We already have an origin, update and return it.
+    		origin.setX(this.getX());
+    		origin.setY(this.getY());
+    		// If this is a 3D box then we need ot set the Z value too.
+    		if (this.dimension == Dimension.THREE_DIMENSIONS) {
+    			origin.setZ(this.getZ());
+    		}
+    	}
+        // Return the up-to-date origin.
+        return origin;
     }
 
-    /**
-     * Get the last origin point of this box.
-     * @return The last origin point of this box.
-     */
-    public Point getLastOriginPoint() {
-        // We will update the x/y axis for the origin point for 2D and 3D boxes.
-        lastOriginPoint.setX(this.lastPosX + (width / 2));
-        lastOriginPoint.setY(this.lastPosY + (height / 2));
-        // We will only update the z axis for the origin point for 3D boxes.
-        if (this.dimension == Dimension.THREE_DIMENSIONS) {
-            lastOriginPoint.setZ(this.lastPosZ + (depth / 2));
-        }
-        // Return the last origin point.
-        return lastOriginPoint;
-    }
+   
 
     protected abstract void onCollisionWithDynamicBox(Box collidingBox, IntersectionPoint dynamicBoxOriginAtCollision);
 

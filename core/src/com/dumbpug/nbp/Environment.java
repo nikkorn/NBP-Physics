@@ -2,6 +2,8 @@ package com.dumbpug.nbp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import com.dumbpug.nbp.point.Point;
 import com.dumbpug.nbp.zone.Zone;
 
 /**
@@ -106,15 +108,8 @@ public class Environment {
             currentBox.onBeforeUpdate();
             // Only attempt to update positions and resolve collisions for dynamic boxes.
             if (currentBox.getType() == BoxType.DYNAMIC) {
-                // Update the current box on the X axis.
-                updateBoxAxisAndHandleCollisions(currentBox, Axis.X);
-                // Update the current box on the Y axis.
-                updateBoxAxisAndHandleCollisions(currentBox, Axis.Y);
-                // Only update this box on the Z axis if this is a 3D environment.
-                if (this.dimension == Dimension.THREE_DIMENSIONS) {
-                    // Update the current box on the Z axis.
-                    updateBoxAxisAndHandleCollisions(currentBox, Axis.Z);
-                }
+                // Update the current box.
+            	updateDynamicBox(currentBox);
             }
             // Process the sensors attached to the current box.
             for (Sensor sensor : currentBox.getAttachedSensors()) {
@@ -136,30 +131,42 @@ public class Environment {
         // Call any user-defined post-update logic.
         this.onAfterUpdate();
     }
-
+    
     /**
-     * Update the specified box on a given axis and handle and resulting collisions.
-     * @param box The box to update.
-     * @param axis The axis on which to update the box.
+     * Update the specified box on every axis and handle and resulting collisions.
+     * @param current The dynamic box to update.
      */
-    private void updateBoxAxisAndHandleCollisions(Box box, Axis axis) {
-        // Get the position of the box on the specified axis.
-        float preUpdatePosition = box.getPosition(axis);
-        // Update this box on the specified axis.
-        box.updateAxis(axis, this.gravity);
-        // If the box did not move on the specified axis then there is no need to handle collisions.
-        if (box.getPosition(axis) == preUpdatePosition) {
-            return;
-        }
-        // Get any boxes that are colliding with this one.
-        for (Box targetBox : boxes) {
-            // Are these boxes different and do they collide?
-            if ((box != targetBox) && NBPMath.doBoxesCollide(box, targetBox)) {
-                NBPMath.handleCollision(targetBox, box, axis);
-            }
-        }
+    private void updateDynamicBox(Box current) {
+    	// Get the current x/y/z positions of the origin of the box.
+    	Point origin           = current.getOrigin();
+    	float preUpdateOriginX = origin.getX();
+    	float preUpdateOriginY = origin.getY();
+    	float preUpdateOriginZ = origin.getZ();
+    	
+    	// Update the current dynamic box.
+    	current.update(this.gravity);
+    	
+    	// Create a list to store all static boxes that intersect the current box.
+    	ArrayList<Box> collidingBoxes = new ArrayList<Box>();
+    	
+    	// Get all static blocks that are colliding with the box.
+    	for (Box box : this.boxes) {
+    		// If this is another dynamic box then do nothing.
+    		if (box.getType() == BoxType.DYNAMIC) {
+    			continue;
+    		}
+    		// This is a static box, is it intersecting the box we are updating?
+    		if (NBPMath.doBoxesCollide(current, box)) {
+    			collidingBoxes.add(box);
+    		}
+    	}
+    	
+    	// TODO Sort the list by which one happened first.
+    	
+    	// TODO Do sweep AABB test for first, and for all others IF they are still colliding.
+    	// Check out http://noonat.github.io/intersect/
     }
-
+ 
     /**
      * Add a Static/Dynamic box to the environment.
      * @param box The box to add.
