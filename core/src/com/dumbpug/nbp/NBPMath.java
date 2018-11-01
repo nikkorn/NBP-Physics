@@ -113,6 +113,27 @@ public class NBPMath {
             secondBox.onCollisionWithDynamicBox(firstBox, point);
         }
     }
+    
+    /**
+     * Finds the closest point of intersection between a dynamic and static box.
+     * @param preUpdateDynamicOrigin The origin of the dynamic box before intersection.
+     * @param dynamicBox The dynamic box.
+     * @param staticBox The static box.
+     * @return The closest point of intersection between a dynamic and static box.
+     */
+    public IntersectionPoint getClosestIntersectionPoint(Point preUpdateDynamicOrigin, Box dynamicBox, Box staticBox) {
+    	// Firstly, we need to get the Minkowski sum of the static box.
+    	// Find the position of the sum.
+		float x = staticBox.getX() - (dynamicBox.getWidth() / 2f);
+		float y = staticBox.getY() - (dynamicBox.getHeight() / 2f);
+		// Get the width/height of the sum.
+		float height = staticBox.getHeight() + dynamicBox.getHeight();
+		float width  = staticBox.getWidth() + dynamicBox.getWidth();
+    	
+    	// ... 
+    	
+    	return null;
+    }
 
     /**
      * Get the distance between two points.
@@ -148,5 +169,20 @@ public class NBPMath {
      */
     public static float getAngleBetweenPoints(Point pointA, Point pointB) {
         return getAngleBetweenPoints(pointA, pointB, false, false);
+    }
+    
+    /**
+     * Get the point of intersection between two lines, or null if no intersection exists.
+     * @param a1
+     * @param a2
+     * @param b1
+     * @param b2
+     * @return The point of intersection between two lines, or null if no intersection exists.
+     */
+    private static Point getLineVsLineIntersection(Point a1, Point a2, Point b1, Point b2) {
+    	
+    	// ...
+    	
+    	return null;
     }
 }

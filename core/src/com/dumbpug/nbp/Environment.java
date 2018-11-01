@@ -138,10 +138,7 @@ public class Environment {
      */
     private void updateDynamicBox(Box current) {
     	// Get the current x/y/z positions of the origin of the box.
-    	Point origin           = current.getOrigin();
-    	float preUpdateOriginX = origin.getX();
-    	float preUpdateOriginY = origin.getY();
-    	float preUpdateOriginZ = origin.getZ();
+    	Point preUpdateOrigin = current.getOrigin().clone();
     	
     	// Update the current dynamic box.
     	current.update(this.gravity);

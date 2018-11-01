@@ -43,7 +43,7 @@ public class CircleZone extends Zone {
     @Override
     public boolean intersects(Box box) {
         // Get the distance between the position of this zone (its centre) and the origin of the specified box.
-        float distance = NBPMath.getDistanceBetweenPoints(this.getPosition(), box.getCurrentOriginPoint());
+        float distance = NBPMath.getDistanceBetweenPoints(this.getPosition(), box.getOrigin());
         // Return whether the box is even in the range of this zone.
         return distance <= this.getRadius();
     }
@@ -51,7 +51,7 @@ public class CircleZone extends Zone {
     @Override
     public void influence(Box box) {
         // Get the angle of difference between our zone position and the intersecting box.
-        float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(box.getCurrentOriginPoint(), this.getPosition());
+        float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(box.getOrigin(), this.getPosition());
         // Apply the force of the zone to the intersecting box at the angle of difference.
         box.applyVelocityInDirection(angleBetweenBloomAndBox, this.getForce());
     }

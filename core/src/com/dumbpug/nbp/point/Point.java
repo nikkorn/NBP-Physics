@@ -80,4 +80,16 @@ public class Point {
      * @return The dimension of this point.
      */
     public Dimension getDimension() { return this.dimension; }
+    
+    /**
+     * Get a clone of this point.
+     * @return A clone of this point. 
+     */
+    public Point clone() {
+    	if (this.dimension == Dimension.THREE_DIMENSIONS) {
+    		return new Point(this.x, this.y, this.z);
+    	} else {
+    		return new Point(this.x, this.y);
+    	}
+    }
 }
