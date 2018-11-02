@@ -2,7 +2,7 @@ package com.dumbpug.nbp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import com.dumbpug.nbp.point.IntersectionPoint;
 import com.dumbpug.nbp.point.Point;
 import com.dumbpug.nbp.zone.Zone;
 
@@ -158,10 +158,24 @@ public class Environment {
     		}
     	}
     	
+    	// There is nothing more to do if we are not colliding with any static boxes.
+    	if (collidingBoxes.isEmpty()) {
+    		return;
+    	}
+    	
     	// TODO Sort the list by which one happened first.
     	
     	// TODO Do sweep AABB test for first, and for all others IF they are still colliding.
     	// Check out http://noonat.github.io/intersect/
+    	
+    	// TODO We can easily be intersecting multiple static boxes!!!!!!
+    	Box colliding = collidingBoxes.get(0);
+    	
+    	// TODO We would have already gotten the closest collision point for this box in choosing which collision to resolve first.
+    	IntersectionPoint closestIntersection = NBPMath.getClosestIntersectionPoint(preUpdateOrigin, current, colliding);
+    	
+    	// TODO Do this properly!
+    	NBPMath.resolveDynamicAndStaticBoxCollision(closestIntersection, current, colliding);
     }
  
     /**

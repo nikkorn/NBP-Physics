@@ -662,8 +662,6 @@ public abstract class Box {
         return origin;
     }
 
-   
-
     protected abstract void onCollisionWithDynamicBox(Box collidingBox, IntersectionPoint dynamicBoxOriginAtCollision);
 
     protected abstract void onCollisionWithStaticBox(Box collidingBox, IntersectionPoint originAtCollision);

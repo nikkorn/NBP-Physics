@@ -1,5 +1,6 @@
 package com.dumbpug.nbp;
 
+import java.util.ArrayList;
 import com.dumbpug.nbp.point.IntersectionPoint;
 import com.dumbpug.nbp.point.Point;
 
@@ -44,75 +45,6 @@ public class NBPMath {
                                              float bX, float bY, float bWidth, float bHeight) {
         return (aX < (bX + bWidth) && (aX + aWidth) > bX && aY < (bY + bHeight) && (aY + aHeight) > bY);
     }
-
-    /**
-     * Handles a collision between two boxes on an axis.
-     * @param firstBox  The first box.
-     * @param secondBox The second box.
-     * @param axis      The axis on which to handle this collision.
-     */
-    public static void handleCollision(Box firstBox, Box secondBox, Axis axis) {
-        // Are we dealing with a Dynamic/Static collision or a Dynamic/Dynamic one?
-        if ((firstBox.getType() == BoxType.DYNAMIC && secondBox.getType() == BoxType.STATIC) ||
-                (secondBox.getType() == BoxType.DYNAMIC && firstBox.getType() == BoxType.STATIC)) {
-            // Dynamic/Static collision, resolve it.
-            Box staticBox  = (firstBox.getType() == BoxType.STATIC) ? firstBox : secondBox;
-            Box dynamicBox = (firstBox.getType() == BoxType.DYNAMIC) ? firstBox : secondBox;
-            // Do our collision resolution based on the specified axis.
-            switch (axis) {
-                case X:
-                    if (dynamicBox.getVelX() > 0) {
-                        dynamicBox.setX(staticBox.getX() - dynamicBox.getWidth());
-                        // Flip velocity
-                        dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
-                        // Notify boxes of collision.
-                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
-                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
-                    } else if (dynamicBox.getVelX() < 0) {
-                        dynamicBox.setX(staticBox.getX() + staticBox.getWidth());
-                        // Flip velocity
-                        dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
-                        // Notify boxes of collision.
-                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
-                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
-                    }
-                    break;
-                case Y:
-                    if (dynamicBox.getVelY() > 0) {
-                        dynamicBox.setY(staticBox.getY() - dynamicBox.getHeight());
-                        // Flip velocity
-                        dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
-                        // Notify boxes of collision.
-                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
-                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
-                    } else if (dynamicBox.getVelY() < 0) {
-                        dynamicBox.setY(staticBox.getY() + staticBox.getHeight());
-                        // Flip velocity
-                        dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
-                        // Reduce X velocity based on friction.
-                        dynamicBox.setVelX(dynamicBox.getVelX() * (dynamicBox.getFriction() + staticBox.getFriction()));
-                        // Notify boxes of collision.
-                        staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.TOP));
-                        dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.TOP));
-                    }
-                    break;
-				case Z:
-					// TODO ...
-					break;
-				default:
-					throw new RuntimeException("Invalid Axis: " + axis);
-            }
-        } else if (secondBox.getType() == BoxType.DYNAMIC && firstBox.getType() == BoxType.DYNAMIC) {
-            // We have a Dynamic/Dynamic collision. We can't resolve this at the moment, so the best
-            // we can do is notify each one of the collision. And while there is no actual intersection
-            // we can pass an IntersectionPoint point which points to the mid-point between the entities.
-            float midpointX = (secondBox.getX() + firstBox.getX()) / 2f;
-            float midpointY = (secondBox.getY() + firstBox.getY()) / 2f;
-            IntersectionPoint point = new IntersectionPoint(midpointX, midpointY, BoxEdge.NONE);
-            firstBox.onCollisionWithDynamicBox(secondBox, point);
-            secondBox.onCollisionWithDynamicBox(firstBox, point);
-        }
-    }
     
     /**
      * Finds the closest point of intersection between a dynamic and static box.
@@ -121,7 +53,9 @@ public class NBPMath {
      * @param staticBox The static box.
      * @return The closest point of intersection between a dynamic and static box.
      */
-    public IntersectionPoint getClosestIntersectionPoint(Point preUpdateDynamicOrigin, Box dynamicBox, Box staticBox) {
+    public static IntersectionPoint getClosestIntersectionPoint(Point preUpdateDynamicOrigin, Box dynamicBox, Box staticBox) {
+    	// Get the new origin of the dynamic box.
+    	Point postUpdateDynamicOrigin = dynamicBox.getOrigin();
     	// Firstly, we need to get the Minkowski sum of the static box.
     	// Find the position of the sum.
 		float x = staticBox.getX() - (dynamicBox.getWidth() / 2f);
@@ -129,10 +63,118 @@ public class NBPMath {
 		// Get the width/height of the sum.
 		float height = staticBox.getHeight() + dynamicBox.getHeight();
 		float width  = staticBox.getWidth() + dynamicBox.getWidth();
-    	
-    	// ... 
-    	
-    	return null;
+		// Keep track of the intersections.
+		// TODO We can stop looking when we get two intersections.
+		ArrayList<IntersectionPoint> intersections = new ArrayList<IntersectionPoint>();
+    	// Check for an intersection with the top edge of the box.
+		Point topEdgeIntersection = NBPMath.getLineVsLineIntersection(
+				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+				x, y + height,
+				x + width, y + height
+		);
+		if (topEdgeIntersection != null) {
+			intersections.add(new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP));
+		}
+		// Check for an intersection with the right edge of the box.
+		Point rightEdgeIntersection = NBPMath.getLineVsLineIntersection(
+				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+				x + width, y,
+				x + width, y + height
+		);
+		if (rightEdgeIntersection != null) {
+			intersections.add(new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT));
+		}
+		// Check for an intersection with the bottom edge of the box.
+		Point bottomEdgeIntersection = NBPMath.getLineVsLineIntersection(
+				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+				x, y,
+				x + width, y
+		);
+		if (bottomEdgeIntersection != null) {
+			intersections.add(new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM));
+		}
+		// Check for an intersection with the left edge of the box.
+		Point leftEdgeIntersection = NBPMath.getLineVsLineIntersection(
+				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+				x, y,
+				x, y + height
+		);
+		if (leftEdgeIntersection != null) {
+			intersections.add(new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT));
+		}
+		// We should only have two intersections.
+		if (intersections.size() != 2) {
+			throw new RuntimeException("Expected two intersection edges, got " + intersections.size());
+		}
+		// Get the distances of both intersections from the original dynamic box origin.
+		float firstIntersectionDistance  = getDistanceBetweenPoints(preUpdateDynamicOrigin, intersections.get(0));
+		float secondIntersectionDistance = getDistanceBetweenPoints(preUpdateDynamicOrigin, intersections.get(1));
+		// Return the closest intersection.
+    	return firstIntersectionDistance < secondIntersectionDistance ? intersections.get(0) : intersections.get(1);
+    }
+    
+    /**
+     * Resolve a collision with a dynamic and static box, this involves moving the dynamic box out of the static one and updating its velocity.
+     * @param point The point of intersection, defining the dynalic box origin at the exact point of collision.
+     * @param dynamicBox The dynamic box.
+     * @param staticBox The static box.
+     */
+    public static void resolveDynamicAndStaticBoxCollision(IntersectionPoint intersection, Box dynamicBox, Box staticBox) {
+    	// Firstly, we need to move the dyamic box to the position it was at when it collided with the static one.
+    	// To avoid rounding issues we will handle this based on the intersection edge.
+    	switch (intersection.getIntersectionEdge()) {
+			case BOTTOM:
+				// We hit the bottom edge of the static box.
+				dynamicBox.setY(staticBox.getY() - dynamicBox.getHeight());
+				dynamicBox.setX(intersection.getX() - (dynamicBox.getWidth() / 2f));
+				break;
+			case TOP:
+				// We hit the top edge of the static box.
+				dynamicBox.setY(staticBox.getY() + staticBox.getHeight());
+				dynamicBox.setX(intersection.getX() - (dynamicBox.getWidth() / 2f));
+				break;
+			case LEFT:
+				// We hit the left edge of the static box.
+				dynamicBox.setY(intersection.getY() - (dynamicBox.getHeight() / 2f));
+				dynamicBox.setX(staticBox.getX() - dynamicBox.getWidth());
+				break;
+			case RIGHT:
+				// We hit the right edge of the static box.
+				dynamicBox.setY(intersection.getY() - (dynamicBox.getHeight() / 2f));
+				dynamicBox.setX(staticBox.getX() + staticBox.getWidth());
+				break;
+			default:
+				throw new RuntimeException("Invalid box edge: " + intersection.getIntersectionEdge());
+    	}
+    	// TODO Update the velocity of the dynamic box, taking friction and restitution into account.
+    }
+    
+    /**
+     * Returns the point of intersection between two lines, returns null if no intersection exists.
+     * @param aX
+     * @param aY
+     * @param bX
+     * @param bY
+     * @param cX
+     * @param cY
+     * @param dX
+     * @param dY
+     * @return The point of intersection between two lines, returns null if no intersection exists.
+     */
+    public static Point getLineVsLineIntersection(float aX, float aY, float bX, float bY, float cX, float cY, float dX, float dY) {
+		float inVal = (aX - bX) * (cY - dY) - (aY - bY) * (cX - dX);
+		// Check whether there is no intersection (lines are parallel).
+		if (inVal == 0) {
+			 return null;
+		}
+		// Get the point of intersection.
+		float x = ((cX - dX) * (aX * bY - aY * bX) - (aX - bX) * (cX * dY - cY * dX)) / inVal;
+		float y = ((cY - dY) * (aX * bY - aY * bX) - (aY - bY) * (cX * dY - cY * dX)) / inVal;
+		return new Point(x, y);
     }
 
     /**
@@ -169,20 +211,5 @@ public class NBPMath {
      */
     public static float getAngleBetweenPoints(Point pointA, Point pointB) {
         return getAngleBetweenPoints(pointA, pointB, false, false);
-    }
-    
-    /**
-     * Get the point of intersection between two lines, or null if no intersection exists.
-     * @param a1
-     * @param a2
-     * @param b1
-     * @param b2
-     * @return The point of intersection between two lines, or null if no intersection exists.
-     */
-    private static Point getLineVsLineIntersection(Point a1, Point a2, Point b1, Point b2) {
-    	
-    	// ...
-    	
-    	return null;
     }
 }
