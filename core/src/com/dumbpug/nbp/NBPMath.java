@@ -73,7 +73,7 @@ public class NBPMath {
 				x, y + height,
 				x + width, y + height
 		);
-		if (topEdgeIntersection != null) {
+		if (topEdgeIntersection != null && doesPointIntersectBox(topEdgeIntersection, x, y, width, height)) {
 			intersections.add(new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP));
 		}
 		// Check for an intersection with the right edge of the box.
@@ -83,7 +83,7 @@ public class NBPMath {
 				x + width, y,
 				x + width, y + height
 		);
-		if (rightEdgeIntersection != null) {
+		if (rightEdgeIntersection != null && doesPointIntersectBox(rightEdgeIntersection, x, y, width, height)) {
 			intersections.add(new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT));
 		}
 		// Check for an intersection with the bottom edge of the box.
@@ -93,7 +93,7 @@ public class NBPMath {
 				x, y,
 				x + width, y
 		);
-		if (bottomEdgeIntersection != null) {
+		if (bottomEdgeIntersection != null && doesPointIntersectBox(bottomEdgeIntersection, x, y, width, height)) {
 			intersections.add(new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM));
 		}
 		// Check for an intersection with the left edge of the box.
@@ -103,7 +103,7 @@ public class NBPMath {
 				x, y,
 				x, y + height
 		);
-		if (leftEdgeIntersection != null) {
+		if (leftEdgeIntersection != null && doesPointIntersectBox(leftEdgeIntersection, x, y, width, height)) {
 			intersections.add(new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT));
 		}
 		// We should only have two intersections.
@@ -119,12 +119,12 @@ public class NBPMath {
     
     /**
      * Resolve a collision with a dynamic and static box, this involves moving the dynamic box out of the static one and updating its velocity.
-     * @param point The point of intersection, defining the dynalic box origin at the exact point of collision.
+     * @param intersection The point of intersection, defining the dynalic box origin at the exact point of collision.
      * @param dynamicBox The dynamic box.
      * @param staticBox The static box.
      */
     public static void resolveDynamicAndStaticBoxCollision(IntersectionPoint intersection, Box dynamicBox, Box staticBox) {
-    	// Firstly, we need to move the dyamic box to the position it was at when it collided with the static one.
+    	// Firstly, we need to move the dynamic box to the position it was at when it collided with the static one.
     	// To avoid rounding issues we will handle this based on the intersection edge.
     	switch (intersection.getIntersectionEdge()) {
 			case BOTTOM:
@@ -212,4 +212,26 @@ public class NBPMath {
     public static float getAngleBetweenPoints(Point pointA, Point pointB) {
         return getAngleBetweenPoints(pointA, pointB, false, false);
     }
+
+	/**
+	 * Gets whether a point is within the bounds of a box.
+	 * @param point The point.
+	 * @param x The x position of the box.
+	 * @param y The y position of the box.
+	 * @param width The width of the box.
+	 * @param height The height of the box.
+     * @return Whether a point is within the bounds of a box.
+     */
+	public static boolean doesPointIntersectBox(Point point, float x, float y, float width, float height) {
+		// Does the point exceed the bounds of the box on the X axis.
+		if (point.getX() < x || point.getX() > (x + width)) {
+			return false;
+		}
+		// Does the point exceed the bounds of the box on the Y axis.
+		if (point.getY() < y || point.getY() > (y + height)) {
+			return false;
+		}
+		// The point is within the bounds of the box.
+		return true;
+	}
 }

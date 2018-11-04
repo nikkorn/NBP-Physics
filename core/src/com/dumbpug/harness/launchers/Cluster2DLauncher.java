@@ -44,7 +44,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         box1 = new Basic2DBox(140, 80, 20, 180, BoxType.STATIC);
         box1.setName("box1");
         
-        box2 = new Basic2DBox(205, 100, 230, 20, BoxType.STATIC);
+        box2 = new Basic2DBox(200, 100, 200, 20, BoxType.STATIC);
         box2.setName("box2");
         
         box3 = new Basic2DBox(480, 80, 20, 180, BoxType.STATIC);
@@ -53,7 +53,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         // Create a cluster.
         for(int i = 0; i < clusterSize; i++) {
             // Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 5, 5, BoxType.DYNAMIC);
-            Box cBox = new Basic2DBox(300, 440, 5, 5, BoxType.DYNAMIC);
+            Box cBox = new Basic2DBox(300, 440, 10, 10, BoxType.DYNAMIC);
             environment.addBox(cBox);
             // cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
             cBox.applyImpulse(0.2f, 0);
