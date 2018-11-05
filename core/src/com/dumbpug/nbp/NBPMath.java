@@ -73,7 +73,7 @@ public class NBPMath {
 				x, y + height,
 				x + width, y + height
 		);
-		if (topEdgeIntersection != null && doesPointIntersectBox(topEdgeIntersection, x, y, width, height)) {
+		if (topEdgeIntersection != null && topEdgeIntersection.getX() >= x && topEdgeIntersection.getX() <= (x + width)) {
 			intersections.add(new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP));
 		}
 		// Check for an intersection with the right edge of the box.
@@ -83,7 +83,7 @@ public class NBPMath {
 				x + width, y,
 				x + width, y + height
 		);
-		if (rightEdgeIntersection != null && doesPointIntersectBox(rightEdgeIntersection, x, y, width, height)) {
+		if (rightEdgeIntersection != null && rightEdgeIntersection.getY() >= y && rightEdgeIntersection.getY() <= (y + height)) {
 			intersections.add(new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT));
 		}
 		// Check for an intersection with the bottom edge of the box.
@@ -93,7 +93,7 @@ public class NBPMath {
 				x, y,
 				x + width, y
 		);
-		if (bottomEdgeIntersection != null && doesPointIntersectBox(bottomEdgeIntersection, x, y, width, height)) {
+		if (bottomEdgeIntersection != null && bottomEdgeIntersection.getX() >= x && bottomEdgeIntersection.getX() <= (x + width)) {
 			intersections.add(new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM));
 		}
 		// Check for an intersection with the left edge of the box.
@@ -103,7 +103,7 @@ public class NBPMath {
 				x, y,
 				x, y + height
 		);
-		if (leftEdgeIntersection != null && doesPointIntersectBox(leftEdgeIntersection, x, y, width, height)) {
+		if (leftEdgeIntersection != null && leftEdgeIntersection.getY() >= y && leftEdgeIntersection.getY() <= (y + height)) {
 			intersections.add(new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT));
 		}
 		// We should only have two intersections.
@@ -150,7 +150,19 @@ public class NBPMath {
 			default:
 				throw new RuntimeException("Invalid box edge: " + intersection.getIntersectionEdge());
     	}
-    	// TODO Update the velocity of the dynamic box, taking friction and restitution into account.
+    	// Secondly, we need to flip the velocity of the box, taking restitution and friction into account.
+    	switch (intersection.getIntersectionEdge()) {
+			case BOTTOM:
+			case TOP:
+				dynamicBox.setVelY(-dynamicBox.getVelY());
+				break;
+			case LEFT:
+			case RIGHT:
+				dynamicBox.setVelX(-dynamicBox.getVelX());
+				break;
+			default:
+				throw new RuntimeException("Invalid box edge: " + intersection.getIntersectionEdge());
+		}
     }
     
     /**
@@ -166,15 +178,16 @@ public class NBPMath {
      * @return The point of intersection between two lines, returns null if no intersection exists.
      */
     public static Point getLineVsLineIntersection(float aX, float aY, float bX, float bY, float cX, float cY, float dX, float dY) {
-		float inVal = (aX - bX) * (cY - dY) - (aY - bY) * (cX - dX);
+		double inVal = (aX - bX) * (cY - dY) - (aY - bY) * (cX - dX);
 		// Check whether there is no intersection (lines are parallel).
 		if (inVal == 0) {
 			 return null;
 		}
-		// Get the point of intersection.
-		float x = ((cX - dX) * (aX * bY - aY * bX) - (aX - bX) * (cX * dY - cY * dX)) / inVal;
-		float y = ((cY - dY) * (aX * bY - aY * bX) - (aY - bY) * (cX * dY - cY * dX)) / inVal;
-		return new Point(x, y);
+		// Get the x/y of intersection.
+		double x = ((cX - dX) * (aX * bY - aY * bX) - (aX - bX) * (cX * dY - cY * dX)) / inVal;
+		double y = ((cY - dY) * (aX * bY - aY * bX) - (aY - bY) * (cX * dY - cY * dX)) / inVal;
+		// Return the intersection point, rounding the values to avoid wacky floating point errors.
+		return new Point((float) (Math.round(x * 1000.0) / 1000.0), (float) (Math.round(y * 1000.0) / 1000.0));
     }
 
     /**
@@ -212,26 +225,4 @@ public class NBPMath {
     public static float getAngleBetweenPoints(Point pointA, Point pointB) {
         return getAngleBetweenPoints(pointA, pointB, false, false);
     }
-
-	/**
-	 * Gets whether a point is within the bounds of a box.
-	 * @param point The point.
-	 * @param x The x position of the box.
-	 * @param y The y position of the box.
-	 * @param width The width of the box.
-	 * @param height The height of the box.
-     * @return Whether a point is within the bounds of a box.
-     */
-	public static boolean doesPointIntersectBox(Point point, float x, float y, float width, float height) {
-		// Does the point exceed the bounds of the box on the X axis.
-		if (point.getX() < x || point.getX() > (x + width)) {
-			return false;
-		}
-		// Does the point exceed the bounds of the box on the Y axis.
-		if (point.getY() < y || point.getY() > (y + height)) {
-			return false;
-		}
-		// The point is within the bounds of the box.
-		return true;
-	}
 }

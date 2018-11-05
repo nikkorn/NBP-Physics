@@ -644,18 +644,18 @@ public abstract class Box {
     		// Are we creating a 2D or 3D point?
     		if (this.dimension == Dimension.THREE_DIMENSIONS) {
     			// The origin is a point in 3D space.
-    			this.origin = new Point(this.getX(), this.getY(), this.getZ());
+    			this.origin = new Point(this.getX() + (this.getWidth() / 2f), this.getY() + (this.getHeight() / 2f), this.getZ() + (this.getDepth() / 2f));
     		} else {
     			// The origin is a point in 2D space.
-    			this.origin = new Point(this.getX(), this.getY());
+    			this.origin = new Point(this.getX() + (this.getWidth() / 2f), this.getY() + (this.getHeight() / 2f));
     		}
     	} else {
     		// We already have an origin, update and return it.
-    		origin.setX(this.getX());
-    		origin.setY(this.getY());
+    		origin.setX(this.getX() + (this.getWidth() / 2f));
+    		origin.setY(this.getY() + (this.getHeight() / 2f));
     		// If this is a 3D box then we need ot set the Z value too.
     		if (this.dimension == Dimension.THREE_DIMENSIONS) {
-    			origin.setZ(this.getZ());
+    			origin.setZ(this.getZ() + (this.getDepth() / 2f));
     		}
     	}
         // Return the up-to-date origin.
