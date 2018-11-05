@@ -154,11 +154,11 @@ public class NBPMath {
     	switch (intersection.getIntersectionEdge()) {
 			case BOTTOM:
 			case TOP:
-				dynamicBox.setVelY(-dynamicBox.getVelY());
+				dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
 				break;
 			case LEFT:
 			case RIGHT:
-				dynamicBox.setVelX(-dynamicBox.getVelX());
+				dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
 				break;
 			default:
 				throw new RuntimeException("Invalid box edge: " + intersection.getIntersectionEdge());

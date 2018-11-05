@@ -29,7 +29,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
     private Box box3;
     private ArrayList<Box> cluster = new ArrayList<Box>();
     
-    private int clusterSize = 1;
+    private int clusterSize = 500;
 
     private Random ran;
 
@@ -52,11 +52,11 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         
         // Create a cluster.
         for(int i = 0; i < clusterSize; i++) {
-            // Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 5, 5, BoxType.DYNAMIC);
-            Box cBox = new Basic2DBox(300, 440, 10, 10, BoxType.DYNAMIC);
+            Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 5, 5, BoxType.DYNAMIC);
+            // Box cBox = new Basic2DBox(300, 440, 10, 10, BoxType.DYNAMIC);
             environment.addBox(cBox);
-            // cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
-            cBox.applyImpulse(0.1f, 0);
+            cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
+            // cBox.applyImpulse(0.1f, 0);
             cBox.setFriction(ran.nextFloat());
             cBox.setRestitution(ran.nextFloat());
             cluster.add(cBox);
