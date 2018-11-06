@@ -62,55 +62,51 @@ public class NBPMath {
 		// Get the width/height of the sum.
 		float height = staticBox.getHeight() + dynamicBox.getHeight();
 		float width  = staticBox.getWidth() + dynamicBox.getWidth();
-    	// Check for an intersection with the top edge of the box.
-		Point topEdgeIntersection = NBPMath.getLineVsLineIntersection(
-				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-				x, y + height,
-				x + width, y + height
-		);
-		if (topEdgeIntersection != null && topEdgeIntersection.getX() >= x && topEdgeIntersection.getX() <= (x + width)) {
-			// If the dynamic box was moving down then this will be the closest intersection point.
-			if (dynamicBox.getVelY() < 0) {
+    	// Check for an intersection with the top edge of the box if we are moving down.
+		if (dynamicBox.getVelY() < 0) {
+			Point topEdgeIntersection = NBPMath.getLineVsLineIntersection(
+					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+					x, y + height,
+					x + width, y + height
+			);
+			if (topEdgeIntersection != null && topEdgeIntersection.getX() >= x && topEdgeIntersection.getX() <= (x + width)) {
 				return new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP);
 			}
 		}
-		// Check for an intersection with the right edge of the box.
-		Point rightEdgeIntersection = NBPMath.getLineVsLineIntersection(
-				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-				x + width, y,
-				x + width, y + height
-		);
-		if (rightEdgeIntersection != null && rightEdgeIntersection.getY() >= y && rightEdgeIntersection.getY() <= (y + height)) {
-			// If the dynamic box was moving right then this will be the closest intersection point.
-			if (dynamicBox.getVelX() < 0) {
+		// Check for an intersection with the right edge of the box if we are moving left.
+		if (dynamicBox.getVelX() < 0) {
+			Point rightEdgeIntersection = NBPMath.getLineVsLineIntersection(
+					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+					x + width, y,
+					x + width, y + height
+			);
+			if (rightEdgeIntersection != null && rightEdgeIntersection.getY() >= y && rightEdgeIntersection.getY() <= (y + height)) {
 				return new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT);
 			}
 		}
-		// Check for an intersection with the bottom edge of the box.
-		Point bottomEdgeIntersection = NBPMath.getLineVsLineIntersection(
-				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-				x, y,
-				x + width, y
-		);
-		if (bottomEdgeIntersection != null && bottomEdgeIntersection.getX() >= x && bottomEdgeIntersection.getX() <= (x + width)) {
-			// If the dynamic box was moving up then this will be the closest intersection point.
-			if (dynamicBox.getVelY() > 0) {
+		// Check for an intersection with the bottom edge of the box if we are moving up.
+		if (dynamicBox.getVelY() > 0) {
+			Point bottomEdgeIntersection = NBPMath.getLineVsLineIntersection(
+					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+					x, y,
+					x + width, y
+			);
+			if (bottomEdgeIntersection != null && bottomEdgeIntersection.getX() >= x && bottomEdgeIntersection.getX() <= (x + width)) {
 				return new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM);
 			}
 		}
-		// Check for an intersection with the left edge of the box.
-		Point leftEdgeIntersection = NBPMath.getLineVsLineIntersection(
-				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-				postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-				x, y,
-				x, y + height
-		);
-		if (leftEdgeIntersection != null && leftEdgeIntersection.getY() >= y && leftEdgeIntersection.getY() <= (y + height)) {
-			// If the dynamic box was moving right then this will be the closest intersection point.
-			if (dynamicBox.getVelX() > 0) {
+		// Check for an intersection with the left edge of the box if we are moving right.
+		if (dynamicBox.getVelX() > 0) {
+			Point leftEdgeIntersection = NBPMath.getLineVsLineIntersection(
+					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
+					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
+					x, y,
+					x, y + height
+			);
+			if (leftEdgeIntersection != null && leftEdgeIntersection.getY() >= y && leftEdgeIntersection.getY() <= (y + height)) {
 				return new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT);
 			}
 		}
