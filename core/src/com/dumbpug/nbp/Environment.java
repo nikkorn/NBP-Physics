@@ -171,11 +171,10 @@ public class Environment {
     	// TODO We can easily be intersecting multiple static boxes!!!!!!
     	Box colliding = collidingBoxes.get(0);
     	
-    	// TODO We would have already gotten the closest collision point for this box in choosing which collision to resolve first.
-    	IntersectionPoint closestIntersection = NBPMath.getClosestIntersectionPoint(preUpdateOrigin, current, colliding);
-    	
-    	// TODO Do this properly!
-    	NBPMath.resolveDynamicAndStaticBoxCollision(closestIntersection, current, colliding);
+    	// Get the point that the dynamic box intersected the static one.
+    	IntersectionPoint intersection = NBPMath.getIntersectionPoint(preUpdateOrigin, current, colliding);
+    	// Resolve the collision.
+    	NBPMath.resolveDynamicAndStaticBoxCollision(intersection, current, colliding);
     }
  
     /**

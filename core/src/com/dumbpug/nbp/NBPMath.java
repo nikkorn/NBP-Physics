@@ -1,6 +1,5 @@
 package com.dumbpug.nbp;
 
-import java.util.ArrayList;
 import com.dumbpug.nbp.point.IntersectionPoint;
 import com.dumbpug.nbp.point.Point;
 
@@ -47,13 +46,13 @@ public class NBPMath {
     }
     
     /**
-     * Finds the closest point of intersection between a dynamic and static box.
+     * Find the point of intersection between a dynamic and static box.
      * @param preUpdateDynamicOrigin The origin of the dynamic box before intersection.
      * @param dynamicBox The dynamic box.
      * @param staticBox The static box.
-     * @return The closest point of intersection between a dynamic and static box.
+     * @return The point of intersection between a dynamic and static box.
      */
-    public static IntersectionPoint getClosestIntersectionPoint(Point preUpdateDynamicOrigin, Box dynamicBox, Box staticBox) {
+    public static IntersectionPoint getIntersectionPoint(Point preUpdateDynamicOrigin, Box dynamicBox, Box staticBox) {
     	// Get the new origin of the dynamic box.
     	Point postUpdateDynamicOrigin = dynamicBox.getOrigin();
     	// Firstly, we need to get the Minkowski sum of the static box.
@@ -63,9 +62,6 @@ public class NBPMath {
 		// Get the width/height of the sum.
 		float height = staticBox.getHeight() + dynamicBox.getHeight();
 		float width  = staticBox.getWidth() + dynamicBox.getWidth();
-		// Keep track of the intersections.
-		// TODO We can stop looking when we get two intersections.
-		ArrayList<IntersectionPoint> intersections = new ArrayList<IntersectionPoint>();
     	// Check for an intersection with the top edge of the box.
 		Point topEdgeIntersection = NBPMath.getLineVsLineIntersection(
 				preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
@@ -74,7 +70,10 @@ public class NBPMath {
 				x + width, y + height
 		);
 		if (topEdgeIntersection != null && topEdgeIntersection.getX() >= x && topEdgeIntersection.getX() <= (x + width)) {
-			intersections.add(new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP));
+			// If the dynamic box was moving down then this will be the closest intersection point.
+			if (dynamicBox.getVelY() < 0) {
+				return new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP);
+			}
 		}
 		// Check for an intersection with the right edge of the box.
 		Point rightEdgeIntersection = NBPMath.getLineVsLineIntersection(
@@ -84,7 +83,10 @@ public class NBPMath {
 				x + width, y + height
 		);
 		if (rightEdgeIntersection != null && rightEdgeIntersection.getY() >= y && rightEdgeIntersection.getY() <= (y + height)) {
-			intersections.add(new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT));
+			// If the dynamic box was moving right then this will be the closest intersection point.
+			if (dynamicBox.getVelX() < 0) {
+				return new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT);
+			}
 		}
 		// Check for an intersection with the bottom edge of the box.
 		Point bottomEdgeIntersection = NBPMath.getLineVsLineIntersection(
@@ -94,7 +96,10 @@ public class NBPMath {
 				x + width, y
 		);
 		if (bottomEdgeIntersection != null && bottomEdgeIntersection.getX() >= x && bottomEdgeIntersection.getX() <= (x + width)) {
-			intersections.add(new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM));
+			// If the dynamic box was moving up then this will be the closest intersection point.
+			if (dynamicBox.getVelY() > 0) {
+				return new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM);
+			}
 		}
 		// Check for an intersection with the left edge of the box.
 		Point leftEdgeIntersection = NBPMath.getLineVsLineIntersection(
@@ -104,17 +109,13 @@ public class NBPMath {
 				x, y + height
 		);
 		if (leftEdgeIntersection != null && leftEdgeIntersection.getY() >= y && leftEdgeIntersection.getY() <= (y + height)) {
-			intersections.add(new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT));
+			// If the dynamic box was moving right then this will be the closest intersection point.
+			if (dynamicBox.getVelX() > 0) {
+				return new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT);
+			}
 		}
-		// We should only have two intersections.
-		if (intersections.size() != 2) {
-			throw new RuntimeException("Expected two intersection edges, got " + intersections.size());
-		}
-		// Get the distances of both intersections from the original dynamic box origin.
-		float firstIntersectionDistance  = getDistanceBetweenPoints(preUpdateDynamicOrigin, intersections.get(0));
-		float secondIntersectionDistance = getDistanceBetweenPoints(preUpdateDynamicOrigin, intersections.get(1));
-		// Return the closest intersection.
-    	return firstIntersectionDistance < secondIntersectionDistance ? intersections.get(0) : intersections.get(1);
+		// We should have intersected the static block on at least one side.
+		throw new RuntimeException("No valid intersection edge found.");
     }
     
     /**
