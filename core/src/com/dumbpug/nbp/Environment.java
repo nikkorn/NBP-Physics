@@ -1,7 +1,6 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import com.dumbpug.nbp.point.IntersectionPoint;
 import com.dumbpug.nbp.point.Point;
 import com.dumbpug.nbp.zone.Zone;
@@ -21,7 +20,7 @@ public class Environment {
     /**
      * The box entities that are in this environment.
      */
-    private ArrayList<Box> boxes = new ArrayList<Box>();
+    private Boxes boxes = new Boxes();
     /**
      * The box entities waiting to be added to this environment (added during physics update).
      */
@@ -68,25 +67,12 @@ public class Environment {
         // Mark the start of the physics step.
         inPhysicsStep = true;
         // Remove any boxes which were marked for deletion.
-        Iterator<Box> boxIterator = boxes.iterator();
-        while (boxIterator.hasNext()) {
-            Box box = boxIterator.next();
-            if (box.isMarkedForDeletion()) {
-                box.setDeleted();
-                boxIterator.remove();
-                // Call user specified behaviour on deletion.
-                box.onDeletion();
-            }
-        }
-        // Apply any environment blooms.
+        boxes.removeDeletedBoxes();
+        // Apply any environment blooms to the dynamic boxes.
         for (Bloom bloom : blooms) {
-            // Go over all boxes.
-            for (Box box : boxes) {
-                // Make sure this is a dynamic box.
-                if (box.getType() == BoxType.DYNAMIC) {
-                    // Apply the bloom to this box
-                    box.applyBloom(bloom);
-                }
+            for (Box box : boxes.getDynamicBoxes()) {
+            	// Apply the bloom to this box
+                box.applyBloom(bloom);
             }
         }
         // Remove processed environment blooms.
@@ -94,26 +80,23 @@ public class Environment {
         // Apply zone forces to any intersecting boxes.
         for (Zone zone : zones) {
             // Go over all boxes.
-            for (Box box : boxes) {
-                // Make sure this is a dynamic box and that it actually intersects the zone.
-                if ((box.getType() == BoxType.DYNAMIC) && zone.intersects(box)) {
+            for (Box box : boxes.getDynamicBoxes()) {
+                // Make sure this box actually intersects the zone.
+                if (zone.intersects(box)) {
                     // Allow the zone of force to influence the intersecting box.
                     zone.influence(box);
                 }
             }
         }
-        // Do collision detection and try to handle it.
-        for (Box currentBox : boxes) {
+        // Update all of the dynamic boxes in the world.
+        for (Box currentBox : boxes.getDynamicBoxes()) {
             // Call any user-defined box pre-update logic.
             currentBox.onBeforeUpdate();
-            // Only attempt to update positions and resolve collisions for dynamic boxes.
-            if (currentBox.getType() == BoxType.DYNAMIC) {
-                // Update the current box.
-            	updateDynamicBox(currentBox);
-            }
+            // Update the current box.
+        	updateDynamicBox(currentBox);
             // Process the sensors attached to the current box.
             for (Sensor sensor : currentBox.getAttachedSensors()) {
-                sensor.reviewIntersections(boxes);
+                // TODO sensor.reviewIntersections(boxes);
             }
             // Call any user-defined box post-update logic.
             currentBox.onAfterUpdate();
@@ -121,12 +104,13 @@ public class Environment {
         // Mark the end of the physics step.
         inPhysicsStep = false;
         // Any boxes that were added as part of this physics step should be added to our actual entity list now.
-        if (pendingBoxes.size() > 0) {
-            for (Box pendingBox : pendingBoxes) {
-                this.addBox(pendingBox);
+        while (!pendingBoxes.isEmpty()) {
+            // Get the next pending box to be added.
+        	Box pendingBox = pendingBoxes.remove(0);
+        	// Add the box to our boxes collection if it does not already contain it.
+            if (!boxes.contains(pendingBox)) {
+                boxes.add(pendingBox);
             }
-            // Clear the pending list.
-            pendingBoxes.clear();
         }
         // Call any user-defined post-update logic.
         this.onAfterUpdate();
@@ -139,25 +123,17 @@ public class Environment {
     private void updateDynamicBox(Box current) {
     	// Get the current x/y/z positions of the origin of the box.
     	Point preUpdateOrigin = current.getOrigin().clone();
-    	
     	// Update the current dynamic box.
     	current.update(this.gravity);
-    	
     	// Create a list to store all static boxes that intersect the current box.
     	ArrayList<Box> collidingBoxes = new ArrayList<Box>();
-    	
-    	// Get all static blocks that are colliding with the box.
-    	for (Box box : this.boxes) {
-    		// If this is another dynamic box then do nothing.
-    		if (box.getType() == BoxType.DYNAMIC) {
-    			continue;
-    		}
+    	// Get all static boxes that are colliding with the dynamic box.
+    	for (Box box : this.boxes.getStaticBoxes()) {
     		// This is a static box, is it intersecting the box we are updating?
     		if (NBPMath.doBoxesCollide(current, box)) {
     			collidingBoxes.add(box);
     		}
     	}
-    	
     	// There is nothing more to do if we are not colliding with any static boxes.
     	if (collidingBoxes.isEmpty()) {
     		return;
@@ -207,7 +183,7 @@ public class Environment {
      * @return The list of boxes in the environment.
      */
     public ArrayList<Box> getBoxes() {
-        return boxes;
+        return boxes.getBoxes();
     }
 
     /**
