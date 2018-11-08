@@ -4,6 +4,7 @@ import java.util.Scanner;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.dumbpug.harness.launchers.Cluster2DLauncher;
+import com.dumbpug.harness.launchers.Grid2DLauncher;
 import com.dumbpug.harness.launchers.Simple2DLauncher;
 
 /**
@@ -23,6 +24,7 @@ public class DesktopLauncher {
         System.out.println("----------------------------------");
         System.out.println("1. Simple 2D Box");
         System.out.println("2. Cluster of 2D Boxes");
+        System.out.println("3. Player in 2D Grid");
         System.out.println("----------------------------------");
         System.out.print("Please make a selection (e.g. 5): ");
         
@@ -36,6 +38,9 @@ public class DesktopLauncher {
 	    		break;
 	    	case 2: 
 	    		new LwjglApplication(new Cluster2DLauncher(), config);
+	    		break;
+	    	case 3: 
+	    		new LwjglApplication(new Grid2DLauncher(), config);
 	    		break;
 	    	default: 
 	    		System.out.println("Invalid selection");
