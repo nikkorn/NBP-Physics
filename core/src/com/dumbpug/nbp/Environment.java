@@ -130,7 +130,7 @@ public class Environment {
     	// Get all static boxes that are colliding with the dynamic box.
     	for (Box box : this.boxes.getStaticBoxes()) {
     		// This is a static box, is it intersecting the box we are updating?
-    		if (NBPMath.doBoxesCollide(current, box)) {
+    		if (Utilities.doBoxesCollide(current, box)) {
     			collidingBoxes.add(box);
     		}
     	}
@@ -148,9 +148,9 @@ public class Environment {
     	Box colliding = collidingBoxes.get(0);
     	
     	// Get the point that the dynamic box intersected the static one.
-    	IntersectionPoint intersection = NBPMath.getIntersectionPoint(preUpdateOrigin, current, colliding);
+    	IntersectionPoint intersection = Utilities.getIntersectionPoint(preUpdateOrigin, current, colliding);
     	// Resolve the collision.
-    	NBPMath.resolveDynamicAndStaticBoxCollision(intersection, current, colliding);
+    	Utilities.resolveDynamicAndStaticBoxCollision(intersection, current, colliding);
     }
  
     /**

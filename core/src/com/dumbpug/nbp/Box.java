@@ -198,11 +198,11 @@ public abstract class Box {
         // Get the origin of this box.
         Point origin = this.getOrigin();
         // Get the distance between the bloom and this box.
-        float distance = NBPMath.getDistanceBetweenPoints(bloomPoint, origin);
+        float distance = Utilities.getDistanceBetweenPoints(bloomPoint, origin);
         // Check to see if the box is even in the range of the bloom.
         if (distance <= bloom.getRadius()) {
             // Our box was in the bloom, get angle difference between our bloom and the current box.
-            float angleBetweenBloomAndBox = NBPMath.getAngleBetweenPoints(origin, bloomPoint);
+            float angleBetweenBloomAndBox = Utilities.getAngleBetweenPoints(origin, bloomPoint);
             // Recalculate force based on the distance between our box and bloom. Avoid a divide by zero.
             float force;
             if (distance == 0) {

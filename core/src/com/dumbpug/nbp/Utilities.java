@@ -6,7 +6,7 @@ import com.dumbpug.nbp.point.Point;
 /**
  * Helper class for basic box collision detection and resolution.
  */
-public class NBPMath {
+public class Utilities {
 
     /**
      * Calculates whether two boxes intersect.
@@ -64,7 +64,7 @@ public class NBPMath {
 		float width  = staticBox.getWidth() + dynamicBox.getWidth();
     	// Check for an intersection with the top edge of the box if we are moving down.
 		if (dynamicBox.getVelY() < 0) {
-			Point topEdgeIntersection = NBPMath.getLineVsLineIntersection(
+			Point topEdgeIntersection = Utilities.getLineVsLineIntersection(
 					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
 					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
 					x, y + height,
@@ -76,7 +76,7 @@ public class NBPMath {
 		}
 		// Check for an intersection with the right edge of the box if we are moving left.
 		if (dynamicBox.getVelX() < 0) {
-			Point rightEdgeIntersection = NBPMath.getLineVsLineIntersection(
+			Point rightEdgeIntersection = Utilities.getLineVsLineIntersection(
 					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
 					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
 					x + width, y,
@@ -88,7 +88,7 @@ public class NBPMath {
 		}
 		// Check for an intersection with the bottom edge of the box if we are moving up.
 		if (dynamicBox.getVelY() > 0) {
-			Point bottomEdgeIntersection = NBPMath.getLineVsLineIntersection(
+			Point bottomEdgeIntersection = Utilities.getLineVsLineIntersection(
 					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
 					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
 					x, y,
@@ -100,7 +100,7 @@ public class NBPMath {
 		}
 		// Check for an intersection with the left edge of the box if we are moving right.
 		if (dynamicBox.getVelX() > 0) {
-			Point leftEdgeIntersection = NBPMath.getLineVsLineIntersection(
+			Point leftEdgeIntersection = Utilities.getLineVsLineIntersection(
 					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
 					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
 					x, y,

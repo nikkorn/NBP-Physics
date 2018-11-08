@@ -71,7 +71,7 @@ public class Sensor {
             // Ignore this sensors parent.
             if (box != parent) {
                 // Does this sensor intersect with the box?
-                if (NBPMath.doesSensorCollideWithBox(this, box)) {
+                if (Utilities.doesSensorCollideWithBox(this, box)) {
                     // We only care if this is the first time we are hearing of the intersection.
                     if (!intersectingBoxes.contains(box)) {
                         // Add this as an intersecting box.
