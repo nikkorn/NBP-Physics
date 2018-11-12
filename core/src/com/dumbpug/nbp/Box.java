@@ -136,30 +136,11 @@ public abstract class Box {
     }
     
     /**
-     * Do our physics update along every axis relevant for the box dimension.
-     * @param gravity The gravity to apply.
-     */
-    public void update(Gravity gravity) {
-        // If this box is static then do nothing!
-        if (this.type != BoxType.DYNAMIC) {
-            return;
-        }
-        // Update this box on the x,y and potentially z axis.
-        this.updateOnAxis(Axis.X, gravity);
-        this.updateOnAxis(Axis.Y, gravity);
-        if (this.dimension == Dimension.THREE_DIMENSIONS) {
-        	this.updateOnAxis(Axis.Z, gravity);
-        }
-        // Clamp our velocity to our max.
-        clampVelocity();
-    }
-
-    /**
      * Do our physics update along the specified axis.
      * @param axis The axis to do the update on.
      * @param gravity The gravity to apply.
      */
-    private void updateOnAxis(Axis axis, Gravity gravity) {
+    public void updateOnAxis(Axis axis, Gravity gravity) {
         // Add our gravity to the axis velocity only if this box is affected by gravity.
         if (this.isAffectedByGravity && gravity != null && gravity.getAxis() == axis) {
             this.setVelocity(axis, this.getVelocity(axis) + gravity.getForce());

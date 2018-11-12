@@ -121,36 +121,43 @@ public class Environment {
      * @param current The dynamic box to update.
      */
     private void updateDynamicBox(Box current) {
-    	// Get the current x/y/z positions of the origin of the box.
-    	Point preUpdateOrigin = current.getOrigin().clone();
-    	// Update the current dynamic box.
-    	current.update(this.gravity);
-    	// Create a list to store all static boxes that intersect the current box.
-    	ArrayList<Box> collidingBoxes = new ArrayList<Box>();
-    	// Get all static boxes that are colliding with the dynamic box.
-    	for (Box box : this.boxes.getStaticBoxes()) {
-    		// This is a static box, is it intersecting the box we are updating?
-    		if (Utilities.doBoxesCollide(current, box)) {
-    			collidingBoxes.add(box);
-    		}
-    	}
-    	// There is nothing more to do if we are not colliding with any static boxes.
-    	if (collidingBoxes.isEmpty()) {
+    	// Get all static boxes that the current box could collide with.
+    	// For now, that will be all static boxes within a range, but eventually it would 
+    	// be better to find those intersecting the box made by updating evey axis and maxing
+    	// a box between the pre and post origins.
+    	// TODO Find nearby!
+    	ArrayList<Box> nearbyBoxes = boxes.getStaticBoxes();
+    	
+    	// There is nothing more to do if there are no boxes that we could be intersecting with.
+    	if (nearbyBoxes.isEmpty()) {
     		return;
     	}
     	
-    	// TODO Sort the list by which one happened first.
+    	// Update the dynamic box on the X axis and resolve any collisions.
+    	current.updateOnAxis(Axis.X, this.gravity);
+    	for (Box nearbyBox : nearbyBoxes) {
+    		if (Utilities.doBoxesCollide(current, nearbyBox)) {
+    			Utilities.handleCollision(current, nearbyBox, Axis.X);
+            }
+    	}
     	
-    	// TODO Do sweep AABB test for first, and for all others IF they are still colliding.
-    	// Check out http://noonat.github.io/intersect/
+    	// Update the dynamic box on the Y axis and resolve any collisions.
+    	current.updateOnAxis(Axis.Y, this.gravity);
+    	for (Box nearbyBox : nearbyBoxes) {
+    		if (Utilities.doBoxesCollide(current, nearbyBox)) {
+    			Utilities.handleCollision(current, nearbyBox, Axis.Y);
+            }
+    	}
     	
-    	// TODO We can easily be intersecting multiple static boxes!!!!!!
-    	Box colliding = collidingBoxes.get(0);
-    	
-    	// Get the point that the dynamic box intersected the static one.
-    	IntersectionPoint intersection = Utilities.getIntersectionPoint(preUpdateOrigin, current, colliding);
-    	// Resolve the collision.
-    	Utilities.resolveDynamicAndStaticBoxCollision(intersection, current, colliding);
+    	// Update the dynamic box on the Z axis and resolve any collisions if we are in 3D space.
+    	if (this.dimension == Dimension.THREE_DIMENSIONS) {
+        	current.updateOnAxis(Axis.Z, this.gravity);
+        	for (Box nearbyBox : nearbyBoxes) {
+        		if (Utilities.doBoxesCollide(current, nearbyBox)) {
+        			Utilities.handleCollision(current, nearbyBox, Axis.Z);
+                }
+        	}
+    	}
     }
  
     /**

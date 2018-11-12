@@ -7,6 +7,73 @@ import com.dumbpug.nbp.point.Point;
  * Helper class for basic box collision detection and resolution.
  */
 public class Utilities {
+	
+	/**
+     * Handles a collision between a dynamic and static box on an axis.
+     * @param dynamicBox The dynamic box.
+     * @param staticBox  The static box.
+     * @param axis       The axis on which to handle this collision.
+     */
+    public static void handleCollision(Box dynamicBox, Box staticBox, Axis axis) {
+    	// Do our collision resolution based on the specified axis.
+        switch (axis) {
+            case X:
+                if (dynamicBox.getVelX() > 0) {
+                    dynamicBox.setX(staticBox.getX() - dynamicBox.getWidth());
+                    // Flip velocity
+                    dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                    // Notify boxes of collision.
+                    // staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                    // dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                } else if (dynamicBox.getVelX() < 0) {
+                    dynamicBox.setX(staticBox.getX() + staticBox.getWidth());
+                    // Flip velocity
+                    dynamicBox.setVelX(-dynamicBox.getVelX() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                    // Notify boxes of collision.
+                    // staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                    // dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                }
+                break;
+            case Y:
+                if (dynamicBox.getVelY() > 0) {
+                    dynamicBox.setY(staticBox.getY() - dynamicBox.getHeight());
+                    // Flip velocity
+                    dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                    // Notify boxes of collision.
+                    // staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
+                    // dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.BOTTOM));
+                } else if (dynamicBox.getVelY() < 0) {
+                    dynamicBox.setY(staticBox.getY() + staticBox.getHeight());
+                    // Flip velocity
+                    dynamicBox.setVelY(-dynamicBox.getVelY() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                    // Reduce X velocity based on friction.
+                    dynamicBox.setVelX(dynamicBox.getVelX() * (dynamicBox.getFriction() + staticBox.getFriction()));
+                    // Notify boxes of collision.
+                    // staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.TOP));
+                    // dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.TOP));
+                }
+                break;
+			case Z:
+				if (dynamicBox.getVelZ() > 0) {
+                    dynamicBox.setZ(staticBox.getZ() - dynamicBox.getDepth());
+                    // Flip velocity
+                    dynamicBox.setVelZ(-dynamicBox.getVelZ() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                    // Notify boxes of collision.
+                    // staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                    // dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.LEFT));
+                } else if (dynamicBox.getVelZ() < 0) {
+                    dynamicBox.setZ(staticBox.getZ() + staticBox.getDepth());
+                    // Flip velocity
+                    dynamicBox.setVelZ(-dynamicBox.getVelZ() * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                    // Notify boxes of collision.
+                    // staticBox.onCollisionWithDynamicBox(dynamicBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                    // dynamicBox.onCollisionWithStaticBox(staticBox, new IntersectionPoint(dynamicBox.getCurrentOriginPoint(), BoxEdge.RIGHT));
+                }
+				break;
+			default:
+				throw new RuntimeException("Invalid axis: " + axis);
+        }
+    }
 
     /**
      * Calculates whether two boxes intersect.
