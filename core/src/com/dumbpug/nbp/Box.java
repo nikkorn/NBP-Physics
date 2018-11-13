@@ -7,11 +7,7 @@ import com.dumbpug.nbp.point.Point;
 /**
  * Represents either a 2D or 3D box in a physics environment.
  */
-public abstract class Box {
-    /**
-     * The position.
-     */
-    private float x, y, z;
+public abstract class Box extends AABB {
     /**
      * The position of this box before the most recent position update.
      */
@@ -25,21 +21,13 @@ public abstract class Box {
      */
     private float maxVelX = 50f, maxVelY = 50f, maxVelZ = 50f;
     /**
-     * The size.
-     */
-    private float width, height, depth;
-    /**
      * The type of this box, which defines its physics behaviour.
      */
     private BoxType type;
     /**
-     * The dimension of the box.
-     */
-    private Dimension dimension = Dimension.TWO_DIMENSIONS;
-    /**
      * The name of the box.
      */
-    private String name;
+    private String name = null;
     /**
      * The friction value of this box.
      */
@@ -67,7 +55,7 @@ public abstract class Box {
     /**
      * The list of sensors that are attached to this box.
      */
-    private ArrayList<Sensor> attachedSensors;
+    private ArrayList<Sensor> attachedSensors = new ArrayList<Sensor>();
     /**
      * The user data.
      */
@@ -82,13 +70,8 @@ public abstract class Box {
      * @param type   The type of the box which defines its physics behaviour.
      */
     public Box(float x, float y, float width, float height, BoxType type) {
-        this.name       = null;
-        this.x          = x;
-        this.y          = y;
-        this.width      = width;
-        this.height     = height;
-        this.type       = type;
-        attachedSensors = new ArrayList<Sensor>();
+    	super(x, y, width, height);
+        this.type = type;
     }
 
     /**
@@ -102,11 +85,8 @@ public abstract class Box {
      * @param type   The type of the box which defines its physics behaviour.
      */
     public Box(float x, float y, float z, float width, float height, float depth, BoxType type) {
-        this(x, y, width, height, type);
-        this.z         = z;
-        this.depth     = depth;
-        this.type      = type;
-        this.dimension = Dimension.THREE_DIMENSIONS;
+        super(x, y, z, width, height, depth);
+        this.type = type;
     }
 
     /**
@@ -215,7 +195,7 @@ public abstract class Box {
             velY = this.getMaxVelocityY();
         }
         // Clamp the velocity on the Z axis if this box is in 3D space.
-        if (this.dimension == Dimension.THREE_DIMENSIONS) {
+        if (this.getDimension() == Dimension.THREE_DIMENSIONS) {
             if (velZ < -this.getMaxVelocityZ()) {
                 velZ = -this.getMaxVelocityZ();
             } else if (velZ > this.getMaxVelocityZ()) {
@@ -297,80 +277,61 @@ public abstract class Box {
     }
 
     /**
-     * Get the X position of this box.
-     * @return The x position.
+     * Set the X position of this box, updating any attached sensors.
+     * @param x The X position.
      */
-    public float getX() {
-        return x;
+    @Override 
+    public void setX(float x) {
+        // Move attached sensors along with this box.
+        if (x > this.getX()) {
+            for (Sensor sensor : this.attachedSensors) {
+                sensor.setX(sensor.getX() + (x - this.getX()));
+            }
+        } else if (x < this.getX()) {
+            for (Sensor sensor : this.attachedSensors) {
+                sensor.setX(sensor.getX() - (this.getX() - x));
+            }
+        }
+        this.lastPosX = this.getX();
+        super.setX(x);
     }
 
     /**
-     * Set the X position of this box.
-     * @param newX The nex X position.
+     * Set the Y position of this box, updating any attached sensors.
+     * @param y The Y position.
      */
-    public void setX(float newX) {
+    public void setY(float y) {
         // Move attached sensors along with this box.
-        if (newX > this.x) {
+        if (y > this.getY()) {
             for (Sensor sensor : this.attachedSensors) {
-                sensor.setX(sensor.getX() + (newX - this.x));
+                sensor.setY(sensor.getY() + (y - this.getY()));
             }
-        } else if (newX < this.x) {
+        } else if (y < this.getY()) {
             for (Sensor sensor : this.attachedSensors) {
-                sensor.setX(sensor.getX() - (this.x - newX));
+                sensor.setY(sensor.getY() - (this.getY() - y));
             }
         }
-        this.lastPosX = x;
-        this.x        = newX;
+        this.lastPosY = getY();
+        super.setY(y);
     }
 
     /**
-     * Get the Y position of this box.
-     * @return The y position.
+     * Set the Z position of this box, updating any attached sensors.
+     * @param z The Z position.
      */
-    public float getY() { return y; }
-
-    /**
-     * Set the Y position of this box.
-     * @param newY position
-     */
-    public void setY(float newY) {
+    public void setZ(float z) {
         // Move attached sensors along with this box.
-        if (newY > this.y) {
+        if (z > this.getZ()) {
             for (Sensor sensor : this.attachedSensors) {
-                sensor.setY(sensor.getY() + (newY - this.y));
+                sensor.setZ(sensor.getZ() + (z - this.getZ()));
             }
-        } else if (newY < this.y) {
+        } else if (z < this.getZ()) {
             for (Sensor sensor : this.attachedSensors) {
-                sensor.setY(sensor.getY() - (this.y - newY));
+                sensor.setZ(sensor.getZ() - (this.getZ() - z));
             }
         }
-        this.lastPosY = y;
-        this.y        = newY;
-    }
-
-    /**
-     * Get the Z position of this box.
-     * @return The Z position.
-     */
-    public float getZ() { return z; }
-
-    /**
-     * Set the Z position of this box.
-     * @param newZ position
-     */
-    public void setZ(float newZ) {
-        // Move attached sensors along with this box.
-        if (newZ > this.z) {
-            for (Sensor sensor : this.attachedSensors) {
-                sensor.setZ(sensor.getZ() + (newZ - this.z));
-            }
-        } else if (newZ < this.z) {
-            for (Sensor sensor : this.attachedSensors) {
-                sensor.setZ(sensor.getZ() - (this.z - newZ));
-            }
-        }
-        this.lastPosZ = z;
-        this.z        = newZ;
+        this.lastPosZ = getZ();
+        super.setZ(z);
     }
 
     /**
@@ -460,12 +421,6 @@ public abstract class Box {
     }
 
     /**
-     * Get the dimension of this box.
-     * @return The dimension of this box.
-     */
-    public Dimension getDimension() { return this.dimension; }
-
-    /**
      * Get user data.
      * @return The user data.
      */
@@ -495,30 +450,6 @@ public abstract class Box {
      */
     public void setAffectedByGravity(boolean isAffectedByGravity) {
         this.isAffectedByGravity = isAffectedByGravity;
-    }
-
-    /**
-     * Get the width of this box.
-     * @return The width of this box.
-     */
-    public float getWidth() {
-        return this.width;
-    }
-
-    /**
-     * Get the height of this box.
-     * @return The height of this box.
-     */
-    public float getHeight() {
-        return this.height;
-    }
-
-    /**
-     * Get the depth of this box.
-     * @return The depth of this box.
-     */
-    public float getDepth() {
-        return this.depth;
     }
 
     public BoxType getType() {
@@ -623,7 +554,7 @@ public abstract class Box {
     	// Create or update the box origin.
     	if (this.origin == null) {
     		// Are we creating a 2D or 3D point?
-    		if (this.dimension == Dimension.THREE_DIMENSIONS) {
+    		if (this.getDimension() == Dimension.THREE_DIMENSIONS) {
     			// The origin is a point in 3D space.
     			this.origin = new Point(this.getX() + (this.getWidth() / 2f), this.getY() + (this.getHeight() / 2f), this.getZ() + (this.getDepth() / 2f));
     		} else {
@@ -635,7 +566,7 @@ public abstract class Box {
     		origin.setX(this.getX() + (this.getWidth() / 2f));
     		origin.setY(this.getY() + (this.getHeight() / 2f));
     		// If this is a 3D box then we need ot set the Z value too.
-    		if (this.dimension == Dimension.THREE_DIMENSIONS) {
+    		if (this.getDimension() == Dimension.THREE_DIMENSIONS) {
     			origin.setZ(this.getZ() + (this.getDepth() / 2f));
     		}
     	}
