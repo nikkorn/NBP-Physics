@@ -30,10 +30,10 @@ public class AABB {
 	 *            The height of the AABB.
 	 */
 	public AABB(float x, float y, float width, float height) {
-		this.x         = x;
-		this.y         = y;
-		this.width     = width;
-		this.height    = height;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 		this.dimension = Dimension.TWO_DIMENSIONS;
 	}
 
@@ -54,12 +54,12 @@ public class AABB {
 	 *            The depth of the AABB.
 	 */
 	public AABB(float x, float y, float z, float width, float height, float depth) {
-		this.x         = x;
-		this.y         = y;
-		this.z         = z;
-		this.width     = width;
-		this.height    = height;
-		this.depth     = depth;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.width = width;
+		this.height = height;
+		this.depth = depth;
 		this.dimension = Dimension.THREE_DIMENSIONS;
 	}
 
@@ -154,5 +154,26 @@ public class AABB {
 	 */
 	public Dimension getDimension() {
 		return this.dimension;
+	}
+
+	/**
+	 * Gets whether this AABB intersects another AABB. The dimensions of both must match.
+	 * 
+	 * @param other
+	 *            The other AABB to check for an intersection against.
+	 * @return Whether this AABB intersects another AABB.
+	 */
+	public boolean intersects(AABB other) {
+		// If we are dealing with a 2D intersection then we only care about the x/y axis, otherwise we care about the z axis too.
+		if (this.getDimension() == Dimension.TWO_DIMENSIONS) {
+			return 
+				this.getX() < (other.getX() + other.getWidth()) && (this.getX() + this.getWidth()) > other.getX() &&
+				this.getY() < (other.getY() + other.getHeight()) && (this.getY() + this.getHeight()) > other.getY();
+		} else {
+			return 
+				this.getX() < (other.getX() + other.getWidth()) && (this.getX() + this.getWidth()) > other.getX() &&
+				this.getY() < (other.getY() + other.getHeight()) && (this.getY() + this.getHeight()) > other.getY() &&
+				this.getZ() < (other.getZ() + other.getDepth()) && (this.getZ() + this.getDepth()) > other.getZ();
+		}
 	}
 }

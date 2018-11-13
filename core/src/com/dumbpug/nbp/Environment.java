@@ -1,8 +1,6 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
-import com.dumbpug.nbp.point.IntersectionPoint;
-import com.dumbpug.nbp.point.Point;
 import com.dumbpug.nbp.zone.Zone;
 
 /**
@@ -136,7 +134,7 @@ public class Environment {
     	// Update the dynamic box on the X axis and resolve any collisions.
     	current.updateOnAxis(Axis.X, this.gravity);
     	for (Box nearbyBox : nearbyBoxes) {
-    		if (Utilities.doBoxesCollide(current, nearbyBox)) {
+    		if (current.intersects(nearbyBox)) {
     			Utilities.handleCollision(current, nearbyBox, Axis.X);
             }
     	}
@@ -144,7 +142,7 @@ public class Environment {
     	// Update the dynamic box on the Y axis and resolve any collisions.
     	current.updateOnAxis(Axis.Y, this.gravity);
     	for (Box nearbyBox : nearbyBoxes) {
-    		if (Utilities.doBoxesCollide(current, nearbyBox)) {
+    		if (current.intersects(nearbyBox)) {
     			Utilities.handleCollision(current, nearbyBox, Axis.Y);
             }
     	}
@@ -153,7 +151,7 @@ public class Environment {
     	if (this.dimension == Dimension.THREE_DIMENSIONS) {
         	current.updateOnAxis(Axis.Z, this.gravity);
         	for (Box nearbyBox : nearbyBoxes) {
-        		if (Utilities.doBoxesCollide(current, nearbyBox)) {
+        		if (current.intersects(nearbyBox)) {
         			Utilities.handleCollision(current, nearbyBox, Axis.Z);
                 }
         	}
