@@ -1,6 +1,8 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.dumbpug.nbp.zone.Zone;
 
 /**
@@ -86,19 +88,25 @@ public class Environment {
                 }
             }
         }
+        // We need to find the dynamic projections of every dynamic box in the environment.
+        // The projection defines an are of space in which the dynamic box will move and
+        // potentially collide with other static/dynamic boxes. 
+        HashMap<Box, AABB> dynamicProjections = new HashMap<Box, AABB>();
+        // Find the dynamic projection for every dynamic box.
+        for (Box dynamicBox : boxes.getDynamicBoxes()) {
+        	dynamicProjections.put(dynamicBox, Utilities.createDynamicProjection(dynamicBox));
+        }
+        
         // Update all of the dynamic boxes in the world.
         for (Box currentBox : boxes.getDynamicBoxes()) {
             // Call any user-defined box pre-update logic.
             currentBox.onBeforeUpdate();
             // Update the current box.
         	updateDynamicBox(currentBox);
-            // Process the sensors attached to the current box.
-            for (Sensor sensor : currentBox.getAttachedSensors()) {
-                // TODO sensor.reviewIntersections(boxes);
-            }
             // Call any user-defined box post-update logic.
             currentBox.onAfterUpdate();
         }
+        
         // Mark the end of the physics step.
         inPhysicsStep = false;
         // Any boxes that were added as part of this physics step should be added to our actual entity list now.
@@ -115,10 +123,10 @@ public class Environment {
     }
     
     /**
-     * Update the specified box on every axis and handle and resulting collisions.
-     * @param current The dynamic box to update.
+     * Update the specified dynamic box on every axis and handle and resulting collisions.
+     * @param dynamicBox The dynamic box to update.
      */
-    private void updateDynamicBox(Box current) {
+    private void updateDynamicBox(Box dynamicBox) {
     	// Get all static boxes that the current box could collide with.
     	// For now, that will be all static boxes within a range, but eventually it would 
     	// be better to find those intersecting the box made by updating evey axis and maxing
@@ -132,27 +140,27 @@ public class Environment {
     	}
     	
     	// Update the dynamic box on the X axis and resolve any collisions.
-    	current.updateOnAxis(Axis.X, this.gravity);
+    	dynamicBox.updateOnAxis(Axis.X, this.gravity);
     	for (Box nearbyBox : nearbyBoxes) {
-    		if (current.intersects(nearbyBox)) {
-    			Utilities.handleCollision(current, nearbyBox, Axis.X);
+    		if (dynamicBox.intersects(nearbyBox)) {
+    			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.X);
             }
     	}
     	
     	// Update the dynamic box on the Y axis and resolve any collisions.
-    	current.updateOnAxis(Axis.Y, this.gravity);
+    	dynamicBox.updateOnAxis(Axis.Y, this.gravity);
     	for (Box nearbyBox : nearbyBoxes) {
-    		if (current.intersects(nearbyBox)) {
-    			Utilities.handleCollision(current, nearbyBox, Axis.Y);
+    		if (dynamicBox.intersects(nearbyBox)) {
+    			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.Y);
             }
     	}
     	
     	// Update the dynamic box on the Z axis and resolve any collisions if we are in 3D space.
     	if (this.dimension == Dimension.THREE_DIMENSIONS) {
-        	current.updateOnAxis(Axis.Z, this.gravity);
+        	dynamicBox.updateOnAxis(Axis.Z, this.gravity);
         	for (Box nearbyBox : nearbyBoxes) {
-        		if (current.intersects(nearbyBox)) {
-        			Utilities.handleCollision(current, nearbyBox, Axis.Z);
+        		if (dynamicBox.intersects(nearbyBox)) {
+        			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.Z);
                 }
         	}
     	}

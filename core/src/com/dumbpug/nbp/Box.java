@@ -574,9 +574,9 @@ public abstract class Box extends AABB {
         return origin;
     }
 
-    protected abstract void onCollisionWithDynamicBox(Box collidingBox, IntersectionPoint dynamicBoxOriginAtCollision);
+    protected abstract void onCollisionWithDynamicBox(Box collidingBox);
 
-    protected abstract void onCollisionWithStaticBox(Box collidingBox, IntersectionPoint originAtCollision);
+    protected abstract void onCollisionWithStaticBox(Box collidingBox);
 
     protected abstract void onSensorEntry(Sensor sensor, Box enteredBox);
 

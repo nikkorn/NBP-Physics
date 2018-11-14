@@ -83,12 +83,12 @@ public class PlayerBox extends Box {
 	}
 
 	@Override
-	protected void onCollisionWithDynamicBox(Box collidingBox, IntersectionPoint dynamicBoxOriginAtCollision) {
+	protected void onCollisionWithDynamicBox(Box collidingBox) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	protected void onCollisionWithStaticBox(Box collidingBox, IntersectionPoint originAtCollision) {
+	protected void onCollisionWithStaticBox(Box collidingBox) {
 		// TODO Auto-generated method stub
 	}
 
