@@ -1,11 +1,9 @@
 package com.dumbpug.nbp;
 
-import java.util.ArrayList;
-
 /**
- * A sensor which can be attached to dynamic and static physics boxes.
+ * A sensor which can be attached to dynamic and static boxes.
  */
-public class Sensor {
+public class Sensor extends AABB {
     /**
      * The name of the sensor.
      */
@@ -14,22 +12,6 @@ public class Sensor {
      * The box that this sensor is attached to.
      */
     private Box parent;
-    /**
-     * The sensor position.
-     */
-    private float x, y, z;
-    /**
-     * The sensor size.
-     */
-    private float width, height, depth;
-    /**
-     * The dimension of the sensor.
-     */
-    private Dimension dimension = Dimension.TWO_DIMENSIONS;
-    /**
-     * The list of intersecting boxes.
-     */
-    private ArrayList<Box> intersectingBoxes;
 
     /**
      * Creates a new instance of a 2D sensor.
@@ -39,13 +21,9 @@ public class Sensor {
      * @param height The height of the sensor.
      */
     public Sensor(float x, float y, float width, float height) {
-        this.x            = x;
-        this.y            = y;
-        this.width        = width;
-        this.height       = height;
-        intersectingBoxes = new ArrayList<Box>();
+    	super(x, y, width, height);
     }
-
+    
     /**
      * Creates a new instance of a 3D sensor.
      * @param x      The X position.
@@ -56,61 +34,14 @@ public class Sensor {
      * @param depth  The depth of the sensor.
      */
     public Sensor(float x, float y, float z, float width, float height, float depth) {
-        this(x, y, width, height);
-        this.z         = z;
-        this.depth     = depth;
-        this.dimension = Dimension.THREE_DIMENSIONS;
+    	super(x, y, z, width, height, depth);
     }
 
     /**
-     * Takes a list of all physics boxes and reviews intersections.
-     * @param boxes The boxes to review.
+     * Get the box that this sensor is attached to.
+     * @return The box that this sensor is attached to.
      */
-    public void reviewIntersections(ArrayList<Box> boxes) {
-        for (Box box : boxes) {
-            // Ignore this sensors parent.
-            if (box != parent) {
-                // Does this sensor intersect with the box?
-                if (Utilities.doesSensorCollideWithBox(this, box)) {
-                    // We only care if this is the first time we are hearing of the intersection.
-                    if (!intersectingBoxes.contains(box)) {
-                        // Add this as an intersecting box.
-                        intersectingBoxes.add(box);
-                        // Notify the sensors parent that this sensor has entered another box.
-                        parent.onSensorEntry(this, box);
-                    }
-                } else {
-                    // Had this box been colliding and now it is not?
-                    if (intersectingBoxes.contains(box)) {
-                        // The sensor was intersecting this box, notify the parent.
-                        intersectingBoxes.remove(box);
-                        parent.onSensorExit(this, box);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Check whether this sensor is intersecting a box with the specified name.
-     * @param boxName The name of the box to check for.
-     * @return Whether this sensor is intersecting a box with the specified name.
-     */
-    public boolean isIntersecting(String boxName) {
-        for (Box box : this.intersectingBoxes) {
-            if (box.getName().equals(boxName)) {
-                return true;
-            }
-        }
-        // There was no intersecting box with the specified name.
-        return false;
-    }
-
-    /**
-     * Get all of the boxes that are currently intersecting with the sensor.
-     * @return The boxes which are intersecting with the sensor.
-     */
-    public ArrayList<Box> getIntersectingBoxes() { return this.intersectingBoxes; }
+    public Box getParent() { return this.parent; }
 
     /**
      * Set the box that this sensor is attached to.
@@ -129,64 +60,4 @@ public class Sensor {
      * @param name The sensor name.
      */
     public void setName(String name) { this.name = name; }
-
-    /**
-     * Get the x position.
-     * @return The x position.
-     */
-    public float getX() { return x; }
-
-    /**
-     * Set the x position.
-     * @param x The X position.
-     */
-    public void setX(float x) { this.x = x; }
-
-    /**
-     * Get the y position.
-     * @return The y position.
-     */
-    public float getY() { return y; }
-
-    /**
-     * Set the y position.
-     * @param y The Y position.
-     */
-    public void setY(float y) { this.y = y; }
-
-    /**
-     * Get the z position.
-     * @return The z position.
-     */
-    public float getZ() { return z; }
-
-    /**
-     * Set the z position.
-     * @param z The Z position.
-     */
-    public void setZ(float z) { this.z = z; }
-
-    /**
-     * Get the width of the sensor.
-     * @return The width of the sensor.
-     */
-    public float getWidth() { return this.width; }
-
-    /**
-     * Get the height of the sensor.
-     * @return the height of the sensor.
-     */
-    public float getHeight() { return this.height; }
-
-    /**
-     * Get the depth of the sensor.
-     * @return the depth of the sensor.
-     */
-    public float getDepth() { return this.depth; }
-
-    /**
-     * Get the dimension of this sensor.
-     * @return The dimension of this sensor.
-     */
-    public Dimension getDimension() { return this.dimension; }
 }

@@ -1,7 +1,6 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
-import com.dumbpug.nbp.point.IntersectionPoint;
 import com.dumbpug.nbp.point.Point;
 
 /**

@@ -4,7 +4,6 @@ import com.dumbpug.nbp.Bloom;
 import com.dumbpug.nbp.Box;
 import com.dumbpug.nbp.BoxType;
 import com.dumbpug.nbp.Sensor;
-import com.dumbpug.nbp.point.IntersectionPoint;
 
 /**
  * A simple 2d box.

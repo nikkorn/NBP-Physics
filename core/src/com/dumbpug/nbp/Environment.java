@@ -1,8 +1,6 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.dumbpug.nbp.zone.Zone;
 
 /**
@@ -88,15 +86,6 @@ public class Environment {
                 }
             }
         }
-        // We need to find the dynamic projections of every dynamic box in the environment.
-        // The projection defines an are of space in which the dynamic box will move and
-        // potentially collide with other static/dynamic boxes. 
-        HashMap<Box, AABB> dynamicProjections = new HashMap<Box, AABB>();
-        // Find the dynamic projection for every dynamic box.
-        for (Box dynamicBox : boxes.getDynamicBoxes()) {
-        	dynamicProjections.put(dynamicBox, Utilities.createDynamicProjection(dynamicBox));
-        }
-        
         // Update all of the dynamic boxes in the world.
         for (Box currentBox : boxes.getDynamicBoxes()) {
             // Call any user-defined box pre-update logic.
@@ -106,7 +95,6 @@ public class Environment {
             // Call any user-defined box post-update logic.
             currentBox.onAfterUpdate();
         }
-        
         // Mark the end of the physics step.
         inPhysicsStep = false;
         // Any boxes that were added as part of this physics step should be added to our actual entity list now.

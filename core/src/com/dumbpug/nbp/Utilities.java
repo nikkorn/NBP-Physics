@@ -74,43 +74,6 @@ public class Utilities {
 				throw new RuntimeException("Invalid axis: " + axis);
         }
     }
-
-    /**
-     * Calculates whether two boxes intersect.
-     * @param firstBox  The first box.
-     * @param secondBox The second box.
-     * @return Whether an intersection exists.
-     */
-    public static boolean doBoxesCollide(Box firstBox, Box secondBox) {
-        return doSquaresIntersect(firstBox.getX(), firstBox.getY(), firstBox.getWidth(), firstBox.getHeight(), secondBox.getX(), secondBox.getY(), secondBox.getWidth(), secondBox.getHeight());
-    }
-
-    /**
-     * Calculates whether a sensor and box intersect.
-     * @param sensor The sensor.
-     * @param box    The box.
-     * @return Whether an intersection exists.
-     */
-    public static boolean doesSensorCollideWithBox(Sensor sensor, Box box) {
-        return doSquaresIntersect(sensor.getX(), sensor.getY(), sensor.getWidth(), sensor.getHeight(), box.getX(), box.getY(), box.getWidth(), box.getHeight());
-    }
-
-    /**
-     * Calculates whether two squares intersect.
-     * @param aX      The X position of the first box.
-     * @param aY      The Y position of the first box.
-     * @param aWidth  The width of the first box.
-     * @param aHeight The height of the first box.
-     * @param bX      The X position of the second box.
-     * @param bY      The Y position of the second box.
-     * @param bWidth  The width of the second box.
-     * @param bHeight The height of the second box.
-     * @return Whether an intersection exists.
-     */
-    public static boolean doSquaresIntersect(float aX, float aY, float aWidth, float aHeight,
-                                             float bX, float bY, float bWidth, float bHeight) {
-        return (aX < (bX + bWidth) && (aX + aWidth) > bX && aY < (bY + bHeight) && (aY + aHeight) > bY);
-    }
     
     /**
      * Creates a dynamic projection for a box, represesting the space in which an 
@@ -146,75 +109,6 @@ public class Utilities {
     		// Create and return the projection.
     		return new AABB(projectionX, projectionY, projectionWidth, projectionHeight);
     	}
-    }
-    
-    /**
-     * Find the point of intersection between a dynamic and static box.
-     * @param preUpdateDynamicOrigin The origin of the dynamic box before intersection.
-     * @param dynamicBox The dynamic box.
-     * @param staticBox The static box.
-     * @return The point of intersection between a dynamic and static box.
-     */
-    public static IntersectionPoint getIntersectionPoint(Point preUpdateDynamicOrigin, Box dynamicBox, Box staticBox) {
-    	// Get the new origin of the dynamic box.
-    	Point postUpdateDynamicOrigin = dynamicBox.getOrigin();
-    	// Firstly, we need to get the Minkowski sum of the static box.
-    	// Find the position of the sum.
-		float x = staticBox.getX() - (dynamicBox.getWidth() / 2f);
-		float y = staticBox.getY() - (dynamicBox.getHeight() / 2f);
-		// Get the width/height of the sum.
-		float height = staticBox.getHeight() + dynamicBox.getHeight();
-		float width  = staticBox.getWidth() + dynamicBox.getWidth();
-    	// Check for an intersection with the top edge of the box if we are moving down.
-		if (dynamicBox.getVelY() < 0) {
-			Point topEdgeIntersection = Utilities.getLineVsLineIntersection(
-					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-					x, y + height,
-					x + width, y + height
-			);
-			if (topEdgeIntersection != null && topEdgeIntersection.getX() >= x && topEdgeIntersection.getX() <= (x + width)) {
-				return new IntersectionPoint(topEdgeIntersection.getX(), topEdgeIntersection.getY(), BoxEdge.TOP);
-			}
-		}
-		// Check for an intersection with the right edge of the box if we are moving left.
-		if (dynamicBox.getVelX() < 0) {
-			Point rightEdgeIntersection = Utilities.getLineVsLineIntersection(
-					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-					x + width, y,
-					x + width, y + height
-			);
-			if (rightEdgeIntersection != null && rightEdgeIntersection.getY() >= y && rightEdgeIntersection.getY() <= (y + height)) {
-				return new IntersectionPoint(rightEdgeIntersection.getX(), rightEdgeIntersection.getY(), BoxEdge.RIGHT);
-			}
-		}
-		// Check for an intersection with the bottom edge of the box if we are moving up.
-		if (dynamicBox.getVelY() > 0) {
-			Point bottomEdgeIntersection = Utilities.getLineVsLineIntersection(
-					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-					x, y,
-					x + width, y
-			);
-			if (bottomEdgeIntersection != null && bottomEdgeIntersection.getX() >= x && bottomEdgeIntersection.getX() <= (x + width)) {
-				return new IntersectionPoint(bottomEdgeIntersection.getX(), bottomEdgeIntersection.getY(), BoxEdge.BOTTOM);
-			}
-		}
-		// Check for an intersection with the left edge of the box if we are moving right.
-		if (dynamicBox.getVelX() > 0) {
-			Point leftEdgeIntersection = Utilities.getLineVsLineIntersection(
-					preUpdateDynamicOrigin.getX(), preUpdateDynamicOrigin.getY(),
-					postUpdateDynamicOrigin.getX(), postUpdateDynamicOrigin.getY(),
-					x, y,
-					x, y + height
-			);
-			if (leftEdgeIntersection != null && leftEdgeIntersection.getY() >= y && leftEdgeIntersection.getY() <= (y + height)) {
-				return new IntersectionPoint(leftEdgeIntersection.getX(), leftEdgeIntersection.getY(), BoxEdge.LEFT);
-			}
-		}
-		// We should have intersected the static block on at least one side.
-		throw new RuntimeException("No valid intersection edge found.");
     }
     
     /**
