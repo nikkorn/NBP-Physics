@@ -14,6 +14,7 @@ import com.dumbpug.nbp.BoxType;
 import com.dumbpug.nbp.Dimension;
 import com.dumbpug.nbp.Environment;
 import com.dumbpug.nbp.Gravity;
+import com.dumbpug.nbp.zone.CircleZone;
 
 /**
  * A simple 2D launcher with lots of individual dynamic boxes.
@@ -50,6 +51,8 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         box3 = new Basic2DBox(480, 80, 20, 180, BoxType.STATIC);
         box3.setName("box3");
         
+        CircleZone cz = new CircleZone(300, 200, -1f, 50f);
+        
         // Create a cluster.
         for(int i = 0; i < clusterSize; i++) {
             Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 3, 3, BoxType.DYNAMIC);
@@ -63,6 +66,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         environment.addBox(box1);
         environment.addBox(box2);
         environment.addBox(box3);
+        environment.addZone(cz);
 
         cluster.add(box1);
         cluster.add(box2);
