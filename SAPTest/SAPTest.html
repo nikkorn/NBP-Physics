@@ -18,17 +18,6 @@
   canvas.style.border = "thin solid black";
   canvas.style.background = "#FFFFF";
 
-  // Create the boxes in the world.
-  var boxes = [
-    createAABB("a", 200, 100, 300, 10),
-    createAABB("b", 150, 220, 200, 100),
-    createAABB("c", 350, 250, 100, 200),
-    createAABB("d", 200, 100, 50, 100),
-    createAABB("e", 300, 400, 300, 80),
-    createAABB("f", 100, 350, 150, 100),
-    createAABB("g", 450, 200, 10, 200)
-  ];
-
   /**
    * Create an AABB at x/y with the width/height. 
    */
@@ -37,12 +26,44 @@
     return { name, x, y, width, height, halfWidth: width / 2, halfHeight: height / 2 };
   }
 
-  function findIntersections() 
+  function findXAxisIntersections(boxes) 
   {
+    // Sort items by left-most min x (just left edge) into sortedList.
+    // Create active list and add first (left-most) sorted item to it.
+    // For each next item (N) in the sorted axis list:
+    // - For each item (E) in the active list:
+    // - - If N.x > (E.x + E.width) : Remove E from the active list.
+    // - - Else                     : Report potential collision between N and E before adding N to the active list.
 
+    // Do nothing if there are no boxes.
+    if (!boxes.length) { return; }
+
+    // Sort the boxes left-to-right.
+    boxes.sort((a, b) => a.x - b.x);
+
+    // Create the active list, adding the left- most box .
+    const activeList = [boxes.shift()];
+
+    // For each next item (N) in the sorted axis list.
+    while (boxes.length) {
+      // Get the next box along.
+      const next = boxes.shift();
+
+      // Check the next box against every one in the active list.
+      for (var activeIndex = 0; activeIndex < activeList.length; activeIndex++) {
+        // Get the current active item.
+        const active = activeList[activeIndex];
+
+        if (next.x > (active.x + active.width)) {
+
+        } else {
+
+        }
+      }
+    }
   }
 
-  function drawBoxes() 
+  function drawBoxes(boxes) 
   {
     for (var i = 0; i < boxes.length; i++)
     {
@@ -51,8 +72,27 @@
     }
   }
 
-  // Draw the boxes.
-  drawBoxes();
+  function go() {
+    // Create the boxes in the world.
+    var boxes = [
+      createAABB("a", 200, 100, 300, 10),
+      createAABB("b", 150, 220, 200, 100),
+      createAABB("c", 350, 250, 100, 200),
+      createAABB("d", 200, 100, 50, 100),
+      createAABB("e", 300, 400, 300, 80),
+      createAABB("f", 100, 350, 150, 100),
+      createAABB("g", 450, 200, 10, 200)
+    ];
+
+    // Find potential collisions on the X axis.
+    findXAxisIntersections(boxes);
+
+    // Draw the boxes.
+    drawBoxes(boxes);
+  }
+
+  // Do the stuff!!!! 
+  go();
    
   document.body.appendChild(canvas);
 </script>
