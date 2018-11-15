@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>The HTML5 Herald</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+</head>
+
+<body></body>
+<script>
+  var canvas = document.createElement("canvas");
+  var ctx = canvas.getContext("2d");
+
+  canvas.width = 500;
+  canvas.height = 500;
+  canvas.style.border = "thin solid black";
+  canvas.style.background = "#FFFFF";
+
+  // Create the boxes in the world.
+  var boxes = [
+    createAABB("a", 200, 100, 300, 10),
+    createAABB("b", 150, 220, 200, 100),
+    createAABB("c", 350, 250, 100, 200),
+    createAABB("d", 200, 100, 50, 100),
+    createAABB("e", 300, 400, 300, 80),
+    createAABB("f", 100, 350, 150, 100),
+    createAABB("g", 450, 200, 10, 200)
+  ];
+
+  /**
+   * Create an AABB at x/y with the width/height. 
+   */
+  function createAABB(name, x, y, width, height)
+  {
+    return { name, x, y, width, height, halfWidth: width / 2, halfHeight: height / 2 };
+  }
+
+  function findIntersections() 
+  {
+
+  }
+
+  function drawBoxes() 
+  {
+    for (var i = 0; i < boxes.length; i++)
+    {
+      ctx.fillStyle = "#7ca3ad";
+      ctx.fillRect(boxes[i].x - boxes[i].halfWidth, boxes[i].y - boxes[i].halfHeight, boxes[i].width, boxes[i].height);
+    }
+  }
+
+  // Draw the boxes.
+  drawBoxes();
+   
+  document.body.appendChild(canvas);
+</script>
+</html>

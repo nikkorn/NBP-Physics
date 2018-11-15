@@ -86,6 +86,12 @@ public class Environment {
                 }
             }
         }
+        
+        // 1. Get projections of all dynamic boxes AND their sensors.
+        // 2. Use Sweep And Prune to find possible intersections between static boxes and the projections of all dynamic boxes and sensors.
+        // 3. Update each dynamic box (inc sensors) and report any collisions with static boxes (provided by SAP) as part of its update.
+        // 4. Check each dynamic box/sensor against possible intersections and report.
+        
         // Update all of the dynamic boxes in the world.
         for (Box currentBox : boxes.getDynamicBoxes()) {
             // Call any user-defined box pre-update logic.
@@ -95,6 +101,7 @@ public class Environment {
             // Call any user-defined box post-update logic.
             currentBox.onAfterUpdate();
         }
+        
         // Mark the end of the physics step.
         inPhysicsStep = false;
         // Any boxes that were added as part of this physics step should be added to our actual entity list now.
