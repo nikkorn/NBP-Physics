@@ -54,12 +54,16 @@
     const activeList = [boxes[0]];
 
     // Store a list of potential colliding pairs. 
-    const pairs = [];
+    const potential = {};
 
     // For each next item (N) in the sorted axis list.
     for (var boxIndex = 1; boxIndex < boxes.length; boxIndex++) {
       // Get the next box along.
       const next = boxes[boxIndex];
+
+      if (!potential[next.name]) {
+        potential[next.name] = [];
+      }
 
       let activeIndex = activeList.length;
 
@@ -72,13 +76,19 @@
         }
       }
 
-      activeList.forEach(active => pairs.push([active.name, next.name]));
+      activeList.forEach(active => {
+        if (!potential[active.name]) {
+          potential[active.name] = [];
+        }
+        potential[active.name].push(next.name);
+        potential[next.name].push(active.name);
+      });
 
       activeList.push(next);
     }
 
     // We should have potential colliding pairs.
-    console.log(pairs);
+    console.log(potential);
   }
 
   function drawBoxes(boxes) 
