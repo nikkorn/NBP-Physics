@@ -50,15 +50,16 @@
     // Sort the boxes left-to-right.
     boxes.sort((a, b) => a.x - b.x);
 
-    // Create the active list, adding the left- most box .
+    // Create the active list, adding the left-most box.
     const activeList = [boxes[0]];
+
+    // Store a list of potential colliding pairs. 
+    const pairs = [];
 
     // For each next item (N) in the sorted axis list.
     for (var boxIndex = 1; boxIndex < boxes.length; boxIndex++) {
       // Get the next box along.
       const next = boxes[boxIndex];
-
-      console.log("ACTIVE: " + next.name);
 
       let activeIndex = activeList.length;
 
@@ -67,17 +68,17 @@
         const active = activeList[--activeIndex];
 
         if (next.x > (active.x + active.width)) {
-          console.log("^^^ " + active.name)
           activeList.splice(activeIndex, 1);
         }
       }
 
-      activeList.forEach(active => console.log("---> " + active.name));
-
-      console.log("");
+      activeList.forEach(active => pairs.push([active.name, next.name]));
 
       activeList.push(next);
     }
+
+    // We should have potential colliding pairs.
+    console.log(pairs);
   }
 
   function drawBoxes(boxes) 
