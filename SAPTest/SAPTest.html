@@ -35,7 +35,7 @@
     return { name, x, y, width, height, halfWidth: width / 2, halfHeight: height / 2 };
   }
 
-  function findXAxisIntersections(boxes) 
+  function findAxisIntersections(boxes, getAxis, getSize) 
   {
     // Sort items by left-most min x (just left edge) into sortedList.
     // Create active list and add first (left-most) sorted item to it.
@@ -48,7 +48,7 @@
     if (!boxes.length) { return; }
 
     // Sort the boxes left-to-right.
-    boxes.sort((a, b) => a.x - b.x);
+    boxes.sort((a, b) => getAxis(a) - getAxis(b));
 
     // Create the active list, adding the left-most box.
     const activeList = [boxes[0]];
@@ -71,7 +71,7 @@
         // Get the current active item.
         const active = activeList[--activeIndex];
 
-        if (next.x > (active.x + active.width)) {
+        if (getAxis(next) > (getAxis(active) + getSize(active))) {
           activeList.splice(activeIndex, 1);
         }
       }
@@ -87,8 +87,8 @@
       activeList.push(next);
     }
 
-    // We should have potential colliding pairs.
-    console.log(potential);
+    // Return the list of potential colliding pairs.
+    return potential;
   }
 
   function drawBoxes(boxes) 
@@ -112,7 +112,13 @@
     ];
 
     // Find potential collisions on the X axis.
-    findXAxisIntersections(boxes);
+    const xIntersections = findAxisIntersections(boxes, (box) => box.x, (box) => box.width);
+
+    // Find potential collisions on the Y axis.
+    const yIntersections = findAxisIntersections(boxes, (box) => box.y, (box) => box.height);
+
+    // We should have potential colliding pairs.
+    console.log({ xIntersections, yIntersections });
 
     // Draw the boxes.
     drawBoxes(boxes);
