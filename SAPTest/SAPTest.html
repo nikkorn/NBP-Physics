@@ -18,6 +18,15 @@
   canvas.style.border = "thin solid black";
   canvas.style.background = "#FFFFF";
 
+  const colours = {
+    "red": "#b50327",
+    "green": "#027a16",
+    "blue": "#0574b5",
+    "orange": "#c67d07",
+    "purple": "#650289",
+    "pink": "#e58bd9"
+  };
+
   /**
    * Create an AABB at x/y with the width/height. 
    */
@@ -42,24 +51,32 @@
     boxes.sort((a, b) => a.x - b.x);
 
     // Create the active list, adding the left- most box .
-    const activeList = [boxes.shift()];
+    const activeList = [boxes[0]];
 
     // For each next item (N) in the sorted axis list.
-    while (boxes.length) {
+    for (var boxIndex = 1; boxIndex < boxes.length; boxIndex++) {
       // Get the next box along.
-      const next = boxes.shift();
+      const next = boxes[boxIndex];
 
-      // Check the next box against every one in the active list.
-      for (var activeIndex = 0; activeIndex < activeList.length; activeIndex++) {
+      console.log("ACTIVE: " + next.name);
+
+      let activeIndex = activeList.length;
+
+      while (activeIndex) {
         // Get the current active item.
-        const active = activeList[activeIndex];
+        const active = activeList[--activeIndex];
 
         if (next.x > (active.x + active.width)) {
-
-        } else {
-
+          console.log("^^^ " + active.name)
+          activeList.splice(activeIndex, 1);
         }
       }
+
+      activeList.forEach(active => console.log("---> " + active.name));
+
+      console.log("");
+
+      activeList.push(next);
     }
   }
 
@@ -67,21 +84,20 @@
   {
     for (var i = 0; i < boxes.length; i++)
     {
-      ctx.fillStyle = "#7ca3ad";
-      ctx.fillRect(boxes[i].x - boxes[i].halfWidth, boxes[i].y - boxes[i].halfHeight, boxes[i].width, boxes[i].height);
+      ctx.fillStyle = colours[boxes[i].name];
+      ctx.fillRect(boxes[i].x, boxes[i].y, boxes[i].width, boxes[i].height);
     }
   }
 
   function go() {
     // Create the boxes in the world.
     var boxes = [
-      createAABB("a", 200, 100, 300, 10),
-      createAABB("b", 150, 220, 200, 100),
-      createAABB("c", 350, 250, 100, 200),
-      createAABB("d", 200, 100, 50, 100),
-      createAABB("e", 300, 400, 300, 80),
-      createAABB("f", 100, 350, 150, 100),
-      createAABB("g", 450, 200, 10, 200)
+      createAABB("red", 350, 100, 120, 10),
+      createAABB("green", 50, 220, 100, 100),
+      createAABB("orange", 230, 250, 100, 120),
+      createAABB("blue", 200, 100, 50, 100),
+      createAABB("purple", 120, 400, 300, 80),
+      createAABB("pink", 450, 200, 10, 200)
     ];
 
     // Find potential collisions on the X axis.
