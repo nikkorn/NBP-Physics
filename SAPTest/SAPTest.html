@@ -13,8 +13,8 @@
   var canvas = document.createElement("canvas");
   var ctx = canvas.getContext("2d");
 
-  canvas.width = 500;
-  canvas.height = 500;
+  canvas.width = 1000;
+  canvas.height = 1000;
   canvas.style.border = "thin solid black";
   canvas.style.background = "#FFFFF";
 
@@ -28,6 +28,19 @@
   };
 
   /**
+   * Make a random id.
+   */
+   function makeId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 10; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+  }
+
+  /**
    * Create an AABB at x/y with the width/height. 
    */
   function createAABB(name, x, y, width, height)
@@ -36,7 +49,23 @@
   }
 
   /**
-   * 
+   * Create a random bunch of boxes. 
+   */
+  function generateAABBs(count, minPos, maxPos, minSize, maxSize) {
+    const boxes = [];
+    for(var index = 0; index < count; index++) {
+      const id     = makeId();
+      const x      = minPos + Math.floor(Math.random() * (maxPos - minPos));
+      const y      = minPos + Math.floor(Math.random() * (maxPos - minPos));
+      const width  = minSize + Math.floor(Math.random() * (maxSize - minSize));
+      const height = minSize + Math.floor(Math.random() * (maxSize - minSize));
+      boxes.push(createAABB(id, x, y, width, height));
+    }
+    return boxes;
+  }
+
+  /**
+   * Find intersection for boxes on an axis.
    */
   function findAxisIntersections(boxes, getAxis, getSize) 
   {
@@ -94,11 +123,13 @@
     return potential;
   }
 
-  function drawBoxes(boxes) 
+  function drawBoxes(boxes, intersections) 
   {
+    const boxHasCollision = (box) => intersections.some((intersection) => intersection[0] === box.name);
+
     for (var i = 0; i < boxes.length; i++)
     {
-      ctx.fillStyle = colours[boxes[i].name];
+      ctx.fillStyle = boxHasCollision(boxes[i]) ? "#b50327" : "#0574b5";
       ctx.fillRect(boxes[i].x, boxes[i].y, boxes[i].width, boxes[i].height);
     }
   }
@@ -120,14 +151,7 @@
 
   function go() {
     // Create the boxes in the world.
-    var boxes = [
-      createAABB("red", 150, 120, 150, 10),
-      createAABB("green", 50, 220, 100, 100),
-      createAABB("orange", 230, 250, 100, 120),
-      createAABB("blue", 200, 100, 50, 100),
-      createAABB("purple", 120, 400, 300, 80),
-      createAABB("pink", 450, 200, 10, 200)
-    ];
+    var boxes = generateAABBs(1000, 10, 980, 5, 20);
 
     // Find potential collisions on the X axis.
     const xIntersections = findAxisIntersections(boxes, (box) => box.x, (box) => box.width);
@@ -143,7 +167,7 @@
     console.log(intersections);
 
     // Draw the boxes.
-    drawBoxes(boxes);
+    drawBoxes(boxes, intersections);
   }
 
   // Do the stuff!!!! 
