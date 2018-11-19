@@ -35,6 +35,9 @@
     return { name, x, y, width, height, halfWidth: width / 2, halfHeight: height / 2 };
   }
 
+  /**
+   * 
+   */
   function findAxisIntersections(boxes, getAxis, getSize) 
   {
     // Sort items by left-most min x (just left edge) into sortedList.
@@ -100,6 +103,21 @@
     }
   }
 
+  /**
+   * Get an array of every value common to every array within the specified array.
+   */
+  function getCommonElements(arrays) {
+    if (arrays.length <= 0) {
+      return [];
+    } else if (arrays.length === 1) {
+      // There is is only one array so the values within it are common across all.
+      return arrays[0];
+    } else {
+      // There are multiple arrays, we need to find the values common to all.
+      return arrays[0].filter((value) => arrays.every((array) => array.indexOf(value) !== -1));
+    }
+  }
+
   function go() {
     // Create the boxes in the world.
     var boxes = [
@@ -117,8 +135,12 @@
     // Find potential collisions on the Y axis.
     const yIntersections = findAxisIntersections(boxes, (box) => box.y, (box) => box.height);
 
-    // We should have potential colliding pairs.
-    console.log({ xIntersections, yIntersections });
+    const intersections = boxes
+      .map((box) => ([ box.name, getCommonElements([ xIntersections[box.name], yIntersections[box.name]]) ]))
+      .filter((intersection) => intersection[1].length);
+		
+		// We should have potential colliding pairs.
+    console.log(intersections);
 
     // Draw the boxes.
     drawBoxes(boxes);
