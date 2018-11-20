@@ -24,6 +24,10 @@ public abstract class Box extends AABB {
      */
     private BoxType type;
     /**
+     * The projection of the box, based on its position and velocity.
+     */
+    private AABB projection;
+    /**
      * The name of the box.
      */
     private String name = null;
@@ -70,7 +74,8 @@ public abstract class Box extends AABB {
      */
     public Box(float x, float y, float width, float height, BoxType type) {
     	super(x, y, width, height);
-        this.type = type;
+        this.type       = type;
+        this.projection = Utilities.createDynamicProjection(this);
     }
 
     /**
@@ -85,7 +90,8 @@ public abstract class Box extends AABB {
      */
     public Box(float x, float y, float z, float width, float height, float depth, BoxType type) {
         super(x, y, z, width, height, depth);
-        this.type = type;
+        this.type       = type;
+        this.projection = Utilities.createDynamicProjection(this);
     }
 
     /**
@@ -454,6 +460,8 @@ public abstract class Box extends AABB {
     public BoxType getType() {
         return this.type;
     }
+
+    public AABB getProjection() { return this.projection; }
 
     public String getName() {
         return this.name;
