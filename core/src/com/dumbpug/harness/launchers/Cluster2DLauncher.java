@@ -56,7 +56,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         // Create a cluster.
         for(int i = 0; i < clusterSize; i++) {
             Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 3, 3, BoxType.DYNAMIC);
-            cBox.applyImpulse((ran.nextFloat()*6f)-3f, 0);
+            cBox.applyImpulse(Axis.X, (ran.nextFloat()*6f)-3f);
             cBox.setFriction(ran.nextFloat());
             cBox.setRestitution(ran.nextFloat());
             environment.addBox(cBox);

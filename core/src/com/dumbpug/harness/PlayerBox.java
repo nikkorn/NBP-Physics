@@ -1,5 +1,6 @@
 package com.dumbpug.harness;
 
+import com.dumbpug.nbp.Axis;
 import com.dumbpug.nbp.Bloom;
 import com.dumbpug.nbp.Box;
 import com.dumbpug.nbp.BoxType;
@@ -27,8 +28,8 @@ public class PlayerBox extends Box {
         super(x, y, width, height, BoxType.DYNAMIC);
         setFriction(PLAYER_FRICTION);
         setRestitution(PLAYER_RESTITUTION);
-        setMaxVelocityX(PLAYER_MAX_VELOCITY);
-        setMaxVelocityY(PLAYER_MAX_VELOCITY);
+        setMaxVelocity(Axis.X, PLAYER_MAX_VELOCITY);
+        setMaxVelocity(Axis.Y, PLAYER_MAX_VELOCITY);
         // Create a sensor and place it at the base of our player. This sensor will
         // be used to detect when we are standing on something static, thus allowing
         // the player to jump.
@@ -49,21 +50,21 @@ public class PlayerBox extends Box {
      */
     public void jump() {
     	// Apply a vertical impulse.
-        applyImpulse(0f, PLAYER_JUMPING_IMPULSE);
+        applyImpulse(Axis.Y, PLAYER_JUMPING_IMPULSE);
     }
     
     /**
      * Move the player to the left.
      */
     public void moveLeft() {
-    	applyImpulse(-PLAYER_WALKING_IMPULSE, 0f);
+    	applyImpulse(Axis.X, -PLAYER_WALKING_IMPULSE);
     }
 
     /**
      * Move the player to the right.
      */
     public void moveRight() {
-    	applyImpulse(PLAYER_WALKING_IMPULSE, 0f);
+    	applyImpulse(Axis.X, PLAYER_WALKING_IMPULSE);
     }
 
 	@Override

@@ -153,6 +153,9 @@
     // Create the boxes in the world.
     var boxes = generateAABBs(1000, 10, 980, 5, 20);
 
+    // Get the start time so we can see how long it takes to do the deed.
+    const startTime = new Date().getTime();
+
     // Find potential collisions on the X axis.
     const xIntersections = findAxisIntersections(boxes, (box) => box.x, (box) => box.width);
 
@@ -163,8 +166,8 @@
       .map((box) => ([ box.name, getCommonElements([ xIntersections[box.name], yIntersections[box.name]]) ]))
       .filter((intersection) => intersection[1].length);
 		
-		// We should have potential colliding pairs.
-    console.log(intersections);
+		// Log the details to the console.
+    console.log("Found " + intersections.length + " intersections in " + boxes.length + " boxes, took " + (new Date().getTime() - startTime) + "ms");
 
     // Draw the boxes.
     drawBoxes(boxes, intersections);

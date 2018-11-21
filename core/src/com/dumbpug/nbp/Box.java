@@ -95,31 +95,17 @@ public abstract class Box extends AABB {
     }
 
     /**
-     * Apply an impulse to this box in 2D space.
-     * @param x The amount of velocity to apply on the X axis.
-     * @param y The amount of velocity to apply on the Y axis.
+     * Apply an impulse to this box on the specified axis.
+     * @param axis The axis to apply the impulse on.
+     * @param value The amount of velocity to apply on the axis.
      */
-    public void applyImpulse(float x, float y) {
-        this.velX += x;
-        this.velY += y;
-        // Clamp our velocity to our max.
-        clampVelocity();
+    public void applyImpulse(Axis axis, float value) {
+        // Get the current velocity on this axis.
+        float velocity = this.getVelocity(axis);
+        // Apply the impulse velocity.
+        this.setVelocity(axis, velocity + value);
     }
 
-    /**
-     * Apply an impulse to this box in 3D space.
-     * @param x The amount of velocity to apply on the X axis.
-     * @param y The amount of velocity to apply on the Y axis.
-     * @param z The amount of velocity to apply on the Z axis.
-     */
-    public void applyImpulse(float x, float y, float z) {
-        this.velX += x;
-        this.velY += y;
-        this.velZ += z;
-        // Clamp our velocity to our max.
-        clampVelocity();
-    }
-    
     /**
      * Do our physics update along the specified axis.
      * @param axis The axis to do the update on.
@@ -137,8 +123,6 @@ public abstract class Box extends AABB {
         if (currentVelocityOnAxis > -0.0005 && currentVelocityOnAxis < 0.0005) {
             this.setVelocity(axis, 0f);
         }
-        // Clamp our velocity to our max.
-        clampVelocity();
         // Alter the box's position on the current axis.
         this.setPosition(axis, this.getPosition(axis) + this.getVelocity(axis));
     }
@@ -149,9 +133,14 @@ public abstract class Box extends AABB {
      * @param force The amount of force to apply.
      */
     public void applyVelocityInDirection(double angle, float force) {
+    	// We can only do this operation in 2D space, for now.
+    	if (this.getDimension() == Dimension.THREE_DIMENSIONS) {
+    		throw new RuntimeException("Cannot apply veclocity by angle in 3D space.");
+    	}
         double impulseX = Math.cos(Math.toRadians(angle)) * force;
+        this.setVelocity(Axis.X, (float)impulseX);
         double impulseY = Math.sin(Math.toRadians(angle)) * force;
-        this.applyImpulse((float) impulseX, (float) impulseY);
+        this.setVelocity(Axis.Y, (float)impulseY);
     }
 
     /**
@@ -179,32 +168,6 @@ public abstract class Box extends AABB {
             // Apply the force of the bloom to this box.
             if (onBloomPush(bloom, angleBetweenBloomAndBox, force, distance)) {
                 applyVelocityInDirection(angleBetweenBloomAndBox, force);
-            }
-        }
-    }
-
-    /**
-     * Clamp the velocity of this box on every axis so that it does not exceed its max for that axis.
-     */
-    private void clampVelocity() {
-        // Clamp the velocity on the X axis.
-        if (velX < -this.getMaxVelocityX()) {
-            velX = -this.getMaxVelocityX();
-        } else if (velX > this.getMaxVelocityX()) {
-            velX = this.getMaxVelocityX();
-        }
-        // Clamp the velocity on the Y axis.
-        if (velY < -this.getMaxVelocityY()) {
-            velY = -this.getMaxVelocityY();
-        } else if (velY > this.getMaxVelocityY()) {
-            velY = this.getMaxVelocityY();
-        }
-        // Clamp the velocity on the Z axis if this box is in 3D space.
-        if (this.getDimension() == Dimension.THREE_DIMENSIONS) {
-            if (velZ < -this.getMaxVelocityZ()) {
-                velZ = -this.getMaxVelocityZ();
-            } else if (velZ > this.getMaxVelocityZ()) {
-                velZ = this.getMaxVelocityZ();
             }
         }
     }
@@ -285,7 +248,7 @@ public abstract class Box extends AABB {
      * Set the X position of this box, updating any attached sensors.
      * @param x The X position.
      */
-    @Override 
+    @Override
     public void setX(float x) {
         // Move attached sensors along with this box.
         if (x > this.getX()) {
@@ -297,6 +260,7 @@ public abstract class Box extends AABB {
                 sensor.setX(sensor.getX() - (this.getX() - x));
             }
         }
+        // TODO Update projection on this axis!
         this.lastPosX = this.getX();
         super.setX(x);
     }
@@ -305,6 +269,7 @@ public abstract class Box extends AABB {
      * Set the Y position of this box, updating any attached sensors.
      * @param y The Y position.
      */
+    @Override
     public void setY(float y) {
         // Move attached sensors along with this box.
         if (y > this.getY()) {
@@ -316,6 +281,7 @@ public abstract class Box extends AABB {
                 sensor.setY(sensor.getY() - (this.getY() - y));
             }
         }
+        // TODO Update projection on this axis!
         this.lastPosY = getY();
         super.setY(y);
     }
@@ -324,6 +290,7 @@ public abstract class Box extends AABB {
      * Set the Z position of this box, updating any attached sensors.
      * @param z The Z position.
      */
+    @Override
     public void setZ(float z) {
         // Move attached sensors along with this box.
         if (z > this.getZ()) {
@@ -335,6 +302,7 @@ public abstract class Box extends AABB {
                 sensor.setZ(sensor.getZ() - (this.getZ() - z));
             }
         }
+        // TODO Update projection on this axis!
         this.lastPosZ = getZ();
         super.setZ(z);
     }
@@ -342,15 +310,16 @@ public abstract class Box extends AABB {
     /**
      * Get the velocity of the box on the specified axis.
      * @param axis The axis for which to get the box velocity.
+     * @return The velocity of the box on the specified axis.
      */
     public float getVelocity(Axis axis) {
         switch (axis) {
             case X:
-                return this.getVelX();
+                return this.velX;
             case Y:
-                return this.getVelY();
+                return this.velY;
             case Z:
-                return this.getVelZ();
+                return this.velZ;
             default:
                 throw new RuntimeException("Invalid axis: " + axis);
         }
@@ -364,65 +333,76 @@ public abstract class Box extends AABB {
     public void setVelocity(Axis axis, float velocity) {
         switch (axis) {
             case X:
-                this.setVelX(velocity);
+                this.velX = velocity;
                 break;
             case Y:
-                this.setVelY(velocity);
+            	this.velY = velocity;
                 break;
             case Z:
-                this.setVelZ(velocity);
+            	this.velZ = velocity;
+                break;
+            default:
+                throw new RuntimeException("Invalid axis: " + axis);
+        }
+        // Clamp our velocity on this axis to its max.
+        clampVelocity(axis);
+        // TODO Update projection on this axis!
+    }
+    
+    /**
+     * Get the max velocity of the box on the specified axis.
+     * @param axis The axis for which to get the max box velocity.
+     * @return The max velocity of the box on the specified axis.
+     */
+    public float getMaxVelocity(Axis axis) {
+    	switch (axis) {
+	        case X:
+	            return this.maxVelX;
+	        case Y:
+	            return this.maxVelY;
+	        case Z:
+	            return this.maxVelZ;
+	        default:
+	            throw new RuntimeException("Invalid axis: " + axis);
+	    }
+    }
+    
+    /**
+     * Set the mx velocity of the box on the specified axis.
+     * @param axis The axis for which to set the box max velocity.
+     * @param max The max velocity of the box on the specified axis.
+     */
+    public void setMaxVelocity(Axis axis, float max) {
+        switch (axis) {
+            case X:
+                this.maxVelX = max;
+                break;
+            case Y:
+            	this.maxVelY = max;
+                break;
+            case Z:
+            	this.maxVelZ = max;
                 break;
             default:
                 throw new RuntimeException("Invalid axis: " + axis);
         }
     }
-
+    
     /**
-     * Get the current velocity of this box on the X axis.
-     * @return The velocity on the X axis.
+     * Clamp the velocity of this box on the specified axis.
+     * @param axis The axis for which to clamp the box velocity.
      */
-    public float getVelX() {
-        return this.velX;
-    }
-
-    /**
-     * Set the current velocity of this box on the X axis.
-     * @param velX The velocity on the X axis.
-     */
-    public void setVelX(float velX) {
-        this.velX = velX;
-    }
-
-    /**
-     * Get the current velocity of this box on the Y axis.
-     * @return The velocity on the Y axis.
-     */
-    public float getVelY() {
-        return this.velY;
-    }
-
-    /**
-     * Set the current velocity of this box on the Y axis.
-     * @param velY The velocity on the Y axis.
-     */
-    public void setVelY(float velY) {
-        this.velY = velY;
-    }
-
-    /**
-     * Get the current velocity of this box on the Z axis.
-     * @return The velocity on the Z axis.
-     */
-    public float getVelZ() {
-        return this.velZ;
-    }
-
-    /**
-     * Set the current velocity of this box on the Z axis.
-     * @param velZ The velocity on the Z axis.
-     */
-    public void setVelZ(float velZ) {
-        this.velZ = velZ;
+    private void clampVelocity(Axis axis) {
+    	// Get the max velocity for the axis.
+    	float maxVelocity = this.getMaxVelocity(axis);
+    	// Get the current velocity for the axis.
+    	float velocity = this.getVelocity(axis);
+        // Clamp the velocity on the axis.
+        if (velocity < -maxVelocity) {
+        	this.setVelocity(axis, -maxVelocity);
+        } else if (velocity > maxVelocity) {
+        	this.setVelocity(axis, maxVelocity);
+        }
     }
 
     /**
@@ -461,7 +441,9 @@ public abstract class Box extends AABB {
         return this.type;
     }
 
-    public AABB getProjection() { return this.projection; }
+    public AABB getProjection() { 
+    	return this.projection; 
+    }
 
     public String getName() {
         return this.name;
@@ -497,30 +479,6 @@ public abstract class Box extends AABB {
 
     public void setDeleted() {
         this.isDeleted = true;
-    }
-
-    public float getMaxVelocityX() {
-        return maxVelX;
-    }
-
-    public void setMaxVelocityX(float maxVelX) {
-        this.maxVelX = maxVelX;
-    }
-
-    public float getMaxVelocityY() {
-        return maxVelY;
-    }
-
-    public void setMaxVelocityY(float maxVelY) {
-        this.maxVelY = maxVelY;
-    }
-
-    public float getMaxVelocityZ() {
-        return maxVelZ;
-    }
-
-    public void setMaxVelocityZ(float maxVelZ) {
-        this.maxVelZ = maxVelZ;
     }
 
     public float getFriction() {

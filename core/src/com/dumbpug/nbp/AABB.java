@@ -30,10 +30,10 @@ public class AABB {
 	 *            The height of the AABB.
 	 */
 	public AABB(float x, float y, float width, float height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.x         = x;
+		this.y         = y;
+		this.width     = width;
+		this.height    = height;
 		this.dimension = Dimension.TWO_DIMENSIONS;
 	}
 
@@ -54,12 +54,12 @@ public class AABB {
 	 *            The depth of the AABB.
 	 */
 	public AABB(float x, float y, float z, float width, float height, float depth) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = width;
-		this.height = height;
-		this.depth = depth;
+		this.x         = x;
+		this.y         = y;
+		this.z         = z;
+		this.width     = width;
+		this.height    = height;
+		this.depth     = depth;
 		this.dimension = Dimension.THREE_DIMENSIONS;
 	}
 

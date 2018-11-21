@@ -54,12 +54,12 @@ public class Simple2DLauncher extends ApplicationAdapter {
 	    
 	    // Apply impulse up on the Y axis.
 	    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-	    	movingBox.applyImpulse(0f, 0.8f);
+	    	movingBox.applyImpulse(Axis.Y, 0.8f);
 	    }
 	    
 	    // Apply impulse down on the Y axis.
 	    if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-	    	movingBox.applyImpulse(0f, -0.8f);
+	    	movingBox.applyImpulse(Axis.Y, -0.8f);
 	    }
 	
 	    // Update the physics environment.
