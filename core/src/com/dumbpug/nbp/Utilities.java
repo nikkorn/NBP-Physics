@@ -52,36 +52,35 @@ public class Utilities {
     }
     
     /**
-     * Creates a dynamic projection for a box, represesting the space in which an 
-     * AABB may collide with the dynamic box as part of the bynamic box's update. 
-     * @param dynamicBox The dynamic box to get the projection for.
-     * @return A dynamic projection for a box.
+     * Creates a projection for a box, represesting the space in which an AABB may collide with the box as part of the box's update. 
+     * @param box The box to get the projection for.
+     * @return A projection for a box.
      */
-    public static AABB createDynamicProjection(Box dynamicBox) {
+    public static AABB createProjection(Box box) {
     	// The type of projection we create depends on whether we are in 2D or 3D space.
-    	if (dynamicBox.getDimension() == Dimension.THREE_DIMENSIONS) {
+    	if (box.getDimension() == Dimension.THREE_DIMENSIONS) {
     		// Find the x/y/z position of the box after the physics update.
-    		float destX = dynamicBox.getX() + dynamicBox.getVelocity(Axis.X);
-    		float destY = dynamicBox.getY() + dynamicBox.getVelocity(Axis.Y);
-    		float destZ = dynamicBox.getZ() + dynamicBox.getVelocity(Axis.Z);
+    		float destX = box.getX() + box.getVelocity(Axis.X);
+    		float destY = box.getY() + box.getVelocity(Axis.Y);
+    		float destZ = box.getZ() + box.getVelocity(Axis.Z);
     		// Find the size/dimensions of the projection.
-    		float projectionX      = Math.min(dynamicBox.getX(), destX);
-    		float projectionY      = Math.min(dynamicBox.getY(), destY);
-    		float projectionZ      = Math.min(dynamicBox.getZ(), destZ);
-    		float projectionWidth  = (Math.max(dynamicBox.getX(), destX) + dynamicBox.getWidth()) - projectionX;
-    		float projectionHeight = (Math.max(dynamicBox.getY(), destY) + dynamicBox.getHeight()) - projectionY;
-    		float projectionDepth  = (Math.max(dynamicBox.getZ(), destZ) + dynamicBox.getDepth()) - projectionZ;
+    		float projectionX      = Math.min(box.getX(), destX);
+    		float projectionY      = Math.min(box.getY(), destY);
+    		float projectionZ      = Math.min(box.getZ(), destZ);
+    		float projectionWidth  = (Math.max(box.getX(), destX) + box.getWidth()) - projectionX;
+    		float projectionHeight = (Math.max(box.getY(), destY) + box.getHeight()) - projectionY;
+    		float projectionDepth  = (Math.max(box.getZ(), destZ) + box.getDepth()) - projectionZ;
     		// Create and return the projection.
     		return new AABB(projectionX, projectionY, projectionY, projectionWidth, projectionHeight, projectionDepth);
     	} else {
     		// Find the x/y position of the box after the physics update.
-    		float destX = dynamicBox.getX() + dynamicBox.getVelocity(Axis.X);
-    		float destY = dynamicBox.getY() + dynamicBox.getVelocity(Axis.Y);
+    		float destX = box.getX() + box.getVelocity(Axis.X);
+    		float destY = box.getY() + box.getVelocity(Axis.Y);
     		// Find the size/dimensions of the projection.
-    		float projectionX      = Math.min(dynamicBox.getX(), destX);
-    		float projectionY      = Math.min(dynamicBox.getY(), destY);
-    		float projectionWidth  = (Math.max(dynamicBox.getX(), destX) + dynamicBox.getWidth()) - projectionX;
-    		float projectionHeight = (Math.max(dynamicBox.getY(), destY) + dynamicBox.getHeight()) - projectionY;
+    		float projectionX      = Math.min(box.getX(), destX);
+    		float projectionY      = Math.min(box.getY(), destY);
+    		float projectionWidth  = (Math.max(box.getX(), destX) + box.getWidth()) - projectionX;
+    		float projectionHeight = (Math.max(box.getY(), destY) + box.getHeight()) - projectionY;
     		// Create and return the projection.
     		return new AABB(projectionX, projectionY, projectionWidth, projectionHeight);
     	}

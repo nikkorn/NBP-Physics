@@ -75,7 +75,7 @@ public abstract class Box extends AABB {
     public Box(float x, float y, float width, float height, BoxType type) {
     	super(x, y, width, height);
         this.type       = type;
-        this.projection = Utilities.createDynamicProjection(this);
+        this.projection = Utilities.createProjection(this);
     }
 
     /**
@@ -91,7 +91,7 @@ public abstract class Box extends AABB {
     public Box(float x, float y, float z, float width, float height, float depth, BoxType type) {
         super(x, y, z, width, height, depth);
         this.type       = type;
-        this.projection = Utilities.createDynamicProjection(this);
+        this.projection = Utilities.createProjection(this);
     }
 
     /**
@@ -207,44 +207,6 @@ public abstract class Box extends AABB {
     }
 
     /**
-     * Get the position of the box on the specified axis.
-     * @param axis The axis for which to get the box position.
-     */
-    public float getPosition(Axis axis) {
-        switch (axis) {
-            case X:
-                return this.getX();
-            case Y:
-                return this.getY();
-            case Z:
-                return this.getZ();
-            default:
-                throw new RuntimeException("Invalid axis: " + axis);
-        }
-    }
-
-    /**
-     * Set the position of the box on the specified axis.
-     * @param axis The axis for which to set the box position.
-     * @param position The position of the box on the specified axis.
-     */
-    public void setPosition(Axis axis, float position) {
-        switch (axis) {
-            case X:
-                this.setX(position);
-                break;
-            case Y:
-                this.setY(position);
-                break;
-            case Z:
-                this.setZ(position);
-                break;
-            default:
-                throw new RuntimeException("Invalid axis: " + axis);
-        }
-    }
-
-    /**
      * Set the X position of this box, updating any attached sensors.
      * @param x The X position.
      */
@@ -260,9 +222,10 @@ public abstract class Box extends AABB {
                 sensor.setX(sensor.getX() - (this.getX() - x));
             }
         }
-        // TODO Update projection on this axis!
         this.lastPosX = this.getX();
         super.setX(x);
+        // Update projection on this axis.
+        this.updateProjection(Axis.X);
     }
 
     /**
@@ -281,9 +244,10 @@ public abstract class Box extends AABB {
                 sensor.setY(sensor.getY() - (this.getY() - y));
             }
         }
-        // TODO Update projection on this axis!
         this.lastPosY = getY();
         super.setY(y);
+        // Update projection on this axis.
+        this.updateProjection(Axis.Y);
     }
 
     /**
@@ -302,9 +266,10 @@ public abstract class Box extends AABB {
                 sensor.setZ(sensor.getZ() - (this.getZ() - z));
             }
         }
-        // TODO Update projection on this axis!
         this.lastPosZ = getZ();
         super.setZ(z);
+        // Update projection on this axis.
+        this.updateProjection(Axis.Z);
     }
 
     /**
@@ -346,7 +311,8 @@ public abstract class Box extends AABB {
         }
         // Clamp our velocity on this axis to its max.
         clampVelocity(axis);
-        // TODO Update projection on this axis!
+        // Update projection on this axis.
+        this.updateProjection(axis);
     }
     
     /**
@@ -422,7 +388,7 @@ public abstract class Box extends AABB {
     }
 
     /**
-     * Gets whether this box is affected by gravity.
+     * Get whether this box is affected by gravity.
      * @return Whether this box is affected by gravity.
      */
     public boolean isAffectedByGravity() {
@@ -430,17 +396,25 @@ public abstract class Box extends AABB {
     }
 
     /**
-     * Sets whether this box is affected by gravity.
+     * Set whether this box is affected by gravity.
      * @param isAffectedByGravity Whether this box is affected by gravity.
      */
     public void setAffectedByGravity(boolean isAffectedByGravity) {
         this.isAffectedByGravity = isAffectedByGravity;
     }
 
+    /**
+     * Get the type of this box.
+     * @return The type of this box.
+     */
     public BoxType getType() {
         return this.type;
     }
 
+    /**
+     * Get the projection for this box.
+     * @return The projection for this box.
+     */
     public AABB getProjection() { 
     	return this.projection; 
     }
@@ -537,6 +511,23 @@ public abstract class Box extends AABB {
     	}
         // Return the up-to-date origin.
         return origin;
+    }
+    
+    /**
+     * Update the projection of this box on the specified axis.
+     * @param axis The axis on which to update the projection.
+     */
+    private void updateProjection(Axis axis) {
+    	// Get the current position of the box on this axis.
+    	float position = this.getPosition(axis);
+    	// Find the x/y position of the box after the physics update.
+    	float destination = position + this.getVelocity(axis);
+    	// Find the position/length of the projection on the axis.
+    	float projectionPosition = Math.min(position, destination);
+		float projectionLength   = (Math.max(position, destination) + this.getLength(axis)) - projectionPosition;
+		// Update the position/length of the projection on the axis.
+		this.projection.setPosition(axis, projectionPosition);
+		this.projection.setLength(axis, projectionLength);	
     }
 
     protected abstract void onCollisionWithDynamicBox(Box collidingBox);
