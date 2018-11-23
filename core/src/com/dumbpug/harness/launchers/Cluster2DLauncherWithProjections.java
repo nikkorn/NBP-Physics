@@ -20,7 +20,7 @@ import com.dumbpug.nbp.zone.CircleZone;
 /**
  * A simple 2D launcher with lots of individual dynamic boxes.
  */
-public class Cluster2DLauncher extends ApplicationAdapter {
+public class Cluster2DLauncherWithProjections extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture wimg;
     private Texture gimg;
@@ -32,7 +32,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
     private Box box3;
     private ArrayList<Box> cluster = new ArrayList<Box>();
     
-    private int clusterSize = 50;
+    private int clusterSize = 1000;
 
     private Random ran;
 
@@ -58,7 +58,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         
         // Create a cluster.
         for(int i = 0; i < clusterSize; i++) {
-            Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 10, 10, BoxType.DYNAMIC);
+            Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 5, 5, BoxType.DYNAMIC);
             cBox.applyImpulse(Axis.X, (ran.nextFloat()*6f)-3f);
             cBox.setFriction(ran.nextFloat());
             cBox.setRestitution(ran.nextFloat());
