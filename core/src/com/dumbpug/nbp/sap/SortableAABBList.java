@@ -30,6 +30,7 @@ public class SortableAABBList {
 	 * @param axis The axis on which to sort the AABBs.
 	 */
 	public SortableAABBList(final Axis axis) {
+		this.axis = axis;
 		// Create the comparator to use in sorting the list.
 		this.comparator = new Comparator<AABB>() {
 			@Override

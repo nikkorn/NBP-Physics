@@ -2,6 +2,8 @@ package com.dumbpug.nbp.sap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import com.dumbpug.nbp.AABB;
 import com.dumbpug.nbp.Axis;
 import com.dumbpug.nbp.Dimension;
@@ -54,8 +56,62 @@ public class SAP {
 	public HashMap<AABB, ArrayList<AABB>> getIntersections() {
 		// Create the map of intersections.
 		HashMap<AABB, ArrayList<AABB>> intersections = new HashMap<AABB, ArrayList<AABB>>();
-
-		// TODO Get the intersections on each axis and find the common intresections across all axis.
+		
+		boolean isInitalAxis = true;
+		
+		// Iterate over each sortable axis list.
+		for (SortableAABBList sortedAxisList : sortedAABBLists) {
+			// Get any intersections on this axis.
+			HashMap<AABB, ArrayList<AABB>> axisIntersections = sortedAxisList.getAxisIntesections();
+			
+			for (Map.Entry<AABB, ArrayList<AABB>> entry : axisIntersections.entrySet()) {
+				// Get the current AABB.
+				AABB current = entry.getKey();
+				
+				// Get the list of AABBs intersecting the current AABB on the axis.
+				ArrayList<AABB> boxesIntersectingCurrent = entry.getValue();
+				
+				if (isInitalAxis) {
+					// Any time we find no intersections for an AABB on any axis then it cannot be intersecting with anything.
+					if (boxesIntersectingCurrent.isEmpty()) {
+						continue;
+					}
+					
+					// There are some AABBs intersecting the current one on the initial axis.
+					intersections.put(current, boxesIntersectingCurrent);
+				} else {
+					// Get the list of possible intersections for the current box.
+					ArrayList<AABB> possibleIntersections = intersections.get(current);
+					
+					if (possibleIntersections == null) {
+						// There were no intersections on any other axis.
+					} else if (boxesIntersectingCurrent.isEmpty()) {
+						// There were no intersections on this axis.
+						intersections.remove(current);
+					} else {
+						// We need to remove any intersections that have occurred on other axis but not on this one.
+						Iterator<AABB> iterator = possibleIntersections.iterator();
+						while (iterator.hasNext()) {
+							// Get the next possible intersection.
+							AABB possibleIntersection = iterator.next();
+							
+							// Check whether there was an AABB-AABB intersection that did not occur on the current axis.
+							if (!boxesIntersectingCurrent.contains(possibleIntersection)) {
+								iterator.remove();
+							}
+						}
+						
+						// Check whether any intersections still exist.
+						if (possibleIntersections.isEmpty()) {
+							intersections.remove(current);
+						}
+					}
+				}
+			}
+			
+			// We are done with this axis.
+			isInitalAxis = false;
+		}
 		
 		// Return the map of intersections.
 		return intersections;
