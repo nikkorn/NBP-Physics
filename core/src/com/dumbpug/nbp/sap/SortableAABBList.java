@@ -82,15 +82,6 @@ public class SortableAABBList {
 	    for (int boxIndex = 1; boxIndex < boxes.size(); boxIndex++) {
 	    	// Get the next box along the axis.
 	    	AABB current = boxes.get(boxIndex);
-	    	
-	    	// Try to get the list of current intersections for this box.
-			ArrayList<AABB> currentBoxIntersections = axisIntersectionMap.get(current);
-			
-			// Check whether this box actually has an entry in the axis intersection map. 
-			if (currentBoxIntersections == null) {
-				currentBoxIntersections = new ArrayList<AABB>();
-				axisIntersectionMap.put(current, currentBoxIntersections);
-			}
 			
 			// Remove any active boxes that we have moved on from and do not intersect the current box.
 			Iterator<AABB> activeBoxIterator = activeBoxes.iterator();
@@ -106,10 +97,19 @@ public class SortableAABBList {
 			
 			// Every item remaining in the active box list is intersecting the current box on this axis.
 			for (AABB intersecting : activeBoxes) {
+				// Try to get the list of current intersections for this box.
+				ArrayList<AABB> currentBoxIntersections = axisIntersectionMap.get(current);
+				
+				// Check whether the current box actually has an entry in the axis intersection map. 
+				if (currentBoxIntersections == null) {
+					currentBoxIntersections = new ArrayList<AABB>();
+					axisIntersectionMap.put(current, currentBoxIntersections);
+				}
+				
 				// Try to get the list of intersections for the intersecting active box.
 				ArrayList<AABB> activeBoxintersections = axisIntersectionMap.get(intersecting);
 				
-				// Check whether this box actually has an entry in the axis intersection map. 
+				// Check whether the active box intersecting the active one actually has an entry in the axis intersection map. 
 				if (activeBoxintersections == null) {
 					activeBoxintersections = new ArrayList<AABB>();
 					axisIntersectionMap.put(intersecting, activeBoxintersections);

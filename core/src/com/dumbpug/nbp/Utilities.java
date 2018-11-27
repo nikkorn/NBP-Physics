@@ -1,6 +1,5 @@
 package com.dumbpug.nbp;
 
-import com.dumbpug.nbp.point.IntersectionPoint;
 import com.dumbpug.nbp.point.Point;
 
 /**
@@ -86,79 +85,6 @@ public class Utilities {
     	}
     }
     
-    /**
-     * Resolve a collision with a dynamic and static box, this involves moving the dynamic box out of the static one and updating its velocity.
-     * @param intersection The point of intersection, defining the dynalic box origin at the exact point of collision.
-     * @param dynamicBox The dynamic box.
-     * @param staticBox The static box.
-     */
-    public static void resolveDynamicAndStaticBoxCollision(IntersectionPoint intersection, Box dynamicBox, Box staticBox) {
-    	// Firstly, we need to move the dynamic box to the position it was at when it collided with the static one.
-    	// To avoid rounding issues we will handle this based on the intersection edge.
-    	switch (intersection.getIntersectionEdge()) {
-			case BOTTOM:
-				// We hit the bottom edge of the static box.
-				dynamicBox.setY(staticBox.getY() - dynamicBox.getHeight());
-				dynamicBox.setX(intersection.getX() - (dynamicBox.getWidth() / 2f));
-				break;
-			case TOP:
-				// We hit the top edge of the static box.
-				dynamicBox.setY(staticBox.getY() + staticBox.getHeight());
-				dynamicBox.setX(intersection.getX() - (dynamicBox.getWidth() / 2f));
-				break;
-			case LEFT:
-				// We hit the left edge of the static box.
-				dynamicBox.setY(intersection.getY() - (dynamicBox.getHeight() / 2f));
-				dynamicBox.setX(staticBox.getX() - dynamicBox.getWidth());
-				break;
-			case RIGHT:
-				// We hit the right edge of the static box.
-				dynamicBox.setY(intersection.getY() - (dynamicBox.getHeight() / 2f));
-				dynamicBox.setX(staticBox.getX() + staticBox.getWidth());
-				break;
-			default:
-				throw new RuntimeException("Invalid box edge: " + intersection.getIntersectionEdge());
-    	}
-    	// Secondly, we need to flip the velocity of the box, taking restitution and friction into account.
-    	switch (intersection.getIntersectionEdge()) {
-			case BOTTOM:
-			case TOP:
-				dynamicBox.setVelocity(Axis.Y, -dynamicBox.getVelocity(Axis.Y) * (dynamicBox.getRestitution() + staticBox.getRestitution()));
-				break;
-			case LEFT:
-			case RIGHT:
-				dynamicBox.setVelocity(Axis.X, -dynamicBox.getVelocity(Axis.X) * (dynamicBox.getRestitution() + staticBox.getRestitution()));
-				break;
-			default:
-				throw new RuntimeException("Invalid box edge: " + intersection.getIntersectionEdge());
-		}
-    }
-    
-    /**
-     * Returns the point of intersection between two lines, returns null if no intersection exists.
-     * @param aX
-     * @param aY
-     * @param bX
-     * @param bY
-     * @param cX
-     * @param cY
-     * @param dX
-     * @param dY
-     * @return The point of intersection between two lines, returns null if no intersection exists.
-     */
-    public static Point getLineVsLineIntersection(float aX, float aY, float bX, float bY, float cX, float cY, float dX, float dY) {
-		double inVal = (aX - bX) * (cY - dY) - (aY - bY) * (cX - dX);
-		// Check whether there is no intersection (lines are parallel).
-		if (inVal == 0) {
-			 return null;
-		}
-		// Get the x/y of intersection.
-		double x = ((cX - dX) * (aX * bY - aY * bX) - (aX - bX) * (cX * dY - cY * dX)) / inVal;
-		double y = ((cY - dY) * (aX * bY - aY * bX) - (aY - bY) * (cX * dY - cY * dX)) / inVal;
-		// Return the intersection point, rounding the values to avoid wacky floating point errors.
-		return new Point((float) (Math.round(x * 1000.0) / 1000.0), (float) (Math.round(y * 1000.0) / 1000.0));
-    }
-
     /**
      * Get the distance between two points.
      * @param pointA The first point.
