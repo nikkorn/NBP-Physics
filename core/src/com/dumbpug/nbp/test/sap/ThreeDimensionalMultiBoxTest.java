@@ -20,8 +20,8 @@ public class ThreeDimensionalMultiBoxTest {
 		
 		// Create some random AABBs to process.
 		for (int i = 0; i < boxCount; i++) {
-			AABB box = new AABB(ran.nextInt(100), ran.nextInt(100), 
-					ran.nextInt(100), ran.nextInt(10), 
+			AABB box = new AABB(ran.nextInt(1000), ran.nextInt(1000), 
+					ran.nextInt(1000), ran.nextInt(10), 
 					ran.nextInt(10), ran.nextInt(10));
 			
 			sap.add(box);
