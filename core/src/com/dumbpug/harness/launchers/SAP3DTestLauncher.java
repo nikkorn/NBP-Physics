@@ -64,9 +64,11 @@ public class SAP3DTestLauncher extends ApplicationAdapter {
         // Create some AABBs to process.
         
         // TODO 2 is fine, 3 is not!
-        // ArrayList<AABB> boxes = getRandomBoxes(2, 345);
+        // ArrayList<AABB> boxes = getRandomBoxes(3, 456);
+        // ArrayList<AABB> boxes = getRandomBoxes(3, 1923723234l);
+        ArrayList<AABB> boxes = getRandomBoxes(200, 12345);
         
-        ArrayList<AABB> boxes = getThreeIntersectingBoxes();
+        // ArrayList<AABB> boxes = getThreeIntersectingBoxes();
         
         // Add the boxes to the SAP.
  		for (AABB box : boxes) {
@@ -113,7 +115,7 @@ public class SAP3DTestLauncher extends ApplicationAdapter {
         Random ran            = new Random(seed);
         
  		for (int i = 0; i < numberOfBoxes; i++) {
- 			boxes.add(new AABB(ran.nextInt(10), ran.nextInt(10), ran.nextInt(10), 5, 5, 5));
+ 			boxes.add(new AABB(ran.nextInt(100) - 50, ran.nextInt(100) - 50, ran.nextInt(100) - 50, 5, 5, 5));
  		}
  		
  		return boxes;

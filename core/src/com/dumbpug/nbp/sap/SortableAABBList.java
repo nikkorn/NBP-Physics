@@ -59,6 +59,14 @@ public class SortableAABBList {
 	}
 	
 	/**
+	 * Get the axis for which to sort.
+	 * @return The axis for which to sort.
+	 */
+	public Axis getAxis() {
+		return this.axis;
+	}
+	
+	/**
 	 * Get the mapping of AABBs to lists of possible intersections.
 	 * @return The mapping of AABBs to lists of possible intersections.
 	 */
@@ -119,6 +127,9 @@ public class SortableAABBList {
 				currentBoxIntersections.add(intersecting);
 				activeBoxintersections.add(current);
 			}
+			
+			// Add the current box to the list of active boxes.
+			activeBoxes.add(current);
 	    }
 		
 	    // Return the map of AABB intersections on the axis.

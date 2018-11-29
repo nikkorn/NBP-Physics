@@ -60,7 +60,12 @@ public class SAP {
 		
 		// Populate the axis intersection list.
 		for (SortableAABBList sortedAxisList : sortedAABBLists) {
-			axisIntersectionMapList.add(sortedAxisList.getAxisIntesections());
+			// Get the map of intersections on this axis.
+			HashMap<AABB, ArrayList<AABB>> axisIntersections = sortedAxisList.getAxisIntesections();
+			
+			debug(sortedAxisList.getAxis(), axisIntersections);
+			
+			axisIntersectionMapList.add(axisIntersections);
 		}
 		
 		// Iterate over the list of every AABB that has an intersection on the first axis intersection map in our list.
@@ -114,5 +119,30 @@ public class SAP {
 		}
 		
 		return commonIntersections;
+	}
+	
+	/**
+	 * Write debug output of a resolved axis intersection map.
+	 * @param axis
+	 * @param axisIntersectionMap
+	 */
+	public void debug(Axis axis, HashMap<AABB, ArrayList<AABB>> axisIntersectionMap) {
+		System.out.println("====================================================");
+		System.out.println("AXIS: " + axis);
+		System.out.println("====================================================");
+		System.out.println("INTERSECTING BOXES: " + axisIntersectionMap.size());
+		
+		for (AABB box : axisIntersectionMap.keySet()) {
+			System.out.println("BOX: " + box.getId());
+			
+			for (AABB intersects : axisIntersectionMap.get(box)) {
+				System.out.println("----> " + intersects.getId());
+			}
+			
+			System.out.println();
+		}
+		
+		System.out.println("====================================================");
+		System.out.println();
 	}
 }
