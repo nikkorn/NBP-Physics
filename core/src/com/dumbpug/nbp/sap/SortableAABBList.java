@@ -93,14 +93,14 @@ public class SortableAABBList {
 			
 			// Remove any active boxes that we have moved on from and do not intersect the current box.
 			Iterator<AABB> activeBoxIterator = activeBoxes.iterator();
-			while(activeBoxIterator.hasNext()){
+			while (activeBoxIterator.hasNext()){
 				// Get the next active box.
 				AABB active = activeBoxIterator.next();
 				
 				// Remove the active box if it is too low on the axis to intersect the current box.
 				if (current.getPosition(axis) > (active.getPosition(axis) + active.getLength(axis))) {
 					activeBoxIterator.remove();
-				}
+				} 
 			}
 			
 			// Every item remaining in the active box list is intersecting the current box on this axis.

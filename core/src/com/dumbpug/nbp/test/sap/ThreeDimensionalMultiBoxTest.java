@@ -3,7 +3,6 @@ package com.dumbpug.nbp.test.sap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-
 import com.dumbpug.nbp.AABB;
 import com.dumbpug.nbp.Dimension;
 import com.dumbpug.nbp.sap.SAP;
@@ -16,12 +15,12 @@ public class ThreeDimensionalMultiBoxTest {
 		
 		SAP sap = new SAP(Dimension.THREE_DIMENSIONS);
 		
-		int boxCount = 1000;
+		int boxCount = 5000;
 		
 		// Create some random AABBs to process.
 		for (int i = 0; i < boxCount; i++) {
-			AABB box = new AABB(ran.nextInt(1000), ran.nextInt(1000), 
-					ran.nextInt(1000), ran.nextInt(10), 
+			AABB box = new AABB(ran.nextInt(100), ran.nextInt(100), 
+					ran.nextInt(100), ran.nextInt(10), 
 					ran.nextInt(10), ran.nextInt(10));
 			
 			sap.add(box);
