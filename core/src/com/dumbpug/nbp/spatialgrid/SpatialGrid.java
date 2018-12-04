@@ -25,7 +25,7 @@ public class SpatialGrid {
 	/**
 	 * The map of grid cells to the list of AABBs which have their origin residing in the cell.
 	 */
-	private HashMap<String, ArrayList<AABB>> grid = new HashMap<String, ArrayList<AABB>>();
+	private HashMap<String, Cell> grid = new HashMap<String, Cell>();
 	/**
 	 * The map of AABBs to the key of which cell the AABB is in.
 	 */
@@ -80,15 +80,12 @@ public class SpatialGrid {
 		}
 		// Create a representation of the origin of the AABB.
 		Origin aabbOrigin = new Origin(aabb);
-		// The AABB is not already in the grid, get a key for it based on the AABBs origin.
-		String cellKey = this.getCellKey(aabbOrigin);
+		// Get the grid cell that the origin resides in.
+		Cell cell = this.getCellForOrigin(aabbOrigin);
 		// Add the new aabb to the map of aabbs to their spatially positioned representations.
-		this.AABBToSpatialAABBMap.put(aabb, new SpatiallyPoisitionedAABB(aabb, aabbOrigin, cellKey));
-		// Add the new aabb to the spatial grid.
-		
-		// TODO We will need to add a Cell if it does not exist yet.
-		
-		this.grid.get(cellKey).add(aabb);
+		this.AABBToSpatialAABBMap.put(aabb, new SpatiallyPoisitionedAABB(aabb, aabbOrigin, cell.getKey()));
+		// Add the new aabb to the cell.
+		cell.addAABB(aabb);
 	}
 	
 	/**
@@ -105,7 +102,7 @@ public class SpatialGrid {
 		// Get the key of the cell that the aabb was last in.
 		String originalCellKey = spatiallyPositionedAABB.getCellKey();
 		// Remove the AABB from its current cell list.
-		this.grid.get(originalCellKey).remove(aabb);
+		this.grid.get(originalCellKey).removeAABB(aabb);
 		// Finally, remove the AABB from the AABB to Spatial AABB mapping.
 		this.AABBToSpatialAABBMap.remove(aabb);
 	}
@@ -121,52 +118,160 @@ public class SpatialGrid {
 		}
 		// Get the spatially positioned AABB.
 		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
-		// Get the key of the cell that the aabb was last in.
+		// Get the key of the cell that the AABB was last in.
 		String originalCellKey = spatiallyPositionedAABB.getCellKey();
-		// The AABB is not already in the grid, get a key for it.
-		String currentCellKey = this.getCellKey(spatiallyPositionedAABB.getAABBOrigin());
+		// Get the grid cell that the origin resides in.
+		Cell cell = this.getCellForOrigin(spatiallyPositionedAABB.getAABBOrigin());
 		// If the original and current cell keys do not differ then the AABB is still in the correct cell.
-		if (originalCellKey == currentCellKey) {
+		if (originalCellKey == cell.getKey()) {
 			return;
 		}
 		// The AABB has moved into a different cell since its last update.
 		// Firstly, We will need to physically remove the AABB from its original grid cell list.
-		this.grid.get(originalCellKey).remove(aabb);
+		this.grid.get(originalCellKey).removeAABB(aabb);
 		// Secondly, we need to move it into the grid cell list that it should be in.
-		
-		// TODO WE will need to add a Cell if it does not exist yet.
-		
-		this.grid.get(currentCellKey).add(aabb);
+		cell.addAABB(aabb);
 		// Lastly, we need to update the cell key for the aabb.
-		spatiallyPositionedAABB.setCellKey(currentCellKey);
-	}
-	
-	public ArrayList<AABB> getNeighbouringAABBs(AABB aabb) {
-		// Get the spatially positioned AABB for the AABB.
-		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
-		// If there was no spatially positioned AABB then there is nothing to do.
-		if (spatiallyPositionedAABB == null) {
-			return new ArrayList<AABB>();
-		}
-		
-		// TODO return a concatenation of all ABBB lists in cell surrounding the current one. 
-		// TODO Add Cell to use instead of ArrayList<AABB> and pass it its cell position as we onyl have the cell key now.
-		
-		
-		return null;
+		spatiallyPositionedAABB.setCellKey(cell.getKey());
 	}
 	
 	/**
-	 * Generate the spatial cell key for the current position of an AABB.
-	 * @param aabb The AABB for which to find a spatial grid key
-	 * @return The spatial grid key for the current position of an AABB.
+	 * Get a list of AABBs that reside in the current or adjacent cells to the specified one excluding it.
+	 * @param aabb The AABB for which to find a list of AABBs that reside in the current or adjacent cells to it.
+	 * @return A list of AABBs that reside in the current or adjacent cells to the specified one excluding it.
 	 */
-	private String getCellKey(Origin origin) {
+	public ArrayList<AABB> getNeighbouringAABBs(AABB aabb) {
+		// Get the spatially positioned AABB for the AABB.
+		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
+		
+		// Create an empty list in which to add all neighbouring AABBs.
+		ArrayList<AABB> neighbouring = new ArrayList<AABB>();
+		
+		// If there was no spatially positioned AABB then there is nothing to do.
+		if (spatiallyPositionedAABB == null) {
+			return neighbouring;
+		}
+		
+		// Get the cell that the specified AABB resides in.
+		Cell cell = this.grid.get(spatiallyPositionedAABB.getCellKey());
+		
+		// The way that we find neighbouring AABBs will depend on the grid dimension.
+		if (this.dimension == Dimension.THREE_DIMENSIONS) {
+			for (int x = (cell.getX() - 1); x <= (cell.getX() + 1); x++) {
+				for (int y = (cell.getY() - 1); y <= (cell.getY() + 1); y++) {
+					for (int z = (cell.getZ() - 1); z <= (cell.getZ() + 1); z++) {
+						// Try to get the cell at this position.
+						Cell neighbouringCell = this.getCellForPosition(x, y, z);
+						
+						// There is nothing to do if the cell does not exist.
+						if (neighbouringCell == null) {
+							continue;
+						}
+						
+						// We found a neighbouring cell. Add all of the AABBs that reside in it into our list.
+						neighbouring.addAll(neighbouringCell.getAABBList());
+					}
+				}
+			}
+		} else {
+			for (int x = (cell.getX() - 1); x <= (cell.getX() + 1); x++) {
+				for (int y = (cell.getY() - 1); y <= (cell.getY() + 1); y++) {
+					// Try to get the cell at this position.
+					Cell neighbouringCell = this.getCellForPosition(x, y);
+					
+					// There is nothing to do if the cell does not exist.
+					if (neighbouringCell == null) {
+						continue;
+					}
+					
+					// We found a neighbouring cell. Add all of the AABBs that reside in it into our list.
+					neighbouring.addAll(neighbouringCell.getAABBList());
+				}
+			}
+		}
+		// Return the list of neighbouring AABBs.
+		return neighbouring;
+	}
+	
+	/**
+	 * Get the existing cell at the specified position, or null if it does not exist.
+	 * @param x The x position of the cell.
+	 * @param y The y position of the cell.
+	 * @return The existing cell at the specified position, or null if it does not exist.
+	 */
+	public Cell getCellForPosition(int x, int y) {
+		// Create the cell key.
+		String cellKey = x + "_" + y;
+		
+		// Return the cell in the grid with this key.
+		return this.grid.get(cellKey);
+	}
+	
+	/**
+	 * Get the existing cell at the specified position, or null if it does not exist.
+	 * @param x The x position of the cell.
+	 * @param y The y position of the cell.
+	 * @param z The z position of the cell.
+	 * @return The existing cell at the specified position, or null if it does not exist.
+	 */
+	public Cell getCellForPosition(int x, int y, int z) {
+		// Create the cell key.
+		String cellKey = x + "_" + y + "_" + z;
+		
+		// Return the cell in the grid with this key.
+		return this.grid.get(cellKey);
+	}
+	
+	/**
+	 * Get the existing cell that contains the specified origin, or create it if it does not exist.
+	 * @param origin The origin for which we are looking for the contianing cell.
+	 * @return The cell that contains the origin.
+	 */
+	public Cell getCellForOrigin(Origin origin) {
 		// The type of key we create will depend on the grid dimension.
 		if (this.dimension == Dimension.THREE_DIMENSIONS) {
-			return this.getCellPosition(Axis.X, origin.getX()) + "_" + this.getCellPosition(Axis.Y, origin.getY()) + "_" + this.getCellPosition(Axis.Z, origin.getZ()); 
+			// Get the position of the cell in which the origin resides.
+			int cellX = this.getCellPosition(Axis.X, origin.getX());
+			int cellY = this.getCellPosition(Axis.Y, origin.getY());
+			int cellZ = this.getCellPosition(Axis.Z, origin.getZ());
+			
+			// Create the cell key.
+			String cellKey = cellX + "_" + cellY + "_" + cellZ;
+			
+			// If the cell already exists then just return it, otherwise we will need to create a new one and add it to our grid.
+			if (this.grid.containsKey(cellKey)) {
+				return this.grid.get(cellKey);
+			} else {
+				// Create the new cell.
+				Cell cell = new Cell(cellKey, cellX, cellY, cellZ);
+				
+				// Add the new cell to the grid.
+				this.grid.put(cellKey, cell);
+				
+				// Return the newly created cell.
+				return cell;
+			}
 		} else {
-			return this.getCellPosition(Axis.X, origin.getX()) + "_" + this.getCellPosition(Axis.Y, origin.getY());
+			// Get the position of the cell in which the origin resides.
+			int cellX = this.getCellPosition(Axis.X, origin.getX());
+			int cellY = this.getCellPosition(Axis.Y, origin.getY());
+			
+			// Create the cell key.
+			String cellKey = cellX + "_" + cellY;
+			
+			// If the cell already exists then just return it, otherwise we will need to create a new one and add it to our grid.
+			if (this.grid.containsKey(cellKey)) {
+				return this.grid.get(cellKey);
+			} else {
+				// Create the new cell.
+				Cell cell = new Cell(cellKey, cellX, cellY);
+				
+				// Add the new cell to the grid.
+				this.grid.put(cellKey, cell);
+				
+				// Return the newly created cell.
+				return cell;
+			}
 		}
 	}
 	
