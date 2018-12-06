@@ -48,4 +48,12 @@ public class Cell {
 	public void addAABB(AABB aabb) {
 		this.aabbList.add(aabb);
 	}
+	
+	/**
+	 * Remove the specified AABB from this cell.
+	 * @param aabb The AABB to remove from this cell. 
+	 */
+	public void removeAABB(AABB aabb) {
+		this.aabbList.remove(aabb);
+	}
 }

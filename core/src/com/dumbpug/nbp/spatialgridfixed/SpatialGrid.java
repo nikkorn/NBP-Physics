@@ -46,6 +46,8 @@ public class SpatialGrid {
 			return;
 		}
 		
+		// TODO Update the positioned AABB so that it is placed into its relevant cells.
+		
 		// Add the new AABB to the map of AABBs to their spatially positioned representations.
 		this.AABBToSpatialAABBMap.put(aabb, new SpatiallyPoisitionedAABB(aabb));
 	}
@@ -60,12 +62,23 @@ public class SpatialGrid {
 			return;
 		}
 		
+		// Get the spatially positioned AABB for the AABB.
+		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
+		
+		// Remove the positioned AABB from ever cell that it is in via spatiallyPositionedAABB.getCellKeys().
+		for (String cellKey : spatiallyPositionedAABB.getCellKeys()) {
+			this.getCell(cellKey).removeAABB(aabb);
+		}
+		
 		// Remove the AABB from the AABB to Spatial AABB mapping.
 		this.AABBToSpatialAABBMap.remove(aabb);
 	}
 	
 	/**
 	 * Update an AABB in the grid.
+	 * 
+	 * TODO Remove in favour or a per-AABB update!
+	 * 
 	 * @param aabb The aabb to update.
 	 */
 	public void update() {
