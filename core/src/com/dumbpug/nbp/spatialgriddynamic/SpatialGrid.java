@@ -1,4 +1,4 @@
-package com.dumbpug.nbp.spatialgrid;
+package com.dumbpug.nbp.spatialgriddynamic;
 
 import java.util.ArrayList;
 import java.util.HashMap;

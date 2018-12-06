@@ -1,4 +1,4 @@
-package com.dumbpug.nbp.spatialgrid;
+package com.dumbpug.nbp.spatialgriddynamic;
 
 import com.dumbpug.nbp.AABB;
 import com.dumbpug.nbp.Axis;
