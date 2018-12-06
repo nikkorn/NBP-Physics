@@ -82,9 +82,15 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
-
+        
+        long time = System.currentTimeMillis();
+		
         // Update the physics environment.
         environment.update();
+		
+		long end = System.currentTimeMillis() - time;
+		
+		System.out.println("update took: " + end + "ms");
         
         // Draw all boxes in cluster
         batch.begin();

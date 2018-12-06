@@ -11,15 +11,14 @@ public class ThreeDimensionalMultiBoxTest {
 		
 		Random ran = new Random();
 		
-		SpatialGrid grid = new SpatialGrid(Dimension.THREE_DIMENSIONS, 20f);
+		SpatialGrid grid = new SpatialGrid(Dimension.THREE_DIMENSIONS, 100f);
 		
-		int boxCount = 3000;
+		int boxCount = 5000;
 		
 		// Create some random AABBs to process.
 		for (int i = 0; i < boxCount; i++) {
-			AABB box = new AABB(ran.nextInt(100), ran.nextInt(100), 
-					ran.nextInt(100), ran.nextInt(10), 
-					ran.nextInt(10), ran.nextInt(10));
+			AABB box = new AABB(ran.nextInt(1000), ran.nextInt(1000), ran.nextInt(1000), 
+					ran.nextInt(10), ran.nextInt(10), ran.nextInt(10));
 			
 			grid.add(box);
 		}
