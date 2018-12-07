@@ -32,7 +32,7 @@ public class Cluster2DLauncherWithProjections extends ApplicationAdapter {
     private Box box3;
     private ArrayList<Box> cluster = new ArrayList<Box>();
     
-    private int clusterSize = 1000;
+    private int clusterSize = 50000;
 
     private Random ran;
 
@@ -43,7 +43,7 @@ public class Cluster2DLauncherWithProjections extends ApplicationAdapter {
         wimg  = new Texture("white_box.png");
         gimg  = new Texture("green_box.png");
 
-        environment = new Environment(Dimension.TWO_DIMENSIONS, new Gravity(Axis.Y, -0.09f));
+        environment = new Environment(Dimension.TWO_DIMENSIONS, 200f, new Gravity(Axis.Y, -0.09f));
         
         box1 = new Basic2DBox(140, 80, 20, 180, BoxType.STATIC);
         box1.setName("box1");

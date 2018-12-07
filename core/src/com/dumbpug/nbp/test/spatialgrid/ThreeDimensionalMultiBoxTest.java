@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import com.dumbpug.nbp.AABB;
 import com.dumbpug.nbp.Dimension;
-import com.dumbpug.nbp.spatialgridfixed.SpatialGrid;
+import com.dumbpug.nbp.spatialgrid.SpatialGrid;
 
 public class ThreeDimensionalMultiBoxTest {
 	

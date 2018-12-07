@@ -33,7 +33,7 @@ public class Simple2DLauncher extends ApplicationAdapter {
 	    batch = new SpriteBatch();
 	    wimg  = new Texture("white_box.png");
 	
-	    environment = new Environment(Dimension.TWO_DIMENSIONS, new Gravity(Axis.Y, -0.09f));
+	    environment = new Environment(Dimension.TWO_DIMENSIONS, 200f, new Gravity(Axis.Y, -0.09f));
 	    
 	    box1 = new Basic2DBox(200, 100, 100, 100, BoxType.STATIC);
 	    box1.setName("wall");

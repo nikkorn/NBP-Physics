@@ -1,4 +1,4 @@
-package com.dumbpug.nbp.spatialgridfixed;
+package com.dumbpug.nbp.spatialgrid;
 
 import java.util.ArrayList;
 import java.util.HashSet;

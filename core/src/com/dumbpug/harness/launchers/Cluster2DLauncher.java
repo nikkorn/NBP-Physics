@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.harness.Basic2DBox;
-import com.dumbpug.nbp.AABB;
 import com.dumbpug.nbp.Axis;
 import com.dumbpug.nbp.Box;
 import com.dumbpug.nbp.BoxType;
@@ -23,7 +22,6 @@ import com.dumbpug.nbp.zone.CircleZone;
 public class Cluster2DLauncher extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture wimg;
-    private Texture gimg;
 
     /** The physics entities. */
     private Environment environment;
@@ -32,7 +30,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
     private Box box3;
     private ArrayList<Box> cluster = new ArrayList<Box>();
     
-    private int clusterSize = 50;
+    private int clusterSize = 10000;
 
     private Random ran;
 
@@ -41,9 +39,8 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         ran   = new Random();
         batch = new SpriteBatch();
         wimg  = new Texture("white_box.png");
-        gimg  = new Texture("green_box.png");
 
-        environment = new Environment(Dimension.TWO_DIMENSIONS, new Gravity(Axis.Y, -0.09f));
+        environment = new Environment(Dimension.TWO_DIMENSIONS, 200f, new Gravity(Axis.Y, -0.09f));
         
         box1 = new Basic2DBox(140, 80, 20, 180, BoxType.STATIC);
         box1.setName("box1");
@@ -82,23 +79,13 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
-        
-        long time = System.currentTimeMillis();
 		
         // Update the physics environment.
         environment.update();
-		
-		long end = System.currentTimeMillis() - time;
-		
-		System.out.println("update took: " + end + "ms");
-        
+
         // Draw all boxes in cluster
         batch.begin();
         for(Box box : cluster) {
-        	// Get the projection of the box.
-        	AABB projection = box.getProjection();
-        	// Draw the box projection.
-            batch.draw(gimg, projection.getX(), projection.getY(), projection.getWidth(), projection.getHeight());
             // Draw the box.
             batch.draw(wimg, box.getX(), box.getY(), box.getWidth(), box.getHeight());
         }

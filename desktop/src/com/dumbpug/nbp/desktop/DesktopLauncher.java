@@ -7,6 +7,7 @@ import com.dumbpug.harness.launchers.Cluster2DLauncher;
 import com.dumbpug.harness.launchers.Grid2DLauncher;
 import com.dumbpug.harness.launchers.SAP3DTestLauncher;
 import com.dumbpug.harness.launchers.Simple2DLauncher;
+import com.dumbpug.harness.launchers.SpatialGrid3DTestLauncher;
 
 /**
  * The desktop launcher.
@@ -27,6 +28,7 @@ public class DesktopLauncher {
         System.out.println("2. Cluster of 2D Boxes");
         System.out.println("3. Player in 2D Grid");
         System.out.println("4. SAP 3D test");
+        System.out.println("5. Spatial grid 3D test");
         System.out.println("----------------------------------");
         System.out.print("Please make a selection (e.g. 5): ");
         
@@ -46,6 +48,9 @@ public class DesktopLauncher {
 	    		break;
 	    	case 4: 
 	    		new LwjglApplication(new SAP3DTestLauncher(), config);
+	    		break;
+	    	case 5: 
+	    		new LwjglApplication(new SpatialGrid3DTestLauncher(), config);
 	    		break;
 	    	default: 
 	    		System.out.println("Invalid selection");

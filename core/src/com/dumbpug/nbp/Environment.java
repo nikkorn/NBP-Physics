@@ -1,6 +1,7 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
+import com.dumbpug.nbp.spatialgrid.SpatialGrid;
 import com.dumbpug.nbp.zone.Zone;
 
 /**
@@ -16,9 +17,13 @@ public class Environment {
      */
     private Dimension dimension;
     /**
+     * The spatial grid to use in broad phase collision detection.
+     */
+    private SpatialGrid spatialGrid;
+    /**
      * The box entities that are in this environment.
      */
-    private Boxes boxes = new Boxes();
+    private Boxes boxes;
     /**
      * The box entities waiting to be added to this environment (added during physics update).
      */
@@ -38,20 +43,26 @@ public class Environment {
 
     /**
      * Create a new instance of the Environment class.
+     * @param worldCellSize The cell size to use for the  broad phase spatial grid.
      * @param dimension The dimension of the environment.
      */
-    public Environment(Dimension dimension) {
+    public Environment(Dimension dimension, float worldCellSize) {
         // Set the environment dimension.
         this.dimension = dimension;
+        // Set the spatial grid to use.
+        this.spatialGrid = new SpatialGrid(dimension, worldCellSize);
+        // Create the boxes collection.
+        this.boxes = new Boxes(this.spatialGrid);
     }
 
     /**
      * Create a new instance of the Environment class with gravity.
      * @param dimension The dimension of the environment.
+     * @param worldCellSize The cell size to use for the  broad phase spatial grid.
      * @param gravity The environment gravity.
      */
-    public Environment(Dimension dimension, Gravity gravity) {
-        this(dimension);
+    public Environment(Dimension dimension, float worldCellSize, Gravity gravity) {
+        this(dimension, worldCellSize);
         // Set the environment gravity.
         this.gravity = gravity;
     }
@@ -66,6 +77,9 @@ public class Environment {
         inPhysicsStep = true;
         // Remove any boxes which were marked for deletion.
         boxes.removeDeletedBoxes();
+        
+        
+        
         // Apply any environment blooms to the dynamic boxes.
         for (Bloom bloom : blooms) {
             for (Box box : boxes.getDynamicBoxes()) {
@@ -75,6 +89,8 @@ public class Environment {
         }
         // Remove processed environment blooms.
         blooms.clear();
+        
+        
         // Apply zone forces to any intersecting boxes.
         for (Zone zone : zones) {
             // Go over all boxes.
@@ -87,10 +103,19 @@ public class Environment {
             }
         }
         
+        // We need to update the position of every dynamic box projection in the spatial grid.
+        for (Box dynamicBox : boxes.getDynamicBoxes()) {
+            // Update the dynamic box projection.
+        	this.spatialGrid.update(dynamicBox.getProjection());
+        }
+       
+        
         // 1. Get projections of all dynamic boxes AND their sensors.
         // 2. Use Sweep And Prune to find possible intersections between static boxes and the projections of all dynamic boxes and sensors.
         // 3. Update each dynamic box (inc sensors) and report any collisions with static boxes (provided by SAP) as part of its update.
         // 4. Check each dynamic box/sensor against possible intersections and report.
+        
+        
         
         // Update all of the dynamic boxes in the world.
         for (Box currentBox : boxes.getDynamicBoxes()) {
@@ -101,6 +126,8 @@ public class Environment {
             // Call any user-defined box post-update logic.
             currentBox.onAfterUpdate();
         }
+        
+        
         
         // Mark the end of the physics step.
         inPhysicsStep = false;

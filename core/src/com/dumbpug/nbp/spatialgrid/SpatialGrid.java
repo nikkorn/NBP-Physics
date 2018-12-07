@@ -1,4 +1,4 @@
-package com.dumbpug.nbp.spatialgridfixed;
+package com.dumbpug.nbp.spatialgrid;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,7 +146,7 @@ public class SpatialGrid {
 	 * @param aabb The AABB for which to find a set of AABBs that reside in the current or adjacent cells to it.
 	 * @return A set of AABBs that reside in the current or adjacent cells to the specified one excluding it.
 	 */
-	public HashSet<AABB> getNeighbouringAABBs(AABB aabb) {
+	public HashSet<AABB> getCollisionCandidates(AABB aabb) {
 		// Get the spatially positioned AABB for the AABB.
 		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
 		

@@ -43,7 +43,7 @@ public class Grid2DLauncher extends ApplicationAdapter {
         wimg  = new Texture("white_box.png");
         gimg  = new Texture("green_box.png");
 
-        environment = new Environment(Dimension.TWO_DIMENSIONS, new Gravity(Axis.Y, -0.09f));
+        environment = new Environment(Dimension.TWO_DIMENSIONS, 200f, new Gravity(Axis.Y, -0.09f));
 
         // Create our grid.
         float gridStartX = 0;

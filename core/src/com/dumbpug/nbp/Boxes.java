@@ -2,6 +2,7 @@ package com.dumbpug.nbp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.dumbpug.nbp.spatialgrid.SpatialGrid;
 
 /**
  * A collection of static and dynamic boxes.
@@ -19,6 +20,18 @@ public class Boxes {
      * The static box entities that are in this environment.
      */
     private ArrayList<Box> staticBoxes = new ArrayList<Box>();
+    /**
+     * The spatial grid to use in broad phase collision detection.
+     */
+    private SpatialGrid spatialGrid;
+    
+    /**
+     * Create a new instance of the Boxes class.
+     * @param grid The spatial grid to use in finding collision candidates between boxes.
+     */
+    public Boxes(SpatialGrid grid) {
+    	this.spatialGrid = grid;
+    }
     
     /**
      * Get all dynamic boxes.
@@ -49,12 +62,16 @@ public class Boxes {
      * @param box The box to add.
      */
     public void add(Box box) {
+    	// Add the box to its type-specific list.
     	if (box.getType() == BoxType.DYNAMIC) {
     		this.dynamicBoxes.add(box);
     	} else {
     		this.staticBoxes.add(box);
     	}
+    	// Add the box to the overall list of boxes.
     	this.boxes.add(box);
+    	// Add the box to the spatial grid, along with any sensors.
+    	this.addBoxToSpatialGrid(box);
     }
     
     /**
@@ -62,12 +79,16 @@ public class Boxes {
      * @param box The box to remove.
      */
     public void remove(Box box) {
+    	// Remove the box from its type-specific list.
     	if (box.getType() == BoxType.DYNAMIC) {
     		this.dynamicBoxes.remove(box);
     	} else {
     		this.staticBoxes.remove(box);
     	}
+    	// Remove the box from the overall list of boxes.
     	this.boxes.remove(box);
+    	// Remove the box from the spatial grid, along with any sensors.
+    	this.removeBoxFromSpatialGrid(box);
     }
     
     /**
@@ -99,6 +120,8 @@ public class Boxes {
                 box.onDeletion();
                 // Remove the dynamic box from the collection of all boxes.
                 this.boxes.remove(box);
+                // Remove the box from the spatial grid, along with any sensors.
+            	this.removeBoxFromSpatialGrid(box);
             }
         }
         // Remove any boxes which were marked for deletion.
@@ -112,7 +135,35 @@ public class Boxes {
                 box.onDeletion();
                 // Remove the static box from the collection of all boxes.
                 this.boxes.remove(box);
+                // Remove the box from the spatial grid, along with any sensors.
+            	this.removeBoxFromSpatialGrid(box);
             }
         }
+    }
+    
+    /**
+     * Add the projection of a box and any attached sensors to the spatial grid.
+     * @param box The box to add.
+     */
+    private void addBoxToSpatialGrid(Box box) {
+    	// Add the box to the spatial grid.
+    	this.spatialGrid.add(box.getProjection());
+    	// Add any sensors to the spatial grid.
+    	for (Sensor sensor : box.getAttachedSensors()) {
+    		this.spatialGrid.add(sensor);
+    	}
+    }
+    
+    /**
+     * Remove the projection of a box and any attached sensors from the spatial grid.
+     * @param box The box to remove.
+     */
+    private void removeBoxFromSpatialGrid(Box box) {
+    	// Remove the box from the spatial grid.
+    	this.spatialGrid.remove(box.getProjection());
+    	// Remove any sensors from the spatial grid.
+    	for (Sensor sensor : box.getAttachedSensors()) {
+    		this.spatialGrid.remove(sensor);
+    	}
     }
 }
