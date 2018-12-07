@@ -1,5 +1,6 @@
 package com.dumbpug.nbp.test.spatialgrid;
 
+import java.util.ArrayList;
 import java.util.Random;
 import com.dumbpug.nbp.AABB;
 import com.dumbpug.nbp.Dimension;
@@ -13,7 +14,9 @@ public class ThreeDimensionalMultiBoxTest {
 		
 		SpatialGrid grid = new SpatialGrid(Dimension.THREE_DIMENSIONS, 100f);
 		
-		int boxCount = 5000;
+		ArrayList<AABB> boxes = new ArrayList<AABB>();
+		
+		int boxCount = 1000;
 		
 		// Create some random AABBs to process.
 		for (int i = 0; i < boxCount; i++) {
@@ -21,13 +24,16 @@ public class ThreeDimensionalMultiBoxTest {
 					ran.nextInt(10), ran.nextInt(10), ran.nextInt(10));
 			
 			grid.add(box);
+			boxes.add(box);
 		}
 		
 		System.out.println("processing " + boxCount + " boxes...");
 		
 		long time = System.currentTimeMillis();
 		
-		grid.update();
+		for (AABB box : boxes) {
+			grid.update(box);
+		}
 		
 		long end = System.currentTimeMillis() - time;
 		

@@ -46,10 +46,11 @@ public class SpatialGrid {
 			return;
 		}
 		
-		// TODO Update the positioned AABB so that it is placed into its relevant cells.
-		
 		// Add the new AABB to the map of AABBs to their spatially positioned representations.
 		this.AABBToSpatialAABBMap.put(aabb, new SpatiallyPoisitionedAABB(aabb));
+		
+		// Update the positioned AABB so that it is placed into its relevant cells.
+		this.update(aabb);
 	}
 	
 	/**
@@ -66,85 +67,74 @@ public class SpatialGrid {
 		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
 		
 		// Remove the positioned AABB from ever cell that it is in via spatiallyPositionedAABB.getCellKeys().
-		for (String cellKey : spatiallyPositionedAABB.getCellKeys()) {
-			this.getCell(cellKey).removeAABB(aabb);
+		for (Cell cell : spatiallyPositionedAABB.getCells()) {
+			cell.removeAABB(aabb);
 		}
 		
 		// Remove the AABB from the AABB to Spatial AABB mapping.
 		this.AABBToSpatialAABBMap.remove(aabb);
 	}
 	
+
+	
 	/**
 	 * Update an AABB in the grid.
-	 * 
-	 * TODO Remove in favour or a per-AABB update!
-	 * 
 	 * @param aabb The aabb to update.
 	 */
-	public void update() {
-		// Clear the grid.
-		this.grid.clear();
+	public void update(AABB aabb) {
+		// Get the spatially positioned AABB for the AABB.
+		SpatiallyPoisitionedAABB spatiallyPositionedAABB = this.AABBToSpatialAABBMap.get(aabb);
+		
+		// Remove any references that any cells have to the AABB.
+		for (Cell cell : spatiallyPositionedAABB.getCells()) {
+			cell.removeAABB(aabb);
+		}
+		
+		// Clear any existing cells that the positioned AABB thinks that it is in.
+		spatiallyPositionedAABB.clearCells();
 		
 		// How we add the AABBs to the grid depends on the dimension we are dealing with.
 		if (this.dimension == Dimension.TWO_DIMENSIONS) {
-			// For each AABB we will need to find every cell that it resides in.
-			for (SpatiallyPoisitionedAABB positionedAABB : this.AABBToSpatialAABBMap.values()) {
-				// Clear any existing cell keys that the positioned AABB has.
-				positionedAABB.clearCellKeys();
-				
-				// Get the AABB.
-				AABB aabb = positionedAABB.getAABB();
-				
-				// Get the cell bounds of the AABB.
-				int xStartCell = this.getCellPosition(aabb.getX());
-				int xEndCell   = this.getCellPosition(aabb.getX() + aabb.getWidth());
-				int yStartCell = this.getCellPosition(aabb.getY());
-				int yEndCell   = this.getCellPosition(aabb.getY() + aabb.getHeight());
-				
-				// Find all cells that the AABB intersects and record the AABB against each one.
-				for (int cellX = xStartCell; cellX <= xEndCell; cellX++) {
-					for (int cellY = yStartCell; cellY <= yEndCell; cellY++) {
+			// Get the cell bounds of the AABB.
+			int xStartCell = this.getCellPosition(aabb.getX());
+			int xEndCell   = this.getCellPosition(aabb.getX() + aabb.getWidth());
+			int yStartCell = this.getCellPosition(aabb.getY());
+			int yEndCell   = this.getCellPosition(aabb.getY() + aabb.getHeight());
+			
+			// Find all cells that the AABB intersects and record the AABB against each one.
+			for (int cellX = xStartCell; cellX <= xEndCell; cellX++) {
+				for (int cellY = yStartCell; cellY <= yEndCell; cellY++) {
+					// Get the cell at the current position.
+					Cell cell = this.getCell(cellX, cellY);
+					
+					// Add the AABB to the cell.
+					cell.addAABB(aabb);
+					
+					// Add the cell key to the list of keys representing cells that the AABB intersects for quick lookup.
+					spatiallyPositionedAABB.addCell(cell);
+				}
+			}
+		} else {
+			// Get the cell bounds of the AABB.
+			int xStartCell = this.getCellPosition(aabb.getX());
+			int xEndCell   = this.getCellPosition(aabb.getX() + aabb.getWidth());
+			int yStartCell = this.getCellPosition(aabb.getY());
+			int yEndCell   = this.getCellPosition(aabb.getY() + aabb.getHeight());
+			int zStartCell = this.getCellPosition(aabb.getZ());
+			int zEndCell   = this.getCellPosition(aabb.getZ() + aabb.getDepth());
+			
+			// Find all cells that the AABB intersects and record the AABB against each one.
+			for (int cellX = xStartCell; cellX <= xEndCell; cellX++) {
+				for (int cellY = yStartCell; cellY <= yEndCell; cellY++) {
+					for (int cellZ = zStartCell; cellZ <= zEndCell; cellZ++) {
 						// Get the cell at the current position.
-						Cell cell = this.getCell(cellX, cellY);
+						Cell cell = this.getCell(cellX, cellY, cellZ);
 						
 						// Add the AABB to the cell.
 						cell.addAABB(aabb);
 						
 						// Add the cell key to the list of keys representing cells that the AABB intersects for quick lookup.
-						positionedAABB.addCellKey(cell.getKey());
-					}
-				}
-			}
-		} else {
-			// For each AABB we will need to find every cell that it resides in.
-			for (SpatiallyPoisitionedAABB positionedAABB : this.AABBToSpatialAABBMap.values()) {
-				// Clear any existing cell keys that the positioned AABB has.
-				positionedAABB.clearCellKeys();
-				
-				// Get the AABB.
-				AABB aabb = positionedAABB.getAABB();
-				
-				// Get the cell bounds of the AABB.
-				int xStartCell = this.getCellPosition(aabb.getX());
-				int xEndCell   = this.getCellPosition(aabb.getX() + aabb.getWidth());
-				int yStartCell = this.getCellPosition(aabb.getY());
-				int yEndCell   = this.getCellPosition(aabb.getY() + aabb.getHeight());
-				int zStartCell = this.getCellPosition(aabb.getZ());
-				int zEndCell   = this.getCellPosition(aabb.getZ() + aabb.getDepth());
-				
-				// Find all cells that the AABB intersects and record the AABB against each one.
-				for (int cellX = xStartCell; cellX <= xEndCell; cellX++) {
-					for (int cellY = yStartCell; cellY <= yEndCell; cellY++) {
-						for (int cellZ = zStartCell; cellZ <= zEndCell; cellZ++) {
-							// Get the cell at the current position.
-							Cell cell = this.getCell(cellX, cellY, cellZ);
-							
-							// Add the AABB to the cell.
-							cell.addAABB(aabb);
-							
-							// Add the cell key to the list of keys representing cells that the AABB intersects for quick lookup.
-							positionedAABB.addCellKey(cell.getKey());
-						}
+						spatiallyPositionedAABB.addCell(cell);
 					}
 				}
 			}
@@ -164,10 +154,7 @@ public class SpatialGrid {
 		HashSet<AABB> neighbouringAABBs = new HashSet<AABB>();
 		
 		// For each cell key that the AABB overlaps, add every AABB that overlaps that cell into the neighbouring set.
-		for (String cellKey : spatiallyPositionedAABB.getCellKeys()) {
-			// Get the grid cell.
-			Cell cell = this.grid.get(cellKey);
-			
+		for (Cell cell : spatiallyPositionedAABB.getCells()) {
 			// Add every AABB that overlaps the cell to our set.
 			cell.collect(neighbouringAABBs);
 		}

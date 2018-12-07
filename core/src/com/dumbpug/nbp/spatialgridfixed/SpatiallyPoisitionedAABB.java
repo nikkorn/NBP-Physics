@@ -12,9 +12,9 @@ public class SpatiallyPoisitionedAABB {
 	 */
 	private AABB aabb;
 	/**
-	 * The list of keys of cells that the AABB overlaps.
+	 * The list of cells that the AABB overlaps.
 	 */
-	private ArrayList<String> cellKeys = new ArrayList<String>();
+	private ArrayList<Cell> cells = new ArrayList<Cell>();
 	
 	/**
 	 * Create a new instance of the SpatiallyPoisitionedAABB class.
@@ -25,26 +25,26 @@ public class SpatiallyPoisitionedAABB {
 	}
 	
 	/**
-	 * Get the list of keys of cells that the AABB overlaps.
-	 * @return The list of keys of cells that the AABB overlaps.
+	 * Get the list of cells that the AABB overlaps.
+	 * @return The list of cells that the AABB overlaps.
 	 */
-	public ArrayList<String> getCellKeys() {
-		return this.cellKeys;
+	public ArrayList<Cell> getCells() {
+		return this.cells;
 	}
 	
 	/**
-	 * Add a cell key to list of cells that the AABB overlaps.
-	 * @param cellKey The cell key to add.
+	 * Add a cell to the list of cells that the AABB overlaps.
+	 * @param cell The cell to add.
 	 */
-	public void addCellKey(String cellKey) {
-		this.cellKeys.add(cellKey);
+	public void addCell(Cell cell) {
+		this.cells.add(cell);
 	}
 	
 	/**
-	 * Clear the list of keys of cells that the AABB overlaps.
+	 * Clear the list of cells that the AABB overlaps.
 	 */
-	public void clearCellKeys() {
-		this.cellKeys.clear();
+	public void clearCells() {
+		this.cells.clear();
 	}
 	
 	/**
