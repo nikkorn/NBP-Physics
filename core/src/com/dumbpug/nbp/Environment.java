@@ -1,6 +1,7 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.dumbpug.nbp.projection.BoxProjection;
 import com.dumbpug.nbp.projection.Projection;
@@ -153,10 +154,13 @@ public class Environment {
      * @param dynamicBox The dynamic box to update.
      */
     private void updateDynamicBox(Box dynamicBox) {
-    	// Get all static boxes that the dynamic box could collide with.
+    	// Get the set of all collision candidates for the dynamic box. 
+    	HashSet<Projection> candidates = this.spatialGrid.getCollisionCandidates(dynamicBox.getProjection());
+    	
+    	// Create a list to store all static boxes that the dynamic box could collide with.
     	ArrayList<Box> staticBoxesOverlappingProjection = new ArrayList<Box>();
     	
-    	for (Projection projection : this.spatialGrid.getCollisionCandidates(dynamicBox.getProjection())) {
+    	for (Projection projection : candidates) {
     		// We only care about projections that are for a box, not sensors.
     		if (projection.getProjectionType() == ProjectionType.BOX) {
     			// Get the box that the box projection represents.
@@ -166,11 +170,6 @@ public class Environment {
     				staticBoxesOverlappingProjection.add(projectedBox);
     			}
     		}
-    	}
-    	
-    	// There is nothing more to do if there are no static boxes that we could be intersecting with.
-    	if (staticBoxesOverlappingProjection.isEmpty()) {
-    		return;
     	}
     	
     	// Update the dynamic box on the X axis and resolve any collisions.

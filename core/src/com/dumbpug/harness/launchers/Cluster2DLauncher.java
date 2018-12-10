@@ -40,7 +40,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         batch = new SpriteBatch();
         wimg  = new Texture("white_box.png");
 
-        environment = new Environment(Dimension.TWO_DIMENSIONS, 200f, new Gravity(Axis.Y, -0.09f));
+        environment = new Environment(Dimension.TWO_DIMENSIONS, 20f, new Gravity(Axis.Y, -0.09f));
         
         box1 = new Basic2DBox(140, 80, 20, 180, BoxType.STATIC);
         box1.setName("box1");
@@ -55,7 +55,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
         
         // Create a cluster.
         for(int i = 0; i < clusterSize; i++) {
-            Box cBox = new Basic2DBox((ran.nextFloat()*300f) + 160f, 440, 10, 10, BoxType.DYNAMIC);
+            Box cBox = new Basic2DBox((ran.nextFloat()*90000f), 440, 5, 5, BoxType.DYNAMIC);
             cBox.applyImpulse(Axis.X, (ran.nextFloat()*6f)-3f);
             cBox.setFriction(ran.nextFloat());
             cBox.setRestitution(ran.nextFloat());
