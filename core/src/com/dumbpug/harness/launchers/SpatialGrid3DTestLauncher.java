@@ -32,7 +32,7 @@ public class SpatialGrid3DTestLauncher extends ApplicationAdapter {
 	public Model intersectingModel;
 	public Model nonIntersectingModel;
 	
-	SpatialGrid grid = new SpatialGrid(Dimension.THREE_DIMENSIONS, 100f);
+	SpatialGrid<AABB> grid = new SpatialGrid<AABB>(Dimension.THREE_DIMENSIONS, 100f);
 	
 	public ArrayList<ModelInstance> instances = new ArrayList<ModelInstance>();
 

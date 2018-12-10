@@ -2,6 +2,7 @@ package com.dumbpug.nbp;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.dumbpug.nbp.projection.Projection;
 import com.dumbpug.nbp.spatialgrid.SpatialGrid;
 
 /**
@@ -23,13 +24,13 @@ public class Boxes {
     /**
      * The spatial grid to use in broad phase collision detection.
      */
-    private SpatialGrid spatialGrid;
+    private SpatialGrid<Projection> spatialGrid;
     
     /**
      * Create a new instance of the Boxes class.
      * @param grid The spatial grid to use in finding collision candidates between boxes.
      */
-    public Boxes(SpatialGrid grid) {
+    public Boxes(SpatialGrid<Projection> grid) {
     	this.spatialGrid = grid;
     }
     

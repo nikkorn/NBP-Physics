@@ -1,6 +1,10 @@
 package com.dumbpug.nbp;
 
 import java.util.ArrayList;
+
+import com.dumbpug.nbp.projection.BoxProjection;
+import com.dumbpug.nbp.projection.Projection;
+import com.dumbpug.nbp.projection.ProjectionType;
 import com.dumbpug.nbp.spatialgrid.SpatialGrid;
 import com.dumbpug.nbp.zone.Zone;
 
@@ -19,7 +23,7 @@ public class Environment {
     /**
      * The spatial grid to use in broad phase collision detection.
      */
-    private SpatialGrid spatialGrid;
+    private SpatialGrid<Projection> spatialGrid;
     /**
      * The box entities that are in this environment.
      */
@@ -50,7 +54,7 @@ public class Environment {
         // Set the environment dimension.
         this.dimension = dimension;
         // Set the spatial grid to use.
-        this.spatialGrid = new SpatialGrid(dimension, worldCellSize);
+        this.spatialGrid = new SpatialGrid<Projection>(dimension, worldCellSize);
         // Create the boxes collection.
         this.boxes = new Boxes(this.spatialGrid);
     }
@@ -149,21 +153,29 @@ public class Environment {
      * @param dynamicBox The dynamic box to update.
      */
     private void updateDynamicBox(Box dynamicBox) {
-    	// Get all static boxes that the current box could collide with.
-    	// For now, that will be all static boxes within a range, but eventually it would 
-    	// be better to find those intersecting the box made by updating evey axis and maxing
-    	// a box between the pre and post origins.
-    	// TODO Find nearby!
-    	ArrayList<Box> nearbyBoxes = boxes.getStaticBoxes();
+    	// Get all static boxes that the dynamic box could collide with.
+    	ArrayList<Box> staticBoxesOverlappingProjection = new ArrayList<Box>();
     	
-    	// There is nothing more to do if there are no boxes that we could be intersecting with.
-    	if (nearbyBoxes.isEmpty()) {
+    	for (Projection projection : this.spatialGrid.getCollisionCandidates(dynamicBox.getProjection())) {
+    		// We only care about projections that are for a box, not sensors.
+    		if (projection.getProjectionType() == ProjectionType.BOX) {
+    			// Get the box that the box projection represents.
+    			Box projectedBox = ((BoxProjection)projection).getProjectedBox();
+    			// At this point of the update we only care about static boxes.
+    			if (projectedBox.getType() == BoxType.STATIC) {
+    				staticBoxesOverlappingProjection.add(projectedBox);
+    			}
+    		}
+    	}
+    	
+    	// There is nothing more to do if there are no static boxes that we could be intersecting with.
+    	if (staticBoxesOverlappingProjection.isEmpty()) {
     		return;
     	}
     	
     	// Update the dynamic box on the X axis and resolve any collisions.
     	dynamicBox.updateOnAxis(Axis.X, this.gravity);
-    	for (Box nearbyBox : nearbyBoxes) {
+    	for (Box nearbyBox : staticBoxesOverlappingProjection) {
     		if (dynamicBox.intersects(nearbyBox)) {
     			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.X);
             }
@@ -171,7 +183,7 @@ public class Environment {
     	
     	// Update the dynamic box on the Y axis and resolve any collisions.
     	dynamicBox.updateOnAxis(Axis.Y, this.gravity);
-    	for (Box nearbyBox : nearbyBoxes) {
+    	for (Box nearbyBox : staticBoxesOverlappingProjection) {
     		if (dynamicBox.intersects(nearbyBox)) {
     			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.Y);
             }
@@ -180,7 +192,7 @@ public class Environment {
     	// Update the dynamic box on the Z axis and resolve any collisions if we are in 3D space.
     	if (this.dimension == Dimension.THREE_DIMENSIONS) {
         	dynamicBox.updateOnAxis(Axis.Z, this.gravity);
-        	for (Box nearbyBox : nearbyBoxes) {
+        	for (Box nearbyBox : staticBoxesOverlappingProjection) {
         		if (dynamicBox.intersects(nearbyBox)) {
         			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.Z);
                 }

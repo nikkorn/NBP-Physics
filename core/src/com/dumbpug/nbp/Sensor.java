@@ -1,9 +1,12 @@
 package com.dumbpug.nbp;
 
+import com.dumbpug.nbp.projection.Projection;
+import com.dumbpug.nbp.projection.ProjectionType;
+
 /**
  * A sensor which can be attached to dynamic and static boxes.
  */
-public class Sensor extends AABB {
+public class Sensor extends Projection {
     /**
      * The name of the sensor.
      */
@@ -21,7 +24,7 @@ public class Sensor extends AABB {
      * @param height The height of the sensor.
      */
     public Sensor(float x, float y, float width, float height) {
-    	super(x, y, width, height);
+    	super(ProjectionType.SENSOR, x, y, width, height);
     }
     
     /**
@@ -34,7 +37,7 @@ public class Sensor extends AABB {
      * @param depth  The depth of the sensor.
      */
     public Sensor(float x, float y, float z, float width, float height, float depth) {
-    	super(x, y, z, width, height, depth);
+    	super(ProjectionType.SENSOR, x, y, z, width, height, depth);
     }
 
     /**

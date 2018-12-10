@@ -1,6 +1,7 @@
 package com.dumbpug.nbp;
 
 import com.dumbpug.nbp.point.Point;
+import com.dumbpug.nbp.projection.BoxProjection;
 
 /**
  * Helper class for basic box collision detection and resolution.
@@ -55,7 +56,7 @@ public class Utilities {
      * @param box The box to get the projection for.
      * @return A projection for a box.
      */
-    public static AABB createProjection(Box box) {
+    public static BoxProjection createBoxProjection(Box box) {
     	// The type of projection we create depends on whether we are in 2D or 3D space.
     	if (box.getDimension() == Dimension.THREE_DIMENSIONS) {
     		// Find the x/y/z position of the box after the physics update.
@@ -70,7 +71,7 @@ public class Utilities {
     		float projectionHeight = (Math.max(box.getY(), destY) + box.getHeight()) - projectionY;
     		float projectionDepth  = (Math.max(box.getZ(), destZ) + box.getDepth()) - projectionZ;
     		// Create and return the projection.
-    		return new AABB(projectionX, projectionY, projectionY, projectionWidth, projectionHeight, projectionDepth);
+    		return new BoxProjection(box, projectionX, projectionY, projectionY, projectionWidth, projectionHeight, projectionDepth);
     	} else {
     		// Find the x/y position of the box after the physics update.
     		float destX = box.getX() + box.getVelocity(Axis.X);
@@ -81,7 +82,7 @@ public class Utilities {
     		float projectionWidth  = (Math.max(box.getX(), destX) + box.getWidth()) - projectionX;
     		float projectionHeight = (Math.max(box.getY(), destY) + box.getHeight()) - projectionY;
     		// Create and return the projection.
-    		return new AABB(projectionX, projectionY, projectionWidth, projectionHeight);
+    		return new BoxProjection(box, projectionX, projectionY, projectionWidth, projectionHeight);
     	}
     }
     

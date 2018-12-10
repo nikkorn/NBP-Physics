@@ -2,6 +2,7 @@ package com.dumbpug.nbp;
 
 import java.util.ArrayList;
 import com.dumbpug.nbp.point.Point;
+import com.dumbpug.nbp.projection.BoxProjection;
 
 /**
  * Represents either a 2D or 3D box in a physics environment.
@@ -26,7 +27,7 @@ public abstract class Box extends AABB {
     /**
      * The projection of the box, based on its position and velocity.
      */
-    private AABB projection;
+    private BoxProjection projection;
     /**
      * The name of the box.
      */
@@ -75,7 +76,7 @@ public abstract class Box extends AABB {
     public Box(float x, float y, float width, float height, BoxType type) {
     	super(x, y, width, height);
         this.type       = type;
-        this.projection = Utilities.createProjection(this);
+        this.projection = Utilities.createBoxProjection(this);
     }
 
     /**
@@ -91,7 +92,7 @@ public abstract class Box extends AABB {
     public Box(float x, float y, float z, float width, float height, float depth, BoxType type) {
         super(x, y, z, width, height, depth);
         this.type       = type;
-        this.projection = Utilities.createProjection(this);
+        this.projection = Utilities.createBoxProjection(this);
     }
 
     /**
@@ -415,7 +416,7 @@ public abstract class Box extends AABB {
      * Get the projection for this box.
      * @return The projection for this box.
      */
-    public AABB getProjection() { 
+    public BoxProjection getProjection() { 
     	return this.projection; 
     }
 

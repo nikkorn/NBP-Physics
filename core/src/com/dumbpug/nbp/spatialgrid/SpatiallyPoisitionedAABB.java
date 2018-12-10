@@ -6,21 +6,21 @@ import com.dumbpug.nbp.AABB;
 /**
  * A spatially positioned AABB.
  */
-public class SpatiallyPoisitionedAABB {
+public class SpatiallyPoisitionedAABB<TAABB extends AABB> {
 	/**
 	 * The AABB.
 	 */
-	private AABB aabb;
+	private TAABB aabb;
 	/**
 	 * The list of cells that the AABB overlaps.
 	 */
-	private ArrayList<Cell> cells = new ArrayList<Cell>();
+	private ArrayList<Cell<TAABB>> cells = new ArrayList<Cell<TAABB>>();
 	
 	/**
 	 * Create a new instance of the SpatiallyPoisitionedAABB class.
 	 * @param aabb The AABB.
 	 */
-	public SpatiallyPoisitionedAABB(AABB aabb) {
+	public SpatiallyPoisitionedAABB(TAABB aabb) {
 		this.aabb = aabb;
 	}
 	
@@ -28,7 +28,7 @@ public class SpatiallyPoisitionedAABB {
 	 * Get the list of cells that the AABB overlaps.
 	 * @return The list of cells that the AABB overlaps.
 	 */
-	public ArrayList<Cell> getCells() {
+	public ArrayList<Cell<TAABB>> getCells() {
 		return this.cells;
 	}
 	
@@ -36,7 +36,7 @@ public class SpatiallyPoisitionedAABB {
 	 * Add a cell to the list of cells that the AABB overlaps.
 	 * @param cell The cell to add.
 	 */
-	public void addCell(Cell cell) {
+	public void addCell(Cell<TAABB> cell) {
 		this.cells.add(cell);
 	}
 	
@@ -51,7 +51,7 @@ public class SpatiallyPoisitionedAABB {
 	 * Get the AABB.
 	 * @return The AABB.
 	 */
-	public AABB getAABB() {
+	public TAABB getAABB() {
 		return this.aabb;
 	}
 }

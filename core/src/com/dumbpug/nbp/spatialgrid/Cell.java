@@ -7,7 +7,7 @@ import com.dumbpug.nbp.AABB;
 /**
  * Represents a cell in a spatial grid.
  */
-public class Cell {
+public class Cell<TAABB extends AABB> {
 	/**
 	 * The cell key.
 	 */
@@ -15,7 +15,7 @@ public class Cell {
 	/**
 	 * The list of AABBs in the cell.
 	 */
-	private ArrayList<AABB> aabbList = new ArrayList<AABB>();
+	private ArrayList<TAABB> aabbList = new ArrayList<TAABB>();
 	
 	/**
 	 * Create a new instance of the Cell class.
@@ -37,7 +37,7 @@ public class Cell {
 	 * Add all of the AABBs that intersect the cell to the specified set.
 	 * @param existing The set of existing AABBs.
 	 */
-	public void collect(HashSet<AABB> existing) {
+	public void collect(HashSet<TAABB> existing) {
 		existing.addAll(aabbList);
 	}
 	
@@ -45,7 +45,7 @@ public class Cell {
 	 * Add the specified AABB to this cell.
 	 * @param aabb The AABB to add to this cell. 
 	 */
-	public void addAABB(AABB aabb) {
+	public void addAABB(TAABB aabb) {
 		this.aabbList.add(aabb);
 	}
 	
@@ -53,7 +53,7 @@ public class Cell {
 	 * Remove the specified AABB from this cell.
 	 * @param aabb The AABB to remove from this cell. 
 	 */
-	public void removeAABB(AABB aabb) {
+	public void removeAABB(TAABB aabb) {
 		this.aabbList.remove(aabb);
 	}
 }

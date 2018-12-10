@@ -30,7 +30,7 @@ public class Cluster2DLauncher extends ApplicationAdapter {
     private Box box3;
     private ArrayList<Box> cluster = new ArrayList<Box>();
     
-    private int clusterSize = 10000;
+    private int clusterSize = 20000;
 
     private Random ran;
 
