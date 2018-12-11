@@ -23,6 +23,7 @@ public class BoxProjection extends Projection {
 	 */
 	public BoxProjection(Box box, float x, float y, float z, float width, float height, float depth) {
 		super(ProjectionType.BOX, x, y, z, width, height, depth);
+		this.box = box;
 	}
 	
 	/**
@@ -35,6 +36,7 @@ public class BoxProjection extends Projection {
 	 */
 	public BoxProjection(Box box, float x, float y, float width, float height) {
 		super(ProjectionType.BOX, x, y, width, height);
+		this.box = box;
 	}
 	
 	/**

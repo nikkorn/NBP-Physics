@@ -23,6 +23,7 @@ public class Projection extends AABB {
 	 */
 	public Projection(ProjectionType type, float x, float y, float z, float width, float height, float depth) {
 		super(x, y, z, width, height, depth);
+		this.type = type;
 	}
 	
 	/**
@@ -35,6 +36,7 @@ public class Projection extends AABB {
 	 */
 	public Projection(ProjectionType type, float x, float y, float width, float height) {
 		super(x, y, width, height);
+		this.type = type;
 	}
 	
 	/**
