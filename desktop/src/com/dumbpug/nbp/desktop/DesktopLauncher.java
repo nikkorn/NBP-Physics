@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.dumbpug.harness.launchers.Cluster2DLauncher;
 import com.dumbpug.harness.launchers.Cluster2DStaticTowerLauncher;
+import com.dumbpug.harness.launchers.Cluster3DStaticTowerLauncher;
 import com.dumbpug.harness.launchers.Grid2DLauncher;
 import com.dumbpug.harness.launchers.SAP3DTestLauncher;
 import com.dumbpug.harness.launchers.Simple2DLauncher;
@@ -30,7 +31,8 @@ public class DesktopLauncher {
         System.out.println("3. Player in 2D Grid");
         System.out.println("4. SAP 3D test");
         System.out.println("5. Spatial grid 3D test");
-        System.out.println("6. Cluster Tower test");
+        System.out.println("6. 2D Cluster Tower test");
+        System.out.println("7. 3D Cluster Tower test");
         System.out.println("----------------------------------");
         System.out.print("Please make a selection (e.g. 5): ");
         
@@ -56,6 +58,9 @@ public class DesktopLauncher {
 	    		break;
 	    	case 6: 
 	    		new LwjglApplication(new Cluster2DStaticTowerLauncher(), config);
+	    		break;
+	    	case 7: 
+	    		new LwjglApplication(new Cluster3DStaticTowerLauncher(), config);
 	    		break;
 	    	default: 
 	    		System.out.println("Invalid selection");
