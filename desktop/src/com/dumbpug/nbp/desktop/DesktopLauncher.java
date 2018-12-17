@@ -9,6 +9,7 @@ import com.dumbpug.harness.launchers.Cluster3DStaticTowerLauncher;
 import com.dumbpug.harness.launchers.Grid2DLauncher;
 import com.dumbpug.harness.launchers.SAP3DTestLauncher;
 import com.dumbpug.harness.launchers.Simple2DLauncher;
+import com.dumbpug.harness.launchers.Simple3DCollision;
 import com.dumbpug.harness.launchers.SpatialGrid3DTestLauncher;
 
 /**
@@ -33,6 +34,7 @@ public class DesktopLauncher {
         System.out.println("5. Spatial grid 3D test");
         System.out.println("6. 2D Cluster Tower test");
         System.out.println("7. 3D Cluster Tower test");
+        System.out.println("8. Simple 3D collision test");
         System.out.println("----------------------------------");
         System.out.print("Please make a selection (e.g. 5): ");
         
@@ -61,6 +63,9 @@ public class DesktopLauncher {
 	    		break;
 	    	case 7: 
 	    		new LwjglApplication(new Cluster3DStaticTowerLauncher(), config);
+	    		break;
+	    	case 8: 
+	    		new LwjglApplication(new Simple3DCollision(), config);
 	    		break;
 	    	default: 
 	    		System.out.println("Invalid selection");

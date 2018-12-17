@@ -2,7 +2,6 @@ package com.dumbpug.harness.launchers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -27,7 +26,7 @@ import com.dumbpug.nbp.Gravity;
 /**
  * A simple 3D launcher with lots of individual dynamic boxes.
  */
-public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
+public class Simple3DCollision extends ApplicationAdapter {
 	public Environment environment;
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
@@ -68,8 +67,11 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
         
         world = new com.dumbpug.nbp.Environment(Dimension.THREE_DIMENSIONS, 20f, new Gravity(Axis.Y, -0.09f));
         
-        // Create some static AABBs to process.
-        ArrayList<Basic3DBox> boxes = getRandomStaticBoxes(10, 10, 10, 12345);
+        // Create some AABBs to process.
+        ArrayList<Basic3DBox> boxes = new ArrayList<Basic3DBox>();
+        
+        // Create and add a static box.
+        boxes.add(getStaticBox());
         
         // Create and add a dynamic box.
         boxes.add(getDynamicBox(12345));
@@ -111,25 +113,17 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	}
 	
 	/**
-	 * Create some random static AABBs
-	 * @param numberOfBoxes
-	 * @param seed
-	 * @return
+	 * Create a static AABB.
+	 * @return A static AABB.
 	 */
-	private ArrayList<Basic3DBox> getRandomStaticBoxes(int width, int height, int depth, long seed) {
-        ArrayList<Basic3DBox> boxes = new ArrayList<Basic3DBox>();
-        
-        float yOffset = -5f; // Anything less than -5 (box size) stops collisions working. Spatial grid key stuff?
-        float xOffset = (width / 2f) * -boxSize;
-        float zOffset = (depth / 2f) * -boxSize;
-        
-        for (int x = 0; x < width; x++) {
-        	for (int z = 0; z < depth; z++) {
-        		boxes.add(new Basic3DBox((x * boxSize) + xOffset, yOffset, (z * boxSize) + zOffset, boxSize, boxSize, boxSize, BoxType.STATIC));
-     		}
- 		}
- 		
- 		return boxes;
+	private Basic3DBox getStaticBox() {
+		// Create our dynamic box.
+		Basic3DBox box = new Basic3DBox(0, 0, 0, boxSize, boxSize, boxSize, BoxType.STATIC);
+		
+		box.setRestitution(0.3f);
+		box.setFriction(0.3f);
+		
+		return box;
 	}
 	
 	/**
@@ -138,15 +132,15 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	 * @return
 	 */
 	private Basic3DBox getDynamicBox(long seed) {
-		Random random = new Random(seed);
-		
 		// Create our dynamic box.
 		Basic3DBox box = new Basic3DBox(0, 20f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
 		
-		box.applyImpulse(Axis.X, (random.nextFloat()*1f) - 0.5f);
-		box.applyImpulse(Axis.Z, (random.nextFloat()*1f) - 0.5f);
-		box.setRestitution(0.4f);
-		box.setFriction(0.4f);
+		// Random random = new Random(seed);
+		box.applyImpulse(Axis.X, 0.01f);
+		box.applyImpulse(Axis.Z, 0.01f);
+		
+		box.setRestitution(0.3f);
+		box.setFriction(0.3f);
 		
 		return box;
 	}
