@@ -71,7 +71,7 @@ public class Utilities {
     		float projectionHeight = (Math.max(box.getY(), destY) + box.getHeight()) - projectionY;
     		float projectionDepth  = (Math.max(box.getZ(), destZ) + box.getDepth()) - projectionZ;
     		// Create and return the projection.
-    		return new BoxProjection(box, projectionX, projectionY, projectionY, projectionWidth, projectionHeight, projectionDepth);
+    		return new BoxProjection(box, projectionX, projectionY, projectionZ, projectionWidth, projectionHeight, projectionDepth);
     	} else {
     		// Find the x/y position of the box after the physics update.
     		float destX = box.getX() + box.getVelocity(Axis.X);

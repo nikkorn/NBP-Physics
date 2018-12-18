@@ -52,8 +52,8 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 		modelBatch = new ModelBatch();
 		
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(50f, 50f, 50f);
-		cam.lookAt(0,0,0);
+		cam.position.set(40f, 80f, 40f);
+		cam.lookAt(0, 50f, 0);
 		cam.near = 1f;
 		cam.far = 300f;
 		cam.update();
@@ -118,6 +118,7 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	 */
 	private ArrayList<Basic3DBox> getRandomStaticBoxes(int width, int height, int depth, long seed) {
         ArrayList<Basic3DBox> boxes = new ArrayList<Basic3DBox>();
+        Random random               = new Random(seed);
         
         float yOffset = -5f; // Anything less than -5 (box size) stops collisions working. Spatial grid key stuff?
         float xOffset = (width / 2f) * -boxSize;
@@ -125,7 +126,10 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
         
         for (int x = 0; x < width; x++) {
         	for (int z = 0; z < depth; z++) {
-        		boxes.add(new Basic3DBox((x * boxSize) + xOffset, yOffset, (z * boxSize) + zOffset, boxSize, boxSize, boxSize, BoxType.STATIC));
+        		for (int y = 0; y < height; y++) {
+        			if (random.nextFloat() < 0.15f)
+        				boxes.add(new Basic3DBox((x * boxSize) + xOffset, (y * boxSize) + yOffset, (z * boxSize) + zOffset, boxSize, boxSize, boxSize, BoxType.STATIC));
+         		}
      		}
  		}
  		
@@ -141,7 +145,7 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 		Random random = new Random(seed);
 		
 		// Create our dynamic box.
-		Basic3DBox box = new Basic3DBox(0, 20f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
+		Basic3DBox box = new Basic3DBox(0, 60f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
 		
 		box.applyImpulse(Axis.X, (random.nextFloat()*1f) - 0.5f);
 		box.applyImpulse(Axis.Z, (random.nextFloat()*1f) - 0.5f);

@@ -51,7 +51,7 @@ public class Simple3DCollision extends ApplicationAdapter {
 		modelBatch = new ModelBatch();
 		
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(50f, 50f, 50f);
+		cam.position.set(30f, 30f, 30f);
 		cam.lookAt(0,0,0);
 		cam.near = 1f;
 		cam.far = 300f;
@@ -118,10 +118,11 @@ public class Simple3DCollision extends ApplicationAdapter {
 	 */
 	private Basic3DBox getStaticBox() {
 		// Create our dynamic box.
-		Basic3DBox box = new Basic3DBox(0, 0, 0, boxSize, boxSize, boxSize, BoxType.STATIC);
+		// TODO If y < -boxSize then no collision!
+		Basic3DBox box = new Basic3DBox(0, -6f, 0, boxSize, boxSize, boxSize, BoxType.STATIC);
 		
-		box.setRestitution(0.3f);
-		box.setFriction(0.3f);
+		box.setRestitution(0.4f);
+		box.setFriction(0.4f);
 		
 		return box;
 	}
@@ -133,14 +134,14 @@ public class Simple3DCollision extends ApplicationAdapter {
 	 */
 	private Basic3DBox getDynamicBox(long seed) {
 		// Create our dynamic box.
-		Basic3DBox box = new Basic3DBox(0, 20f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
+		Basic3DBox box = new Basic3DBox(0, 15f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
 		
 		// Random random = new Random(seed);
 		box.applyImpulse(Axis.X, 0.01f);
 		box.applyImpulse(Axis.Z, 0.01f);
 		
-		box.setRestitution(0.3f);
-		box.setFriction(0.3f);
+		box.setRestitution(0.4f);
+		box.setFriction(0.4f);
 		
 		return box;
 	}
