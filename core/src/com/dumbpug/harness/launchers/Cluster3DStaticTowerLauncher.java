@@ -2,9 +2,9 @@ package com.dumbpug.harness.launchers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -43,6 +43,8 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 
 	float boxSize = 5f;
 	
+	Basic3DBox dynamicBox = null;
+	
 	@Override
 	public void create () {
 		environment = new Environment();
@@ -69,10 +71,12 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
         world = new com.dumbpug.nbp.Environment(Dimension.THREE_DIMENSIONS, 20f, new Gravity(Axis.Y, -0.09f));
         
         // Create some static AABBs to process.
-        ArrayList<Basic3DBox> boxes = getRandomStaticBoxes(10, 10, 10, 12345);
+        ArrayList<Basic3DBox> boxes = getStaticBoxes(10, 10, 10);
+        
+        dynamicBox = getDynamicBox();
         
         // Create and add a dynamic box.
-        boxes.add(getDynamicBox(12345));
+        boxes.add(dynamicBox);
         
  		for (Basic3DBox box : boxes) {	
  			ModelInstance instance = new ModelInstance(box.getType() == BoxType.DYNAMIC ? intersectingModel : nonIntersectingModel);
@@ -95,6 +99,22 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         
+        // Test moving player
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        	dynamicBox.applyImpulse(Axis.Z, 0.5f);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        	dynamicBox.applyImpulse(Axis.X, -0.5f);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        	dynamicBox.applyImpulse(Axis.Z, -0.5f);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        	dynamicBox.applyImpulse(Axis.X, 0.5f);
+        }
+
+        // Test jumping player
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        	dynamicBox.applyImpulse(Axis.Y, 1f);
+        }
+        
         // Update the physics environment.
         world.update();
  
@@ -116,18 +136,17 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	 * @param seed
 	 * @return
 	 */
-	private ArrayList<Basic3DBox> getRandomStaticBoxes(int width, int height, int depth, long seed) {
+	private ArrayList<Basic3DBox> getStaticBoxes(int width, int height, int depth) {
         ArrayList<Basic3DBox> boxes = new ArrayList<Basic3DBox>();
-        Random random               = new Random(seed);
         
-        float yOffset = -5f; // Anything less than -5 (box size) stops collisions working. Spatial grid key stuff?
+        float yOffset = -5f;
         float xOffset = (width / 2f) * -boxSize;
         float zOffset = (depth / 2f) * -boxSize;
         
         for (int x = 0; x < width; x++) {
         	for (int z = 0; z < depth; z++) {
         		for (int y = 0; y < height; y++) {
-        			if (random.nextFloat() < 0.15f)
+        			if (y == 0 || x == 0 || x == (width - 1) || z == 0 || z == (depth - 1))
         				boxes.add(new Basic3DBox((x * boxSize) + xOffset, (y * boxSize) + yOffset, (z * boxSize) + zOffset, boxSize, boxSize, boxSize, BoxType.STATIC));
          		}
      		}
@@ -141,14 +160,10 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	 * @param seed
 	 * @return
 	 */
-	private Basic3DBox getDynamicBox(long seed) {
-		Random random = new Random(seed);
-		
+	private Basic3DBox getDynamicBox() {
 		// Create our dynamic box.
 		Basic3DBox box = new Basic3DBox(0, 60f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
 		
-		box.applyImpulse(Axis.X, (random.nextFloat()*1f) - 0.5f);
-		box.applyImpulse(Axis.Z, (random.nextFloat()*1f) - 0.5f);
 		box.setRestitution(0.4f);
 		box.setFriction(0.4f);
 		
