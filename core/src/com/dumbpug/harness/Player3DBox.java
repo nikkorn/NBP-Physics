@@ -7,42 +7,32 @@ import com.dumbpug.nbp.BoxType;
 import com.dumbpug.nbp.Sensor;
 
 /**
- * Represents a movable player.
+ * Represents a 3D movable player.
  */
-public class PlayerBox extends Box {
-	private final float PLAYER_MAX_VELOCITY    = 5f;
-	private final float PLAYER_FRICTION        = 0.92f;
+public class Player3DBox extends Box {
+	private final float PLAYER_MAX_VELOCITY    = 0.5f;
+	private final float PLAYER_FRICTION        = 0.5f;
 	private final float PLAYER_RESTITUTION     = 0.5f;
-	private final float PLAYER_JUMPING_IMPULSE = 3.5f;
+	private final float PLAYER_JUMPING_IMPULSE = 0.5f;
 	private final float PLAYER_WALKING_IMPULSE = 0.2f;
 
 	/**
-	 * Create a new instance of the PlayerBox class.
+	 * Create a new instance of the Player3DBox class.
 	 * @param x
 	 * @param y
+	 * @param z
 	 * @param width
 	 * @param height
+	 * @param depth
 	 * @param playerNumber
 	 */
-    public PlayerBox(float x, float y, float width, float height) {
-        super(x, y, width, height, BoxType.DYNAMIC);
+    public Player3DBox(float x, float y, float z, float width, float height, float depth) {
+        super(x, y, z, width, height, depth, BoxType.DYNAMIC);
         setFriction(PLAYER_FRICTION);
         setRestitution(PLAYER_RESTITUTION);
         setMaxVelocity(Axis.X, PLAYER_MAX_VELOCITY);
+        setMaxVelocity(Axis.Z, PLAYER_MAX_VELOCITY);
         setMaxVelocity(Axis.Y, PLAYER_MAX_VELOCITY);
-        // Create a sensor and place it at the base of our player. This sensor will
-        // be used to detect when we are standing on something static, thus allowing
-        // the player to jump.
-        float sensorHeight = 1;
-        float sensorWidth  = width/2;
-        float sensorPosX   = x;
-        float sensorPosY   = y - sensorHeight;
-        // Create the sensor.
-        Sensor baseSensor = new Sensor(sensorPosX + (sensorWidth/2), sensorPosY, sensorWidth, sensorHeight);
-        // Give the sensor a name, this will be checked when notified by th sensor.
-        baseSensor.setName("player_base_sensor");
-        // Attach the sensor to the player box.
-        attachSensor(baseSensor);
     }
 
     /**
@@ -51,6 +41,20 @@ public class PlayerBox extends Box {
     public void jump() {
     	// Apply a vertical impulse.
         applyImpulse(Axis.Y, PLAYER_JUMPING_IMPULSE);
+    }
+    
+    /**
+     * Move the player up.
+     */
+    public void moveUp() {
+    	applyImpulse(Axis.Z, -PLAYER_WALKING_IMPULSE);
+    }
+
+    /**
+     * Move the player down.
+     */
+    public void moveDown() {
+    	applyImpulse(Axis.Z, PLAYER_WALKING_IMPULSE);
     }
     
     /**

@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dumbpug.harness.Basic2DBox;
-import com.dumbpug.harness.PlayerBox;
+import com.dumbpug.harness.Player2DBox;
 import com.dumbpug.nbp.Axis;
 import com.dumbpug.nbp.Box;
 import com.dumbpug.nbp.BoxType;
@@ -24,7 +24,7 @@ public class Grid2DLauncher extends ApplicationAdapter {
     Texture gimg;
 
     Environment environment;
-    PlayerBox player;
+    Player2DBox player;
 
     private int gridBlockSize = 60;
     private int[][] gridLayout = {
@@ -60,7 +60,7 @@ public class Grid2DLauncher extends ApplicationAdapter {
         }
 
         // Make our player box.
-        player = new PlayerBox(65, 200, 20, 40);
+        player = new Player2DBox(65, 200, 20, 40);
         environment.addBox(player);
     }
     

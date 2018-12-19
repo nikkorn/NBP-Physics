@@ -19,7 +19,9 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.dumbpug.harness.Basic3DBox;
+import com.dumbpug.harness.Player3DBox;
 import com.dumbpug.nbp.Axis;
+import com.dumbpug.nbp.Box;
 import com.dumbpug.nbp.BoxType;
 import com.dumbpug.nbp.Dimension;
 import com.dumbpug.nbp.Gravity;
@@ -39,11 +41,11 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	
 	public ArrayList<ModelInstance> instances = new ArrayList<ModelInstance>();
 	
-	private HashMap<Basic3DBox, ModelInstance> boxToModelInstanceMap = new HashMap<Basic3DBox, ModelInstance>();
+	private HashMap<Box, ModelInstance> boxToModelInstanceMap = new HashMap<Box, ModelInstance>();
 
 	float boxSize = 5f;
 	
-	Basic3DBox dynamicBox = null;
+	Player3DBox player = new Player3DBox(0, 60f, 0, boxSize, boxSize, boxSize);
 	
 	@Override
 	public void create () {
@@ -71,14 +73,12 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
         world = new com.dumbpug.nbp.Environment(Dimension.THREE_DIMENSIONS, 20f, new Gravity(Axis.Y, -0.09f));
         
         // Create some static AABBs to process.
-        ArrayList<Basic3DBox> boxes = getStaticBoxes(10, 10, 10);
-        
-        dynamicBox = getDynamicBox();
+        ArrayList<Box> boxes = getStaticBoxes(10, 10, 10);
         
         // Create and add a dynamic box.
-        boxes.add(dynamicBox);
+        boxes.add(player);
         
- 		for (Basic3DBox box : boxes) {	
+ 		for (Box box : boxes) {	
  			ModelInstance instance = new ModelInstance(box.getType() == BoxType.DYNAMIC ? intersectingModel : nonIntersectingModel);
  			
  			instance.transform.setToTranslation(box.getX(), box.getY(), box.getZ());
@@ -101,25 +101,25 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
         
         // Test moving player
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-        	dynamicBox.applyImpulse(Axis.Z, 0.5f);
+        	player.moveUp();
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-        	dynamicBox.applyImpulse(Axis.X, -0.5f);
+        	player.moveLeft();
         } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-        	dynamicBox.applyImpulse(Axis.Z, -0.5f);
+        	player.moveDown();
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-        	dynamicBox.applyImpulse(Axis.X, 0.5f);
+        	player.moveRight();
         }
 
         // Test jumping player
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-        	dynamicBox.applyImpulse(Axis.Y, 1f);
+        	player.jump();
         }
         
         // Update the physics environment.
         world.update();
  
         modelBatch.begin(cam);
-        for (Basic3DBox box : this.boxToModelInstanceMap.keySet()) {
+        for (Box box : this.boxToModelInstanceMap.keySet()) {
         	// Get the model instance for the box.
         	ModelInstance instance = this.boxToModelInstanceMap.get(box);
         	
@@ -136,8 +136,8 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	 * @param seed
 	 * @return
 	 */
-	private ArrayList<Basic3DBox> getStaticBoxes(int width, int height, int depth) {
-        ArrayList<Basic3DBox> boxes = new ArrayList<Basic3DBox>();
+	private ArrayList<Box> getStaticBoxes(int width, int height, int depth) {
+        ArrayList<Box> boxes = new ArrayList<Box>();
         
         float yOffset = -5f;
         float xOffset = (width / 2f) * -boxSize;
@@ -153,20 +153,5 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
  		}
  		
  		return boxes;
-	}
-	
-	/**
-	 * Create a dynamic AABB.
-	 * @param seed
-	 * @return
-	 */
-	private Basic3DBox getDynamicBox() {
-		// Create our dynamic box.
-		Basic3DBox box = new Basic3DBox(0, 60f, 0, boxSize, boxSize, boxSize, BoxType.DYNAMIC);
-		
-		box.setRestitution(0.4f);
-		box.setFriction(0.4f);
-		
-		return box;
 	}
 }
