@@ -25,8 +25,9 @@ public class Utilities {
                 } else if (velocity < 0) {
                     dynamicBox.setX(staticBox.getX() + staticBox.getWidth());
                 }
-                // Flip velocity
+                // Flip velocity and apply restitution.
                 dynamicBox.setVelocity(Axis.X, -velocity * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                // TODO Apply friction to velocities on other axis (Y/Z).
                 break;
             case Y:
                 if (velocity > 0) {
@@ -34,8 +35,9 @@ public class Utilities {
                 } else if (velocity < 0) {
                     dynamicBox.setY(staticBox.getY() + staticBox.getHeight());
                 }
-                // Flip velocity
+                // Flip velocity and apply restitution.
                 dynamicBox.setVelocity(Axis.Y, -velocity * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                // TODO Apply friction to velocities on other axis (X/Z).
                 break;
 			case Z:
 				if (velocity > 0) {
@@ -43,8 +45,9 @@ public class Utilities {
                 } else if (velocity < 0) {
                     dynamicBox.setZ(staticBox.getZ() + staticBox.getDepth());
                 }
-				// Flip velocity
+				// Flip velocity and apply restitution.
                 dynamicBox.setVelocity(Axis.Z, -velocity * (dynamicBox.getRestitution() + staticBox.getRestitution()));
+                // TODO Apply friction to velocities on other axis (X/Y).
 				break;
 			default:
 				throw new RuntimeException("Invalid axis: " + axis);

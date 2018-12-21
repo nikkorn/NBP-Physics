@@ -94,6 +94,10 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
 	
 	@Override
 	public void render () {
+		// Put the camera at the player box position.
+		// cam.position.set(player.getX() + (player.getWidth() / 2), player.getY() + (player.getHeight() / 2), player.getZ() + (player.getDepth() / 2));
+		// cam.update();
+		
 		camController.update();
 		
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -120,6 +124,9 @@ public class Cluster3DStaticTowerLauncher extends ApplicationAdapter {
  
         modelBatch.begin(cam);
         for (Box box : this.boxToModelInstanceMap.keySet()) {
+        	// Do not draw the player box at the moment.
+        	// if (box == player) continue;
+        	
         	// Get the model instance for the box.
         	ModelInstance instance = this.boxToModelInstanceMap.get(box);
         	

@@ -10,11 +10,11 @@ import com.dumbpug.nbp.Sensor;
  * Represents a 3D movable player.
  */
 public class Player3DBox extends Box {
-	private final float PLAYER_MAX_VELOCITY    = 0.5f;
-	private final float PLAYER_FRICTION        = 0.5f;
-	private final float PLAYER_RESTITUTION     = 0.5f;
-	private final float PLAYER_JUMPING_IMPULSE = 0.5f;
-	private final float PLAYER_WALKING_IMPULSE = 0.2f;
+	private final float PLAYER_MAX_VELOCITY         = 1.5f;
+	private final float PLAYER_FRICTION             = 0.5f;
+	private final float PLAYER_RESTITUTION          = 0.5f;
+	private final float PLAYER_JUMPING_IMPULSE      = 0.5f;
+	private final float PLAYER_WALKING_IMPULSE      = 0.2f;
 
 	/**
 	 * Create a new instance of the Player3DBox class.
@@ -32,7 +32,6 @@ public class Player3DBox extends Box {
         setRestitution(PLAYER_RESTITUTION);
         setMaxVelocity(Axis.X, PLAYER_MAX_VELOCITY);
         setMaxVelocity(Axis.Z, PLAYER_MAX_VELOCITY);
-        setMaxVelocity(Axis.Y, PLAYER_MAX_VELOCITY);
     }
 
     /**

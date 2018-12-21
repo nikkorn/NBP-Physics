@@ -150,7 +150,7 @@ public class Environment {
     }
     
     /**
-     * Update the specified dynamic box on every axis and handle and resulting collisions.
+     * Update the specified dynamic box on every axis and handle any resulting collisions.
      * @param dynamicBox The dynamic box to update.
      */
     private void updateDynamicBox(Box dynamicBox) {
@@ -173,29 +173,38 @@ public class Environment {
     	}
     	
     	// Update the dynamic box on the X axis and resolve any collisions.
-    	dynamicBox.updateOnAxis(Axis.X, this.gravity);
-    	for (Box nearbyBox : staticBoxesOverlappingProjection) {
-    		if (dynamicBox.intersects(nearbyBox)) {
-    			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.X);
-            }
-    	}
+    	updateDynamicBoxOnAxis(dynamicBox, staticBoxesOverlappingProjection, Axis.X);
     	
     	// Update the dynamic box on the Y axis and resolve any collisions.
-    	dynamicBox.updateOnAxis(Axis.Y, this.gravity);
-    	for (Box nearbyBox : staticBoxesOverlappingProjection) {
-    		if (dynamicBox.intersects(nearbyBox)) {
-    			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.Y);
-            }
-    	}
+    	updateDynamicBoxOnAxis(dynamicBox, staticBoxesOverlappingProjection, Axis.Y);
     	
     	// Update the dynamic box on the Z axis and resolve any collisions if we are in 3D space.
     	if (this.dimension == Dimension.THREE_DIMENSIONS) {
-        	dynamicBox.updateOnAxis(Axis.Z, this.gravity);
-        	for (Box nearbyBox : staticBoxesOverlappingProjection) {
-        		if (dynamicBox.intersects(nearbyBox)) {
-        			Utilities.handleCollision(dynamicBox, nearbyBox, Axis.Z);
-                }
-        	}
+    		updateDynamicBoxOnAxis(dynamicBox, staticBoxesOverlappingProjection, Axis.Z);
+    	}
+    }
+    
+    /**
+     * Update a dynamic box and resolve any collisons between it and any static boxes in
+     * reponse to updating the position of the dynamic box on the specified axis.
+     * @param dynamicBox The dynamic box to update and resolve any collisions for.
+     * @param staticBoxes The static boxes that the dynamic box may collide with.
+     * @param axis The axis on which to update the dynamic box and resolve collisions
+     */
+    private void updateDynamicBoxOnAxis(Box dynamicBox, ArrayList<Box> staticBoxes, Axis axis) {
+    	// Update the dynamic box on the axis.
+    	dynamicBox.updateOnAxis(axis, this.gravity);
+    	
+    	// TODO Find the earliest collision (if any) that happened with any static boxes on the axis.
+    	// If any happened at the same time then either just pick one or find the greatest are of overlap (using other axis).
+    	
+    	// TODO Call Utilities.handleCollision() passing the dynamic box and the earliest static collision.
+    	
+    	// TODO Remove and replace with above!
+    	for (Box staticBox : staticBoxes) {
+    		if (dynamicBox.intersects(staticBox)) {
+    			Utilities.handleCollision(dynamicBox, staticBox, axis);
+            }
     	}
     }
  
