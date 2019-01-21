@@ -195,16 +195,54 @@ public class Environment {
     	// Update the dynamic box on the axis.
     	dynamicBox.updateOnAxis(axis, this.gravity);
     	
-    	// TODO Find the earliest collision (if any) that happened with any static boxes on the axis.
+    	// Keep track of which colliding static box is closest.
+    	Box closestCollidingBox = null;
+    	
+    	// Find the earliest collision (if any) that happened with any static boxes on the axis.
     	// If any happened at the same time then either just pick one or find the greatest are of overlap (using other axis).
-    	
-    	// TODO Call Utilities.handleCollision() passing the dynamic box and the earliest static collision.
-    	
-    	// TODO Remove and replace with above!
     	for (Box staticBox : staticBoxes) {
-    		if (dynamicBox.intersects(staticBox)) {
-    			Utilities.handleCollision(dynamicBox, staticBox, axis);
-            }
+    		if (closestCollidingBox == null && dynamicBox.intersects(staticBox)) {
+    			closestCollidingBox = staticBox;
+    		} else if (dynamicBox.intersects(staticBox)) {
+    			
+    			// Based on the direction that the dynamic box is moving on the axis we will find the closest intersection.
+    			if (dynamicBox.getVelocity(axis) > 0) {
+    				
+    				// Moving in a positive direction means that we would intersect static boxes at the edge defined
+    				// by just their position, not their position plus their length on the current axis.
+    				float closestEdgeAxisPosition = closestCollidingBox.getPosition(axis);
+    				float currentEdgeAxisPosition = staticBox.getPosition(axis);
+    				
+    				// Is the current static boxes edge closer to the dynamic box that the current one?
+    				if (currentEdgeAxisPosition < closestEdgeAxisPosition) {
+    					// The current static box would have collided with the dynamic box earliest.
+    					closestCollidingBox = staticBox;
+    				} else if (currentEdgeAxisPosition == closestEdgeAxisPosition) {
+    					// TODO The dynamic box would have collided with the current and closest boxes at the same time.
+    				}
+    			} else if (dynamicBox.getVelocity(axis) < 0) {
+    				
+    				// Moving in a negative direction means that we would intersect static boxes at the edge defined
+    				// by their position plus their length on the current axis.
+    				float closestEdgeAxisPosition = closestCollidingBox.getPosition(axis) + closestCollidingBox.getLength(axis);
+    				float currentEdgeAxisPosition = staticBox.getPosition(axis) + staticBox.getLength(axis);
+    				
+    				// Is the current static boxes edge closer to the dynamic box that the current one?
+    				if (currentEdgeAxisPosition > closestEdgeAxisPosition) {
+    					// The current static box would have collided with the dynamic box earliest.
+    					closestCollidingBox = staticBox;
+    				} else if (currentEdgeAxisPosition == closestEdgeAxisPosition) {
+    					// TODO The dynamic box would have collided with the current and closest boxes at the same time.
+    				}
+    			} else {
+    				// The dynamic box is not moving on the current axis.
+    			}
+    		}
+    	}
+    	
+    	// Call Utilities.handleCollision() passing the dynamic box and the earliest static collision.
+    	if (closestCollidingBox != null) {
+    		Utilities.handleCollision(dynamicBox, closestCollidingBox, axis);
     	}
     }
  
